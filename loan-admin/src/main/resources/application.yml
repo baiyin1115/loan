@@ -1,0 +1,73 @@
+spring:
+  profiles:
+#    active: preproduction
+#    active: staging
+    active: development
+#    active: production
+
+###################  spring配置  ###################
+  mvc:
+    static-path-pattern: /static/**
+    view:
+      prefix: /WEB-INF/view
+  http:
+    converters.preferred-json-mapper: fastjson
+    multipart:
+      #最大请求大小
+      max-request-size: 100MB
+      #最大文件大小
+      max-file-size: 100MB
+  #是否开启开发者工具（true/false）
+  devtools:
+    restart:
+      enabled: false
+      additional-paths: src/main/java
+      exclude: static/**,WEB-INF/view/**
+  #false为启用jdk默认动态代理,true为cglib动态代理
+  aop:
+    proxy-target-class: true
+  datasource:
+    driverClassName: net.sf.log4jdbc.DriverSpy
+    db-name: loan
+
+loan:
+  #是否开启swagger (true/false)
+  swagger-open: true
+  #是否开启登录时验证码 (true/false)
+  kaptcha-open: false
+  #是否开启session超时验证（受影响的类SessionTimeoutInterceptor） (true/false)
+  session-open: false
+  #是否开启多数据源(true/false)
+  muti-datasource-open: false
+  #是否开启spring session,如果是多机环境需要开启(true/false)
+  spring-session-open: false
+  #session失效时间(只在单机环境下生效，多机环境在SpringSessionConfig类中配置) 单位：秒
+  session-invalidate-time: 1800
+  #多久检测一次失效的session(只在单机环境下生效) 单位：秒
+  session-validation-interval: 900
+
+###################  beetl配置  ###################
+beetl:
+  #开始结束标签(yaml不允许@开头)
+  delimiter-statement-start: \@
+  delimiter-statement-end: null
+  #自定义标签文件Root目录和后缀
+  resource-tagroot: common/tags
+  resource-tagsuffix: tag
+  #是否检测文件变化,开发用true合适，但线上要改为false
+  resource-auto-check: true
+
+logback:
+  log_level: INFO
+  log_path: d:/logs
+
+#底层包swigger相关项目信息 必须配置
+swagger:
+  open: true
+  project:
+    name: 小贷管理系统
+    description: 接口列表
+    api-package-path: com.zsy.loan.admin
+    version: 1.0.0
+
+

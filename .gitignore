@@ -1,0 +1,17 @@
+*.iml
+.vuepress/*
+./**/target/*
+docs/md/node_modules/*
+docs/md/*.log
+docs/md/dist/*
+**/target/*
+*.project
+*.classpath
+*.factorypath
+*/.settings/*
+.settings/*
+.vscode/*
+.idea/*
+loan-admin-vuejs/node_modules/*
+loan-admin-vuejs/.idea/*
+loan-admin-vuejs/dist/*

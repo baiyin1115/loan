@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!--<property resource="properties/logback-variables.properties"/>-->     <!-- 得到APP_NAME log_path的值 -->
+
+  <define class="com.zsy.loan.utils.logback.IpUtils"
+    name="ip"/>
+
+
+  <springProperty name="logstash_host" scope="context" source="logback.logstash_host"/>
+  <springProperty name="log_level" scope="context" source="logback.log_level"/>
+  <springProperty name="log_path" scope="context" source="logback.log_path"/>
+  <springProperty name="appname" scope="context" source="spring.application.name"/>
+  <!--<springProperty name="ip" scope="context" source="spring.cloud.client.ipAddress"/>-->
+  <!--<springProperty name="log_sql_level" scope="context" source="logback.log_sql_level"/>-->
+
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+    <encoder charset="UTF-8"> <!-- encoder 可以指定字符集，对于中文输出有意义 -->
+      <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} | %-5level | %thread | %logger{80}-line:%line | %msg%n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="errorAppender">
+    <file>${log_path}/error.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log_path}/%d{yyyy-MM,aux}/error-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>60</maxHistory>
+      <!--<totalSizeCap>20GB</totalSizeCap>-->
+    </rollingPolicy>
+    <encoder>
+      <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} | %-5level | %thread | %logger{80}-line:%line | %msg%n
+      </pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+      <level>ERROR</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+  </appender>
+
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="infoAppender">
+    <file>${log_path}/info.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log_path}/%d{yyyy-MM,aux}/info-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>60</maxHistory>
+      <!--<totalSizeCap>20GB</totalSizeCap>-->
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} | %-5level | %thread | %logger{80}-line:%line | %msg%n
+      </pattern>
+    </encoder>
+
+  </appender>
+
+  <!-- druid连接池的日志级别 -->
+  <logger name="com.alibaba.druid" level="INFO"/>
+
+  <!-- show_credit的日志级别 -->
+  <logger name="com.zsy.loan" level="DEBUG"/>
+
+  <logger name="jdbc.connection" additivity="false" level="OFF">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="infoAppender"/>
+  </logger>
+  <logger name="jdbc.resultset" additivity="false" level="OFF">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="infoAppender"/>
+  </logger>
+  <logger name="jdbc.audit" additivity="false" level="OFF">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="infoAppender"/>
+  </logger>
+  <logger name="jdbc.sqlonly" additivity="false" level="OFF">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="infoAppender"/>
+  </logger>
+  <logger name="jdbc.sqltiming" additivity="false" level="INFO">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="infoAppender"/>
+  </logger>
+
+  <root level="${log_level}">                    <!-- 设置日志级别 -->
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="infoAppender"/>
+    <appender-ref ref="errorAppender"/>
+  </root>
+</configuration>

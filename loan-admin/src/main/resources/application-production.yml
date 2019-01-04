@@ -1,0 +1,18 @@
+server:
+  port: 8091
+  tomcat.max-threads: 800
+
+debug: false
+
+spring:
+  application:
+    name: loan-admin-prod
+  datasource:
+    url: jdbc:log4jdbc:mysql://localhost:3306/loan?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+        show_sql: false
