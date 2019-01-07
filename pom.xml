@@ -24,7 +24,7 @@
     <mail.version>1.5.4</mail.version>
     <poi.version>3.9</poi.version>
     <httpcomponents.version>4.4.1</httpcomponents.version>
-    <jackson.version>2.7.7</jackson.version>
+    <jackson.version>2.8.11</jackson.version>
     <!-- Log libs -->
     <slf4j.version>1.7.21</slf4j.version>
     <logback.version>1.1.7</logback.version>
