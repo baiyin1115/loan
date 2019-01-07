@@ -17,6 +17,8 @@ public interface MenuRepository extends PagingAndSortingRepository<Menu, Long> {
 
   Menu findByCode(String code);
 
+  Menu findById(Long id);
+
   List<Menu> findByPcodesLike(String code);
 
   List<Menu> findByNameLikeAndLevels(String name, Integer levels);

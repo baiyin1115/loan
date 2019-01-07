@@ -186,7 +186,11 @@ public class MenuServiceImpl implements MenuService {
       menu.setLevels(1);
     } else {
 
-      Menu pMenu = menuRepository.findByCode(menu.getPcode());
+      /**
+       * 传入的pcode是父节点的id信息，需要修改下这里的代码
+       */
+//      Menu pMenu = menuRepository.findByCode(menu.getPcode());
+      Menu pMenu =  menuRepository.findById(Long.valueOf(menu.getPcode()));
       Integer pLevels = pMenu.getLevels();
       menu.setPcode(pMenu.getCode());
 
