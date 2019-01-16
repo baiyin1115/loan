@@ -8,14 +8,14 @@ var DeptInfoDlg = {
         simplename: {
             validators: {
                 notEmpty: {
-                    message: '部门名称不能为空'
+                    message: '公司名称不能为空'
                 }
             }
         },
         fullname: {
             validators: {
                 notEmpty: {
-                    message: '部门全称不能为空'
+                    message: '公司全称不能为空'
                 }
             }
         },

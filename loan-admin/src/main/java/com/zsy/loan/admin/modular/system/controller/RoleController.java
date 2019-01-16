@@ -85,7 +85,7 @@ public class RoleController extends BaseController {
     Role role = this.roleRepository.findOne(roleId);
     model.addAttribute(role);
     model.addAttribute("pName", ConstantFactory.me().getSingleRoleName(role.getPid()));
-    model.addAttribute("deptName", ConstantFactory.me().getDeptName(role.getDeptid()));
+//    model.addAttribute("deptName", ConstantFactory.me().getDeptName(role.getDeptid()));
     LogObjectHolder.me().set(role);
     return PREFIX + "/role_edit.html";
   }

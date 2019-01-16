@@ -51,6 +51,11 @@ public interface IConstantFactory {
   String getDeptName(Integer deptId);
 
   /**
+   * 获取部门名称
+   */
+  String getDeptName(String deptIds);
+
+  /**
    * 获取菜单的名称们(多个)
    */
   String getMenuNames(String menuIds);

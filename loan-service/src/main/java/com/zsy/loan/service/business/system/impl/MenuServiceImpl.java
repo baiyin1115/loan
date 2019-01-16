@@ -9,6 +9,7 @@ import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.system.MenuRepository;
 import com.zsy.loan.service.business.system.MenuService;
 import com.zsy.loan.utils.Lists;
+import com.zsy.loan.utils.StringUtils;
 import com.zsy.loan.utils.ToolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,8 +190,13 @@ public class MenuServiceImpl implements MenuService {
       /**
        * 传入的pcode是父节点的id信息，需要修改下这里的代码
        */
-//      Menu pMenu = menuRepository.findByCode(menu.getPcode());
-      Menu pMenu =  menuRepository.findById(Long.valueOf(menu.getPcode()));
+      Menu pMenu = null;
+      if(StringUtils.isNumeric(menu.getPcode())){
+        pMenu =  menuRepository.findById(Long.valueOf(menu.getPcode()));
+      }else{
+        pMenu = menuRepository.findByCode(menu.getPcode());
+      }
+
       Integer pLevels = pMenu.getLevels();
       menu.setPcode(pMenu.getCode());
 

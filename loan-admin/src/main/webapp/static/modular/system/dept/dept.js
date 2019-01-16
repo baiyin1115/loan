@@ -15,8 +15,8 @@ Dept.initColumn = function () {
     return [
         {field: 'selectItem', radio: true},
         {title: 'id', field: 'id', align: 'center', valign: 'middle',width:'50px'},
-        {title: '部门简称', field: 'simplename', align: 'center', valign: 'middle', sortable: true},
-        {title: '部门全称', field: 'fullname', align: 'center', valign: 'middle', sortable: true},
+        {title: '公司简称', field: 'simplename', align: 'center', valign: 'middle', sortable: true},
+        {title: '公司全称', field: 'fullname', align: 'center', valign: 'middle', sortable: true},
         {title: '排序', field: 'num', align: 'center', valign: 'middle', sortable: true},
         {title: '备注', field: 'tips', align: 'center', valign: 'middle', sortable: true}];
 };
@@ -41,7 +41,7 @@ Dept.check = function () {
 Dept.openAddDept = function () {
     var index = layer.open({
         type: 2,
-        title: '添加部门',
+        title: '添加公司',
         area: ['800px', '420px'], //宽高
         fix: false, //不固定
         maxmin: true,
@@ -57,7 +57,7 @@ Dept.openDeptDetail = function () {
     if (this.check()) {
         var index = layer.open({
             type: 2,
-            title: '部门详情',
+            title: '公司详情',
             area: ['800px', '420px'], //宽高
             fix: false, //不固定
             maxmin: true,
@@ -84,7 +84,7 @@ Dept.delete = function () {
             ajax.start();
         };
 
-        Feng.confirm("是否刪除该部门?", operation);
+        Feng.confirm("是否刪除该公司?", operation);
     }
 };
 

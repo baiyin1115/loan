@@ -22,4 +22,6 @@ public interface DeptService {
   List<DeptNode> queryAll();
 
   void deptSetPids(Dept dept);
+
+  List<ZTreeNode> deptTreeListByDeptId(Integer[] deptIds);
 }

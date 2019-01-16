@@ -36,6 +36,23 @@ public class DeptServiceImpl implements DeptService {
     return nodes;
   }
 
+  @Override
+  public List<ZTreeNode> deptTreeListByDeptId(Integer[] ids) {
+    List list = deptRepository.deptTreeListByDeptId(ids);
+    List<ZTreeNode> treeNodes = new ArrayList<>();
+    for (int i = 0; i < list.size(); i++) {
+      Object[] arr = (Object[]) list.get(i);
+      ZTreeNode node = new ZTreeNode();
+      node.setId(Long.valueOf(arr[0].toString()));
+      node.setpId(Long.valueOf(arr[1].toString()));
+      node.setName(arr[2].toString());
+      node.setOpen(Boolean.valueOf(arr[3].toString()));
+      node.setChecked(Boolean.valueOf(arr[4].toString()));
+      treeNodes.add(node);
+    }
+    return treeNodes;
+  }
+
   private ZTreeNode transfer(Object[] obj) {
     ZTreeNode node = new ZTreeNode();
     node.setId(Long.valueOf(obj[0].toString()));

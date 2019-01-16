@@ -19,14 +19,14 @@ import com.zsy.loan.bean.constant.Const;
 import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.service.business.system.impl.ConstantFactory;
 import com.zsy.loan.utils.ToolUtil;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
-
-import java.util.List;
 
 /**
  * shiro工具类
@@ -256,11 +256,21 @@ public class ShiroKit {
   /**
    * 获取当前用户的部门数据范围的集合
    */
+//  public static List<Integer> getDeptDataScope() {
+//    Integer deptId = getUser().getDeptId();
+//    List<Integer> subDeptIds = ConstantFactory.me().getSubDeptId(deptId);
+//    subDeptIds.add(deptId);
+//    return subDeptIds;
+//  }
   public static List<Integer> getDeptDataScope() {
-    Integer deptId = getUser().getDeptId();
-    List<Integer> subDeptIds = ConstantFactory.me().getSubDeptId(deptId);
-    subDeptIds.add(deptId);
-    return subDeptIds;
+    List<Integer> deptIds = getUser().getDeptList();
+    List<Integer> subDeptIdAll = new ArrayList<>();
+    for (int deptId : deptIds) {
+      List<Integer> subDeptIds = ConstantFactory.me().getSubDeptId(deptId);
+      subDeptIdAll.addAll(subDeptIds);
+      subDeptIdAll.add(deptId);
+    }
+    return subDeptIdAll;
   }
 
   /**

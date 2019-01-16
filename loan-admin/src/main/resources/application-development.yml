@@ -4,6 +4,11 @@ server:
 
 ## 开发环境配置
 spring:
+  #开启热部署
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: ./loan-admin/src/main/java,./loan-dao/src/main/java,./loan-entity/src/main/java,./loan-service/src/main/java,./loan-utils/src/main/java
   application:
     name: loan-admin-dev
   datasource:

@@ -39,8 +39,6 @@ public class AccountServiceImpl implements AccountService {
     Integer[] roleArray = Convert.toIntArray(user.getRoleid());
     ShiroUser shiroUser = new ShiroUser();
     shiroUser.setAccount(user.getAccount());
-    shiroUser.setDeptId(user.getDeptid());
-    shiroUser.setDeptName(ConstantFactory.me().getDeptName(user.getDeptid()));
     shiroUser.setId(idUser);
     shiroUser.setName(user.getName());
     shiroUser.setRoleList(Lists.newArrayList(roleArray));
@@ -53,6 +51,20 @@ public class AccountServiceImpl implements AccountService {
     }
     shiroUser.setRoleNames(roleNames);
     shiroUser.setRoleCodes(roleCodes);
+
+    /**
+     * 部门集设置
+     */
+    //    shiroUser.setDeptId(user.getDeptid());
+//    shiroUser.setDeptName(ConstantFactory.me().getDeptName(user.getDeptid()));
+    Integer[] depoArray = Convert.toIntArray(user.getDeptid());
+    shiroUser.setDeptList(Lists.newArrayList(depoArray));
+    List<String> depoNames = Lists.newArrayList();
+    for (int depoId : depoArray) {
+      depoNames.add(ConstantFactory.me().getDeptName(depoId));
+    }
+    shiroUser.setDeptNameList(depoNames);
+
     tokenCache.setUser(token, shiroUser);
     return token;
   }

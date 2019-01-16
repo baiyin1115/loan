@@ -177,6 +177,28 @@ public class ConstantFactory implements IConstantFactory {
   }
 
   /**
+   * 通过角色ids获取角色名称
+   */
+  @Override
+  public String getDeptName(String deptIds) {
+    String val = get(CacheKey.DEPT_NAME + deptIds);
+    if (StringUtils.isNotEmpty(val)) {
+      return val;
+    }
+    Integer[] depts = Convert.toIntArray(deptIds);
+    StringBuilder sb = new StringBuilder();
+    for (int dept : depts) {
+      Dept deptObj = deptRepository.findOne(dept);
+      if (StringUtils.isNotNullOrEmpty(deptObj) && StringUtils.isNotEmpty(deptObj.getFullname())) {
+        sb.append(deptObj.getFullname()).append(",");
+      }
+    }
+    val = StrKit.removeSuffix(sb.toString(), ",");
+    set(CacheKey.DEPT_NAME + deptIds, val);
+    return val;
+  }
+
+  /**
    * 获取菜单的名称们(多个)
    */
   @Override

@@ -1,5 +1,6 @@
 package com.zsy.loan.service.shiro.factory;
 
+import com.google.common.collect.Lists;
 import com.zsy.loan.bean.vo.SpringContextHolder;
 import com.zsy.loan.bean.constant.state.ManagerStatus;
 import com.zsy.loan.bean.core.ShiroUser;
@@ -58,8 +59,20 @@ public class ShiroFactroy implements IShiro {
 
     shiroUser.setId(Long.valueOf(user.getId()));            // 账号id
     shiroUser.setAccount(user.getAccount());// 账号
-    shiroUser.setDeptId(user.getDeptid());    // 部门id
-    shiroUser.setDeptName(ConstantFactory.me().getDeptName(user.getDeptid()));// 部门名称
+//    shiroUser.setDeptId(user.getDeptid());    // 部门id
+//    shiroUser.setDeptName(ConstantFactory.me().getDeptName(user.getDeptid()));// 部门名称
+
+    /**
+     * 部门集设置
+     */
+    Integer[] depoArray = Convert.toIntArray(user.getDeptid());
+    shiroUser.setDeptList(Lists.newArrayList(depoArray));
+    List<String> depoNames = Lists.newArrayList();
+    for (int depoId : depoArray) {
+      depoNames.add(ConstantFactory.me().getDeptName(depoId));
+    }
+    shiroUser.setDeptNameList(depoNames);
+
     shiroUser.setName(user.getName());        // 用户名称
 
     Integer[] roleArray = Convert.toIntArray(user.getRoleid());// 角色集合

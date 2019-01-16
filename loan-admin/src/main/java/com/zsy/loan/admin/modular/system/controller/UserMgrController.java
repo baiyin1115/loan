@@ -21,6 +21,7 @@ import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.constant.state.ManagerStatus;
 import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.dao.system.UserRepository;
+import com.zsy.loan.utils.Convert;
 import com.zsy.loan.utils.MD5;
 import com.zsy.loan.utils.ToolUtil;
 import com.google.common.base.Strings;
@@ -89,6 +90,23 @@ public class UserMgrController extends BaseController {
     model.addAttribute("userId", userId);
     model.addAttribute("userAccount", user.getAccount());
     return PREFIX + "user_roleassign.html";
+  }
+
+  /**
+   * 跳转到部门分配页面
+   */
+  //@RequiresPermissions("/mgr/role_assign")  //利用shiro自带的权限检查
+  @Permission
+  @RequestMapping("/depo_assign/{userId}")
+  public String depoAssign(@PathVariable Integer userId, Model model) {
+    if (ToolUtil.isEmpty(userId)) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    User user = userRepository.findOne(userId);
+    model.addAttribute("userId", userId);
+    model.addAttribute("userAccount", user.getAccount());
+    return PREFIX + "user_depoassign.html";
   }
 
   /**
@@ -365,6 +383,29 @@ public class UserMgrController extends BaseController {
   }
 
   /**
+   * 分配部门
+   */
+  @RequestMapping("/setDept")
+  @BussinessLog(value = "分配角色", key = "userId,deptIds", dict = UserDict.class)
+  @Permission(Const.ADMIN_NAME)
+  @ResponseBody
+  public Tip setDept(@RequestParam("userId") Integer userId,
+      @RequestParam("deptIds") String deptIds) {
+    if (ToolUtil.isOneEmpty(userId, deptIds)) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+    //不能修改超级管理员
+    if (userId.equals(Const.ADMIN_ID)) {
+      throw new LoanException(BizExceptionEnum.CANT_CHANGE_ADMIN);
+    }
+    assertAuth(userId);
+    User user = userRepository.findOne(userId);
+    user.setDeptid(deptIds);
+    userRepository.save(user);
+    return SUCCESS_TIP;
+  }
+
+  /**
    * 上传图片(上传到项目的webapp/static/img)
    */
   @RequestMapping(method = RequestMethod.POST, path = "/upload")
@@ -389,8 +430,9 @@ public class UserMgrController extends BaseController {
     }
     List<Integer> deptDataScope = ShiroKit.getDeptDataScope();
     User user = this.userRepository.findOne(userId);
-    Integer deptid = user.getDeptid();
-    if (deptDataScope.contains(deptid)) {
+    String deptid = user.getDeptid();
+    Integer[] deptids = Convert.toIntArray(",", deptid);
+    if (deptDataScope.contains(deptids)) {
       return;
     } else {
       throw new LoanException(BizExceptionEnum.NO_PERMITION);

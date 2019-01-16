@@ -3,10 +3,12 @@ package com.zsy.loan.admin.modular.system.controller;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.dictmap.DeptDict;
+import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.system.DeptRepository;
+import com.zsy.loan.dao.system.UserRepository;
 import com.zsy.loan.service.business.system.DeptService;
 import com.zsy.loan.service.business.system.LogObjectHolder;
 import com.zsy.loan.service.business.system.impl.ConstantFactory;
@@ -14,6 +16,7 @@ import com.zsy.loan.service.warpper.DeptWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.bean.entity.system.Dept;
+import com.zsy.loan.utils.Convert;
 import com.zsy.loan.utils.ToolUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,6 +45,9 @@ public class DeptController extends BaseController {
 
   @Resource
   DeptRepository deptRepository;
+
+  @Resource
+  UserRepository userRepository;
 
 
   /**
@@ -149,6 +155,25 @@ public class DeptController extends BaseController {
     LogObjectHolder.me().set(ConstantFactory.me().getDeptName(deptId));
     deptService.deleteDept(deptId);
     return SUCCESS_TIP;
+  }
+
+  /**
+   * 获取角色列表
+   */
+  @RequestMapping(value = "/deptTreeListByUserId/{userId}")
+  @ResponseBody
+  public List<ZTreeNode> deptTreeListByUserId(@PathVariable Integer userId) {
+    User theUser = this.userRepository.findOne(userId);
+    String deptId = theUser.getDeptid();
+    if (ToolUtil.isEmpty(deptId)) {
+      List<ZTreeNode> tree = this.deptService.tree();
+      tree.add(ZTreeNode.createParent());
+      return tree;
+    } else {
+      Integer[] deptIds = Convert.toIntArray(",", deptId);
+      List<ZTreeNode> treeListByUserId = this.deptService.deptTreeListByDeptId(deptIds);
+      return treeListByUserId;
+    }
   }
 
 }

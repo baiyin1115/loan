@@ -23,6 +23,7 @@ public class UserDict extends AbstractDictMap {
     put("roleid", "角色名称");
     put("deptid", "部门名称");
     put("roleIds", "角色名称集合");
+    put("deptIds", "部门名称集合");
   }
 
   @Override
@@ -32,5 +33,6 @@ public class UserDict extends AbstractDictMap {
     putFieldWrapperMethodName("roleid", "getSingleRoleName");
     putFieldWrapperMethodName("userId", "getUserAccountById");
     putFieldWrapperMethodName("roleIds", "getRoleName");
+    putFieldWrapperMethodName("deptIds", "getDeptName");
   }
 }

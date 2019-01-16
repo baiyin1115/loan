@@ -17,12 +17,6 @@ spring:
       max-request-size: 100MB
       #最大文件大小
       max-file-size: 100MB
-  #是否开启开发者工具（true/false）
-  devtools:
-    restart:
-      enabled: false
-      additional-paths: src/main/java
-      exclude: static/**,WEB-INF/view/**
   #false为启用jdk默认动态代理,true为cglib动态代理
   aop:
     proxy-target-class: true

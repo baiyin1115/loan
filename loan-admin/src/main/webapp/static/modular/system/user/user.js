@@ -20,8 +20,8 @@ MgrUser.initColumn = function () {
         {title: '姓名', field: 'name', align: 'center', valign: 'middle', sortable: true},
         {title: '性别', field: 'sexName', align: 'center', valign: 'middle', sortable: true},
         {title: '角色', field: 'roleName', align: 'center', valign: 'middle', sortable: true},
-        {title: '部门', field: 'deptName', align: 'center', valign: 'middle', sortable: true},
-        {title: '教育部门', field: 'eduOrgName', align: 'center', valign: 'middle', sortable: true},
+        {title: '公司', field: 'deptName', align: 'center', valign: 'middle', sortable: true},
+        // {title: '教育部门', field: 'eduOrgName', align: 'center', valign: 'middle', sortable: true},
         {title: '邮箱', field: 'email', align: 'center', valign: 'middle', sortable: true},
         {title: '电话', field: 'phone', align: 'center', valign: 'middle', sortable: true},
         {title: '创建时间', field: 'createtime', align: 'center', valign: 'middle', sortable: true},
@@ -92,6 +92,24 @@ MgrUser.roleAssign = function () {
         });
         this.layerIndex = index;
     }
+};
+
+/**
+ * 点击部门分配
+ * @param
+ */
+MgrUser.depoAssign = function () {
+  if (this.check()) {
+    var index = layer.open({
+      type: 2,
+      title: '公司分配',
+      area: ['300px', '400px'], //宽高
+      fix: false, //不固定
+      maxmin: true,
+      content: Feng.ctxPath + '/mgr/depo_assign/' + this.seItem.id
+    });
+    this.layerIndex = index;
+  }
 };
 
 /**

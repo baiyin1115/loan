@@ -11,10 +11,8 @@
 					<#input id="pName" name="上级名称" underline="true" hidden="pid" hiddenValue="${role.pid}" readonly="readonly" value="${pName}"
 							clickFun="RolInfoDlg.showPNameSelectTree(); return false;"
 							style="background-color: #ffffff !important;"/>
-					<#input id="deptName" name="部门名称" hidden="deptid" hiddenValue="${role.deptid}" readonly="readonly" value="${deptName}"
-							clickFun="RolInfoDlg.showDeptSelectTree(); return false;"
-							style="background-color: #ffffff !important;"/>
 				</div>
+
 				<div class="col-sm-6">
 					<#input id="tips" name="别名" underline="true" value="${role.tips}"/>
 					<#input id="num" name="排序" value="${role.num}"/>
