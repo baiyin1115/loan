@@ -16,38 +16,29 @@
     <module>loan-admin</module>
   </modules>
 
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.18.RELEASE</version>
+  </parent>
+
   <properties>
     <!-- Common libs -->
-    <springframework.version>4.3.9.RELEASE</springframework.version>
-    <fastjson.version>1.1.39</fastjson.version>
-    <solr.version>4.9.1</solr.version>
-    <mail.version>1.5.4</mail.version>
-    <poi.version>3.9</poi.version>
+    <springframework.version>4.3.21.RELEASE</springframework.version>
     <httpcomponents.version>4.4.1</httpcomponents.version>
     <jackson.version>2.8.11</jackson.version>
-    <!-- Log libs -->
-    <slf4j.version>1.7.21</slf4j.version>
-    <logback.version>1.1.7</logback.version>
-    <!-- Test libs -->
-    <junit.version>4.12</junit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java_source_version>1.8</java_source_version>
     <java_target_version>1.8</java_target_version>
     <file_encoding>UTF-8</file_encoding>
 
-
-    <spring.boot.version>1.5.4.RELEASE</spring.boot.version>
-    <spring.boot.jpa.version>1.5.4.RELEASE</spring.boot.jpa.version>
+    <spring.boot.jpa.version>1.5.18.RELEASE</spring.boot.jpa.version>
     <lombok.version>1.16.20</lombok.version>
     <druid.version>1.1.10</druid.version>
     <mysql.connector.java.version>5.1.45</mysql.connector.java.version>
 
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <mybatisplus-spring-boot-starter.version>1.0.5</mybatisplus-spring-boot-starter.version>
     <shiro.version>1.4.0</shiro.version>
-    <mybatis-plus.version>2.1.8</mybatis-plus.version>
     <fastjson.version>1.2.44</fastjson.version>
-    <commons.io.version>2.5</commons.io.version>
     <velocity.version>1.7</velocity.version>
     <kaptcha.version>2.3.2</kaptcha.version>
     <ehcache.version>3.3.1</ehcache.version>
@@ -56,10 +47,8 @@
     <swagger.version>2.8.0</swagger.version>
     <commons-lang3.version>3.6</commons-lang3.version>
     <ehcache.core.version>2.6.11</ehcache.core.version>
-    <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
 
     <flowable.version>6.2.0</flowable.version>
-    <hutool.version>4.0.0</hutool.version>
     <github.kaptcha.version>1.0.0</github.kaptcha.version>
   </properties>
   <dependencyManagement>
@@ -68,9 +57,9 @@
         <!-- Import dependency management from Spring Boot -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring.boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
+        <version>1.5.18.RELEASE</version>
       </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>
@@ -184,7 +173,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <scope>test</scope>
-        <version>${spring.boot.version}</version>
+        <version>1.5.18.RELEASE</version>
       </dependency>
       <dependency>
         <groupId>com.github.napp-com</groupId>
@@ -194,18 +183,12 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-security</artifactId>
-        <version>${spring.boot.jpa.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.springframework.security.oauth</groupId>
         <artifactId>spring-security-oauth2</artifactId>
         <version>2.2.0.RELEASE</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-redis</artifactId>
-        <version>${spring.boot.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.security</groupId>
@@ -220,7 +203,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-messaging</artifactId>
-        <version>${springframework.version}</version>
+        <!--<version>${springframework.version}</version>-->
       </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
@@ -311,7 +294,7 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-jdbc</artifactId>
-        <version>${spring.boot.version}</version>
+        <version>1.5.18.RELEASE</version>
       </dependency>
 
       <dependency>
@@ -356,7 +339,6 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring.boot.version}</version>
       </plugin>
     </plugins>
   </build>

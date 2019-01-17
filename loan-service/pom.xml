@@ -48,5 +48,23 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zsy</groupId>
+      <artifactId>loan-entity</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zsy</groupId>
+      <artifactId>loan-utils</artifactId>
+      <version>1.0</version>
+    </dependency>
   </dependencies>
 </project>
