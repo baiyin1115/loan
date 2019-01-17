@@ -49,6 +49,7 @@
 - 升级了spring boot版本为1.5.4 升级了部分其他jar包版本
 - 将配置文件有properties修改为yml文件
 - 修改了druid的连接池配置信息，引入druid-spring-boot-starter jar包，原项目中 不知道是不是我配置的问题，监控出不来，修改后  现在只有session监控不能显示了
-- 业务逻辑代码持续增加中
+- 修改一个人可以对应多个公司
+- 提交设计文档、提交建库sql
 
 
