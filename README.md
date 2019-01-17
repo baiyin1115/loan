@@ -28,13 +28,13 @@
 
 - 克隆本项目
 - 导入idea或者eclipse
-- 创建数据库：loan，将db/sql/mysql.sql导入数据库中，更改相应数据库配置
+- 创建数据库：loan，将db/sql/loan.sql导入数据库中，更改相应数据库配置
 - 启动loan-admin
 - 访问 https://localhost:8080，   登录，用户名密码:admin/admin
 - 效果图完成后在放
 
 ## 文档
-- 无
+- 见doc
 
 
 ## 感谢 - 我们都是站在巨人的肩膀上 感谢他们
