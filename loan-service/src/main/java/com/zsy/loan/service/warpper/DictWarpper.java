@@ -1,7 +1,7 @@
 package com.zsy.loan.service.warpper;
 
 import com.zsy.loan.bean.entity.system.Dict;
-import com.zsy.loan.service.business.system.impl.ConstantFactory;
+import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.utils.ToolUtil;
 
 import java.util.List;

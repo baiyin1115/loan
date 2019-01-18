@@ -17,7 +17,7 @@ package com.zsy.loan.service.shiro;
 
 import com.zsy.loan.bean.constant.Const;
 import com.zsy.loan.bean.core.ShiroUser;
-import com.zsy.loan.service.business.system.impl.ConstantFactory;
+import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.utils.ToolUtil;
 import java.util.ArrayList;
 import java.util.List;

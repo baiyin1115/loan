@@ -17,6 +17,17 @@
     <class>com.zsy.loan.bean.entity.system.UserRole</class>
     <class>com.zsy.loan.bean.entity.system.UserUnit</class>
     <class>com.zsy.loan.bean.entity.system.TSysFinalAuditPlus</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizAcct</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizAcctRecord</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizCustomerInfo</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizInOutVoucherInfo</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizInvestInfo</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizInvestPlan</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizLoanInfo</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizLoanVoucherInfo</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizProductInfo</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizRepayPlan</class>
+    <class>com.zsy.loan.bean.entity.biz.TBizTransferVoucherInfo</class>
     <properties>
       <property name="eclipselink.jdbc.url" value="jdbc:mysql://localhost:3306/edu_finance"/>
       <property name="eclipselink.jdbc.driver" value="com.mysql.jdbc.Driver"/>
@@ -30,7 +41,7 @@
       <property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver"/>
       <property name="openjpa.ConnectionUserName"/>
       <property name="openjpa.ConnectionPassword"/>
-      <property name="toplink.jdbc.url" value="jdbc:mysql://localhost:3306/edu_finance"/>
+      <property name="toplink.jdbc.url" value="jdbc:mysql://localhost:3306/loan"/>
       <property name="toplink.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="toplink.jdbc.user"/>
       <property name="toplink.jdbc.password"/>

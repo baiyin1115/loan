@@ -1,7 +1,7 @@
 package com.zsy.loan.service.warpper;
 
 import com.zsy.loan.bean.vo.node.IsMenu;
-import com.zsy.loan.service.business.system.impl.ConstantFactory;
+import com.zsy.loan.service.system.impl.ConstantFactory;
 import java.util.List;
 import java.util.Map;
 

@@ -5,7 +5,7 @@ import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.bean.dictmap.base.AbstractDictMap;
 import com.zsy.loan.bean.vo.SpringContextHolder;
 import com.zsy.loan.dao.cache.TokenCache;
-import com.zsy.loan.service.business.system.LogObjectHolder;
+import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.factory.Contrast;
 import com.zsy.loan.service.platform.log.LogManager;
 import com.zsy.loan.service.platform.log.LogTaskFactory;

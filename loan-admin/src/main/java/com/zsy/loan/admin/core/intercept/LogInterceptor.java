@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.slf4j.MDC;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,14 +17,15 @@ import org.springframework.web.servlet.ModelAndView;
  * Created by liufei on 2017/12/1.
  */
 @Slf4j
+@Component
 public class LogInterceptor implements HandlerInterceptor {
 
-  public static final String SERVICE_NAME = "business-name";
+//  public static final String SERVICE_NAME = "service-name";
 
   @Override
   public boolean preHandle(HttpServletRequest httpServletRequest,
       HttpServletResponse httpServletResponse, Object o) {
-    log.info("来自 {} 服务访问开始，访问url：{} ", httpServletRequest.getHeader(SERVICE_NAME),
+    log.info("来自 {} 服务访问开始，访问url：{} ", getRemoteAddr(httpServletRequest),
         httpServletRequest.getRequestURL());
     log.info("访问详细信息:{}", getRequestInfo(httpServletRequest, o));
     ThreadLocalUtil.requestTime.remove();
@@ -46,7 +48,7 @@ public class LogInterceptor implements HandlerInterceptor {
     long endRequestTime = System.currentTimeMillis();
 
     log.info("服务 {} 访问结束, {} request to {} ,耗时：{} ms",
-        httpServletRequest.getHeader(SERVICE_NAME),
+        getRemoteAddr(httpServletRequest),
         httpServletRequest.getMethod(),
         httpServletRequest.getRequestURI(), (endRequestTime - startRequestTime));
     ThreadLocalUtil.requestTime.remove();
@@ -114,5 +116,23 @@ public class LogInterceptor implements HandlerInterceptor {
           ", url='" + url + '\'' +
           '}';
     }
+  }
+
+  public String getRemoteAddr(HttpServletRequest request) {
+
+    String ip = request.getHeader("x-forwarded-for");
+
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+      ip = request.getHeader("Proxy-Client-IP");
+    }
+
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+      ip = request.getHeader("WL-Proxy-Client-IP");
+    }
+
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+      ip = request.getRemoteAddr();
+    }
+    return ip;
   }
 }

@@ -1,6 +1,6 @@
 package com.zsy.loan.service.warpper;
 
-import com.zsy.loan.service.business.system.impl.ConstantFactory;
+import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.factory.Contrast;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.ToolUtil;

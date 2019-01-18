@@ -7,7 +7,7 @@ import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.dao.system.MenuRepository;
 import com.zsy.loan.dao.system.UserRepository;
-import com.zsy.loan.service.business.system.impl.ConstantFactory;
+import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.utils.Convert;
 import org.apache.shiro.authc.CredentialsException;
 import org.apache.shiro.authc.LockedAccountException;

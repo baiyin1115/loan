@@ -3,8 +3,8 @@ package com.zsy.loan.service.factory;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.exception.LoanException;
 
-import com.zsy.loan.service.business.system.IConstantFactory;
-import com.zsy.loan.service.business.system.impl.ConstantFactory;
+import com.zsy.loan.service.system.IConstantFactory;
+import com.zsy.loan.service.system.impl.ConstantFactory;
 import java.lang.reflect.Method;
 
 /**
