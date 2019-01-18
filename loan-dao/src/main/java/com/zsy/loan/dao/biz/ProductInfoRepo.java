@@ -2,6 +2,7 @@
 package com.zsy.loan.dao.biz;
 
 import com.zsy.loan.bean.entity.biz. TBizProductInfo;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,4 +16,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface ProductInfoRepo extends PagingAndSortingRepository< TBizProductInfo, Long>
     , JpaRepository< TBizProductInfo, Long>, JpaSpecificationExecutor< TBizProductInfo> {
 
+  List<TBizProductInfo> findByProductNameLike(String condition);
 }

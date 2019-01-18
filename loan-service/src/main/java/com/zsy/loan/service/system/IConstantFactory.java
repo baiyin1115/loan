@@ -150,4 +150,40 @@ public interface IConstantFactory {
    * 获取全局参数
    */
   String getCfg(String cfgName);
+
+  /**
+   * 获取公司名称
+   */
+  String getOrgNoName(Integer id);
+
+  /**
+   * 获取服务费收取方式名称
+   */
+  String getServiceFeeTypeName(Long id);
+
+  /**
+   * 获取是否罚息名称
+   */
+  String getIsPenName(Long id);
+
+  /**
+   * 获取性别名称
+   */
+  String getPenNumberName(Long id);
+
+  /**
+   * 获取还款方式名称
+   */
+  String getRepayTypeName(Long id);
+
+  /**
+   * 获取贷款类型名称
+   */
+  String getLoanTypeName(Long id);
+
+  /**
+   * 获取产品名称
+   */
+  String getProductName(Long deptId);
+
 }

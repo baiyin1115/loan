@@ -3,16 +3,18 @@ package com.zsy.loan.service.system.impl;
 import com.zsy.loan.bean.constant.cache.CacheKey;
 import com.zsy.loan.bean.constant.state.ManagerStatus;
 import com.zsy.loan.bean.constant.state.MenuStatus;
-import com.zsy.loan.bean.vo.DictVo;
-import com.zsy.loan.bean.vo.SpringContextHolder;
-import com.zsy.loan.dao.cache.ConfigCache;
-import com.zsy.loan.dao.cache.DictCache;
+import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.entity.system.Dept;
 import com.zsy.loan.bean.entity.system.Dict;
 import com.zsy.loan.bean.entity.system.Menu;
 import com.zsy.loan.bean.entity.system.Notice;
 import com.zsy.loan.bean.entity.system.Role;
 import com.zsy.loan.bean.entity.system.User;
+import com.zsy.loan.bean.vo.DictVo;
+import com.zsy.loan.bean.vo.SpringContextHolder;
+import com.zsy.loan.dao.biz.ProductInfoRepo;
+import com.zsy.loan.dao.cache.ConfigCache;
+import com.zsy.loan.dao.cache.DictCache;
 import com.zsy.loan.dao.system.DeptRepository;
 import com.zsy.loan.dao.system.DictRepository;
 import com.zsy.loan.dao.system.MenuRepository;
@@ -25,12 +27,11 @@ import com.zsy.loan.utils.Convert;
 import com.zsy.loan.utils.StrKit;
 import com.zsy.loan.utils.StringUtils;
 import com.zsy.loan.utils.cache.TimeCacheMap;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -53,6 +54,8 @@ public class ConstantFactory implements IConstantFactory {
   private MenuRepository menuRepository = SpringContextHolder.getBean(MenuRepository.class);
   private SysNoticeRepository sysNoticeRepository = SpringContextHolder
       .getBean(SysNoticeRepository.class);
+  private ProductInfoRepo productInfoRepo = SpringContextHolder.getBean(ProductInfoRepo.class);
+
   private ConfigCache configCache = SpringContextHolder.getBean(ConfigCache.class);
 
   public static IConstantFactory me() {
@@ -415,6 +418,50 @@ public class ConstantFactory implements IConstantFactory {
     val = (String) configCache.get(cfgName);
     set(CacheKey.CFG + cfgName, val);
     return val;
+  }
+
+  /**
+   * 获取公司名称
+   */
+  @Override
+  public String getOrgNoName(Integer id) {
+    return getDeptName(id);
+  }
+
+  @Override
+  public String getServiceFeeTypeName(Long id) {
+    return getDictsByName("服务费收取方式", String.valueOf(id));
+  }
+
+  @Override
+  public String getIsPenName(Long id) {
+    return getDictsByName("是否", String.valueOf(id));
+  }
+
+  @Override
+  public String getPenNumberName(Long id) {
+    return getDictsByName("罚息基数", String.valueOf(id));
+  }
+
+  @Override
+  public String getRepayTypeName(Long id) {
+    return getDictsByName("还款方式", String.valueOf(id));
+  }
+
+  @Override
+  public String getLoanTypeName(Long id) {
+    return getDictsByName("贷款类型", String.valueOf(id));
+  }
+
+  @Override
+  public String getProductName(Long deptId) {
+    TBizProductInfo info = productInfoRepo.findOne(deptId);
+
+    if (info == null) {
+      return "";
+    } else {
+      return info.getProductName();
+    }
   }
 
 }

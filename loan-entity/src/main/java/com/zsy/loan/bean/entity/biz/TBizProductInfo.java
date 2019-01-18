@@ -31,11 +31,11 @@ public class TBizProductInfo {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Basic
   @Column(name = "org_no")
-  private long orgNo;
+  private Long orgNo;
 
   @Basic
   @Column(name = "product_name")
@@ -67,19 +67,19 @@ public class TBizProductInfo {
 
   @Basic
   @Column(name = "repay_type")
-  private long repayType;
+  private Long repayType;
 
   @Basic
   @Column(name = "loan_type")
-  private long loanType;
+  private Long loanType;
 
   @Basic
   @Column(name = "cycle_interval")
-  private long cycleInterval;
+  private Long cycleInterval;
 
   @Basic
   @Column(name = "operator")
-  private long operator;
+  private Long operator;
 
   @Basic
   @Column(name = "create_at")
