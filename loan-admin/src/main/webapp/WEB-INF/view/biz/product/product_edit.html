@@ -1,0 +1,34 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="productInfoForm">
+
+            <input type="hidden" id="id" value="${product.id}">
+
+            <div class="row">
+                <div class="col-sm-6 b-r">
+                    <#input id="simplename" name="公司名称" underline="true" value="${product.simplename}"/>
+
+                    <#input id="fullname" name="公司全称" underline="true" value="${product.fullname}"/>
+
+                    <#input id="tips" name="备注" underline="true" value="${product.tips}"/>
+                </div>
+                <div class="col-sm-6">
+                    <#input id="num" name="排序" underline="true" value="${product.num}"/>
+
+
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="ProductInfoDlg.editSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="ProductInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/product/product_info.js"></script>
+@}
