@@ -67,7 +67,7 @@ public class LoginController extends BaseController {
 
     //获取用户头像
     Long id = ShiroKit.getUser().getId();
-    User user = userRepository.findOne(id.intValue());
+    User user = userRepository.getOne(id.intValue());
     String avatar = user.getAvatar();
     model.addAttribute("avatar", avatar);
 

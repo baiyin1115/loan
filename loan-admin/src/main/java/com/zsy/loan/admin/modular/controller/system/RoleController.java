@@ -82,7 +82,7 @@ public class RoleController extends BaseController {
     if (ToolUtil.isEmpty(roleId)) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
-    Role role = this.roleRepository.findOne(roleId);
+    Role role = this.roleRepository.getOne(roleId);
     model.addAttribute(role);
     model.addAttribute("pName", ConstantFactory.me().getSingleRoleName(role.getPid()));
 //    model.addAttribute("deptName", ConstantFactory.me().getDeptName(role.getDeptid()));
@@ -190,7 +190,7 @@ public class RoleController extends BaseController {
     if (ToolUtil.isEmpty(roleId)) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
-    this.roleRepository.findOne(roleId);
+    this.roleRepository.getOne(roleId);
     return SUCCESS_TIP;
   }
 
@@ -226,7 +226,7 @@ public class RoleController extends BaseController {
   @RequestMapping(value = "/roleTreeListByUserId/{userId}")
   @ResponseBody
   public List<ZTreeNode> roleTreeListByUserId(@PathVariable Integer userId) {
-    User theUser = this.userRepository.findOne(userId);
+    User theUser = this.userRepository.findById(userId).get();
     String roleid = theUser.getRoleid();
     if (ToolUtil.isEmpty(roleid)) {
       List<ZTreeNode> roleTreeList = roleService.roleTreeList();

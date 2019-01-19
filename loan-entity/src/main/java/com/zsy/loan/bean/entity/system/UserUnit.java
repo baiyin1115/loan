@@ -16,7 +16,7 @@ public class UserUnit {
   private String unitId;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   public Long getId() {
     return id;

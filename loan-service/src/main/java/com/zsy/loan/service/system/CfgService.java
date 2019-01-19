@@ -79,7 +79,7 @@ public class CfgService {
   }
 
   public void delete(Long id) {
-    cfgRepository.delete(id);
+    cfgRepository.deleteById(id);
     configCache.cache();
   }
 }

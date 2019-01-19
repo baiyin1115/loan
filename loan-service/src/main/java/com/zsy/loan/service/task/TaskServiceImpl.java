@@ -8,6 +8,7 @@ import com.zsy.loan.bean.vo.QuartzJob;
 import com.zsy.loan.dao.system.TaskLogRepository;
 import com.zsy.loan.dao.system.TaskRepository;
 import com.zsy.loan.utils.factory.Page;
+import java.util.Optional;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,31 +76,32 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public Task get(Long id) {
-    return taskRepository.findOne(id);
+  public Optional<Task> get(Long id) {
+    return taskRepository.findById(id);
   }
 
 
   @Override
   public Task disable(Long id) {
-    Task task = get(id);
-    task.setDisabled(true);
-    taskRepository.save(task);
+    Optional<Task> task = get(id);
+    task.get().setDisabled(true);
+    taskRepository.save(task.get());
     logger.info("禁用定时任务{}", id.toString());
     try {
-      QuartzJob job = jobService.getJob(task.getId().toString(), task.getJobGroup());
+      QuartzJob job = jobService.getJob(task.get().getId().toString(), task.get().getJobGroup());
       if (job != null) {
         jobService.deleteJob(job);
       }
     } catch (SchedulerException e) {
       logger.error(e.getMessage(), e);
     }
-    return task;
+    return task.get();
   }
 
   @Override
   public Task enable(Long id) {
-    Task task = get(id);
+    Optional<Task> optTask = get(id);
+    Task task = optTask.get();
     task.setDisabled(false);
     taskRepository.save(task);
     logger.info("启用定时任务{}", id.toString());
@@ -119,7 +121,8 @@ public class TaskServiceImpl implements TaskService {
 
   @Override
   public Task delete(Long id) {
-    Task task = get(id);
+    Optional<Task> optTask = get(id);
+    Task task = optTask.get();
     task.setDisabled(true);
     taskRepository.delete(task);
     logger.info("删除定时任务{}", id.toString());

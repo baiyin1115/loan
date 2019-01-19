@@ -29,6 +29,7 @@ import com.zsy.loan.utils.StringUtils;
 import com.zsy.loan.utils.cache.TimeCacheMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
@@ -83,7 +84,8 @@ public class ConstantFactory implements IConstantFactory {
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
-    User user = userRepository.findOne(userId);
+    Optional<User> optUser = userRepository.findById(userId);
+    User user = optUser.get();
     if (user != null) {
       val = user.getName();
       set(CacheKey.SYS_USER_NAME + userId, val);
@@ -101,7 +103,8 @@ public class ConstantFactory implements IConstantFactory {
    */
   @Override
   public String getUserAccountById(Integer userId) {
-    User user = userRepository.findOne(userId);
+    Optional<User> optUser = userRepository.findById(userId);
+    User user = optUser.get();
     if (user != null) {
       return user.getAccount();
     } else {
@@ -121,7 +124,8 @@ public class ConstantFactory implements IConstantFactory {
     Integer[] roles = Convert.toIntArray(roleIds);
     StringBuilder sb = new StringBuilder();
     for (int role : roles) {
-      Role roleObj = roleRepository.findOne(role);
+      Optional<Role> optRoleObj = roleRepository.findById(role);
+      Role roleObj = optRoleObj.get();
       if (StringUtils.isNotNullOrEmpty(roleObj) && StringUtils.isNotEmpty(roleObj.getName())) {
         sb.append(roleObj.getName()).append(",");
       }
@@ -139,7 +143,8 @@ public class ConstantFactory implements IConstantFactory {
     if (0 == roleId) {
       return "--";
     }
-    Role roleObj = roleRepository.findOne(roleId);
+    Optional<Role> optRoleObj = roleRepository.findById(roleId);
+    Role roleObj = optRoleObj.get();
     if (StringUtils.isNotNullOrEmpty(roleObj) && StringUtils.isNotEmpty(roleObj.getName())) {
       return roleObj.getName();
     }
@@ -154,7 +159,7 @@ public class ConstantFactory implements IConstantFactory {
     if (0 == roleId) {
       return "--";
     }
-    Role roleObj = roleRepository.findOne(roleId);
+    Role roleObj = roleRepository.findById(roleId).get();
     if (StringUtils.isNotNullOrEmpty(roleObj) && StringUtils.isNotEmpty(roleObj.getName())) {
       return roleObj.getTips();
     }
@@ -170,7 +175,7 @@ public class ConstantFactory implements IConstantFactory {
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
-    Dept dept = deptRepository.findOne(deptId);
+    Dept dept = deptRepository.getOne(deptId);
     if (StringUtils.isNotNullOrEmpty(dept) && StringUtils.isNotEmpty(dept.getFullname())) {
       val = dept.getFullname();
       set(CacheKey.DEPT_NAME + deptId, val);
@@ -191,7 +196,7 @@ public class ConstantFactory implements IConstantFactory {
     Integer[] depts = Convert.toIntArray(deptIds);
     StringBuilder sb = new StringBuilder();
     for (int dept : depts) {
-      Dept deptObj = deptRepository.findOne(dept);
+      Dept deptObj = deptRepository.findById(dept).orElse(null);
       if (StringUtils.isNotNullOrEmpty(deptObj) && StringUtils.isNotEmpty(deptObj.getFullname())) {
         sb.append(deptObj.getFullname()).append(",");
       }
@@ -199,6 +204,10 @@ public class ConstantFactory implements IConstantFactory {
     val = StrKit.removeSuffix(sb.toString(), ",");
     set(CacheKey.DEPT_NAME + deptIds, val);
     return val;
+  }
+
+  public List<Dept> getDeptAll(){
+    return deptRepository.findAll();
   }
 
   /**
@@ -209,7 +218,7 @@ public class ConstantFactory implements IConstantFactory {
     Integer[] menus = Convert.toIntArray(menuIds);
     StringBuilder sb = new StringBuilder();
     for (int menu : menus) {
-      Menu menuObj = menuRepository.findOne(Long.valueOf(menu));
+      Menu menuObj = menuRepository.findById(Long.valueOf(menu)).get();
       if (StringUtils.isNotNullOrEmpty(menuObj) && StringUtils.isNotEmpty(menuObj.getName())) {
         sb.append(menuObj.getName()).append(",");
       }
@@ -223,7 +232,7 @@ public class ConstantFactory implements IConstantFactory {
   @Override
   public String getMenuName(Long menuId) {
 
-    Menu menu = menuRepository.findOne(menuId);
+    Menu menu = menuRepository.findById(menuId).get();
     if (menu == null) {
       return "";
     } else {
@@ -283,7 +292,7 @@ public class ConstantFactory implements IConstantFactory {
   @Override
   public String getNoticeTitle(Integer dictId) {
 
-    Notice notice = sysNoticeRepository.findOne(dictId);
+    Notice notice = sysNoticeRepository.findById(dictId).get();
     if (notice == null) {
       return "";
     } else {
@@ -393,7 +402,7 @@ public class ConstantFactory implements IConstantFactory {
    */
   @Override
   public List<Integer> getParentDeptIds(Integer deptid) {
-    Dept dept = deptRepository.findOne(deptid);
+    Dept dept = deptRepository.findById(deptid).get();
     String pids = dept.getPids();
     String[] split = pids.split(",");
     ArrayList<Integer> parentDeptIds = new ArrayList<>();
@@ -455,7 +464,7 @@ public class ConstantFactory implements IConstantFactory {
 
   @Override
   public String getProductName(Long deptId) {
-    TBizProductInfo info = productInfoRepo.findOne(deptId);
+    TBizProductInfo info = productInfoRepo.findById(deptId).get();
 
     if (info == null) {
       return "";

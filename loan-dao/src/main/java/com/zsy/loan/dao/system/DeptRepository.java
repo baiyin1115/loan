@@ -2,6 +2,8 @@ package com.zsy.loan.dao.system;
 
 
 import com.zsy.loan.bean.entity.system.Dept;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -12,7 +14,8 @@ import java.util.List;
  *
  * @author enilu
  */
-public interface DeptRepository extends PagingAndSortingRepository<Dept, Integer> {
+public interface DeptRepository extends PagingAndSortingRepository<Dept, Integer>
+    , JpaRepository<Dept, Integer>, JpaSpecificationExecutor<Dept> {
 
   List<Dept> findByPidsLike(String pid);
 

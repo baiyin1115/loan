@@ -34,7 +34,7 @@ public class MenuServiceImpl implements MenuService {
   @Override
   public void delMenu(Long menuId) {
     //删除菜单
-    this.menuRepository.delete(menuId);
+    this.menuRepository.deleteById(menuId);
     //删除关联的relation
     this.menuRepository.deleteRelationByMenu(menuId);
 
@@ -42,10 +42,10 @@ public class MenuServiceImpl implements MenuService {
 
   @Override
   public void delMenuContainSubMenus(Long menuId) {
-    Menu menu = menuRepository.findOne(menuId);
+    Menu menu = menuRepository.findById(menuId).get();
     //删除所有子菜单
     List<Menu> menus = menuRepository.findByPcodesLike("%[" + menu.getCode() + "]%");
-    menuRepository.delete(menus);
+    menuRepository.deleteAll(menus);
     //删除当前菜单
     delMenu(menuId);
 
@@ -192,7 +192,7 @@ public class MenuServiceImpl implements MenuService {
        */
       Menu pMenu = null;
       if(StringUtils.isNumeric(menu.getPcode())){
-        pMenu =  menuRepository.findById(Long.valueOf(menu.getPcode()));
+        pMenu =  menuRepository.findById(Long.valueOf(menu.getPcode())).get();
       }else{
         pMenu = menuRepository.findByCode(menu.getPcode());
       }

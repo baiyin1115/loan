@@ -21,7 +21,7 @@ public class Dept {
   private Integer version;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   public Integer getId() {
     return id;

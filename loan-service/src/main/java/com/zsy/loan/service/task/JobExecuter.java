@@ -34,7 +34,7 @@ public abstract class JobExecuter {
   public void execute() {
     Map dataMap = job.getDataMap();
     String taskId = job.getJobName();
-    Task task = taskService.get(Long.valueOf(taskId));
+    Task task = taskService.get(Long.valueOf(taskId)).get();
     final String taskName = task.getName();
     log.info(">>>>>>>>>>>>>>>>>开始执行定时任务[" + taskName + "]...<<<<<<<<<<<<<<<<<<<");
 

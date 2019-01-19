@@ -22,7 +22,7 @@ public class SysExpense {
   private String processId;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   public Integer getId() {
     return id;

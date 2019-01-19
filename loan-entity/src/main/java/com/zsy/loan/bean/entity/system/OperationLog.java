@@ -23,7 +23,7 @@ public class OperationLog {
   private String message;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   public Integer getId() {
     return id;

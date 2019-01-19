@@ -76,7 +76,7 @@ public class LogController extends BaseController {
   @Permission(Const.ADMIN_NAME)
   @ResponseBody
   public Object detail(@PathVariable Integer id) {
-    OperationLog operationLog = operationLogRepository.findOne(id);
+    OperationLog operationLog = operationLogRepository.findById(id).get();
     Map<String, Object> stringObjectMap = BeanKit.beanToMap(operationLog);
     return super.warpObject(new LogWarpper(stringObjectMap));
   }

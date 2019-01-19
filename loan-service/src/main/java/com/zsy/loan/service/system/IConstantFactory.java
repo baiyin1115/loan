@@ -1,6 +1,7 @@
 package com.zsy.loan.service.system;
 
 
+import com.zsy.loan.bean.entity.system.Dept;
 import com.zsy.loan.bean.entity.system.Dict;
 import com.zsy.loan.bean.vo.DictVo;
 
@@ -54,6 +55,11 @@ public interface IConstantFactory {
    * 获取部门名称
    */
   String getDeptName(String deptIds);
+
+  /**
+   * 获取部门id all
+   */
+  List<Dept> getDeptAll();
 
   /**
    * 获取菜单的名称们(多个)

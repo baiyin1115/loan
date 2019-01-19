@@ -17,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import springboot.reload.plugin.annotation.EnableOnlineReload;
 
 /**
  * SpringBoot方式启动类
@@ -24,12 +25,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @author stylefeng
  * @Date 2017/5/21 12:06
  */
-//@EnableAutoConfiguration
+@EnableAutoConfiguration
 @SpringBootApplication
 @EnableCaching
-@ComponentScan(basePackages = "com.zsy.loan")
+@ComponentScan(basePackages = {"com.zsy.loan","springboot.reload.plugin"})
 @EntityScan(basePackages = "com.zsy.loan.bean.entity")
-@EnableJpaRepositories(basePackages = "com.zsy.loan.dao")
+@EnableOnlineReload(activeProfile= {"dev"},needAuth=true)
 public class AdminApplication extends WebMvcConfigurerAdapter {
 
   protected final static Logger logger = LoggerFactory.getLogger(AdminApplication.class);

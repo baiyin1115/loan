@@ -47,7 +47,7 @@ public class CfgController extends BaseController {
    */
   @RequestMapping("/cfg_update/{cfgId}")
   public String orgUpdate(@PathVariable Long cfgId, Model model) {
-    Cfg cfg = cfgRepository.findOne(cfgId);
+    Cfg cfg = cfgRepository.getOne(cfgId);
     model.addAttribute("item", cfg);
     return PREFIX + "cfg_edit.html";
   }
@@ -77,7 +77,7 @@ public class CfgController extends BaseController {
   @RequestMapping(value = "/delete")
   @ResponseBody
   public Object delete(@RequestParam Long cfgId) {
-    cfgRepository.delete(cfgId);
+    cfgRepository.deleteById(cfgId);
     return SUCCESS_TIP;
   }
 
@@ -97,7 +97,7 @@ public class CfgController extends BaseController {
   @RequestMapping(value = "/detail/{cfgId}")
   @ResponseBody
   public Object detail(@PathVariable("cfgId") Long cfgId) {
-    return cfgRepository.findOne(cfgId);
+    return cfgRepository.getOne(cfgId);
   }
 
 }

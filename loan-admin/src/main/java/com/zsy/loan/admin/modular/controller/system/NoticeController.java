@@ -62,7 +62,7 @@ public class NoticeController extends BaseController {
    */
   @RequestMapping("/notice_update/{noticeId}")
   public String noticeUpdate(@PathVariable Integer noticeId, Model model) {
-    Notice notice = sysNoticeRepository.findOne(noticeId);
+    Notice notice = sysNoticeRepository.getOne(noticeId);
     model.addAttribute("notice", notice);
     LogObjectHolder.me().set(notice);
     return PREFIX + "notice_edit.html";
@@ -120,7 +120,7 @@ public class NoticeController extends BaseController {
     //缓存通知名称
     LogObjectHolder.me().set(ConstantFactory.me().getNoticeTitle(noticeId));
 
-    this.sysNoticeRepository.delete(noticeId);
+    this.sysNoticeRepository.deleteById(noticeId);
 
     return SUCCESS_TIP;
   }
@@ -135,7 +135,7 @@ public class NoticeController extends BaseController {
     if (ToolUtil.isOneEmpty(notice, notice.getId(), notice.getTitle(), notice.getContent())) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
-    Notice old = sysNoticeRepository.findOne(notice.getId());
+    Notice old = sysNoticeRepository.getOne(notice.getId());
     old.setTitle(notice.getTitle());
     old.setContent(notice.getContent());
     sysNoticeRepository.save(old);

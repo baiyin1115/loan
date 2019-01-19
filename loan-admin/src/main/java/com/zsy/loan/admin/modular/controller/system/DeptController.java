@@ -72,7 +72,7 @@ public class DeptController extends BaseController {
   @Permission
   @RequestMapping("/dept_update/{deptId}")
   public String deptUpdate(@PathVariable Integer deptId, Model model) {
-    Dept dept = deptRepository.findOne(deptId);
+    Dept dept = deptRepository.findById(deptId).get();
     model.addAttribute(dept);
     model.addAttribute("pName", ConstantFactory.me().getDeptName(dept.getPid()));
     LogObjectHolder.me().set(dept);
@@ -124,7 +124,7 @@ public class DeptController extends BaseController {
   @Permission
   @ResponseBody
   public Object detail(@PathVariable("deptId") Integer deptId) {
-    return deptRepository.findOne(deptId);
+    return deptRepository.findById(deptId).get();
   }
 
   /**
@@ -163,7 +163,7 @@ public class DeptController extends BaseController {
   @RequestMapping(value = "/deptTreeListByUserId/{userId}")
   @ResponseBody
   public List<ZTreeNode> deptTreeListByUserId(@PathVariable Integer userId) {
-    User theUser = this.userRepository.findOne(userId);
+    User theUser = this.userRepository.findById(userId).get();
     String deptId = theUser.getDeptid();
     if (ToolUtil.isEmpty(deptId)) {
       List<ZTreeNode> tree = this.deptService.tree();

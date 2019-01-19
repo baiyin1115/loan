@@ -77,9 +77,9 @@ public class DictServiceImpl implements DictService {
   public void delteDict(Integer dictId) {
     //删除这个字典的子词典
     List<Dict> subList = dictRepository.findByPid(dictId);
-    dictRepository.delete(subList);
+    dictRepository.deleteAll(subList);
     //删除这个词典
-    dictRepository.delete(dictId);
+    dictRepository.deleteById(dictId);
 
     dictCache.cache();
   }

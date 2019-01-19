@@ -57,7 +57,7 @@ public class TaskController extends BaseController {
    */
   @RequestMapping("/task_update/{taskId}")
   public String orgUpdate(@PathVariable Long taskId, Model model) {
-    Task task = taskRepository.findOne(taskId);
+    Task task = taskRepository.findById(taskId).get();
     model.addAttribute("item", task);
     return PREFIX + "task_edit.html";
   }
@@ -120,7 +120,7 @@ public class TaskController extends BaseController {
   @ResponseBody
   public Object update(Task task) {
 
-    Task old = taskRepository.findOne(task.getId());
+    Task old = taskRepository.getOne(task.getId());
     old.setName(task.getName());
     old.setCron(task.getCron());
     old.setNote(task.getNote());
@@ -135,7 +135,7 @@ public class TaskController extends BaseController {
   @RequestMapping(value = "/detail/{taskId}")
   @ResponseBody
   public Object detail(@PathVariable("taskId") Long taskId) {
-    return taskRepository.findOne(taskId);
+    return taskRepository.findById(taskId).get();
   }
 
   @RequestMapping(value = "/viewLog/{taskId}")

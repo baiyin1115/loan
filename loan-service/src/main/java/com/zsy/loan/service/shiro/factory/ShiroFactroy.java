@@ -1,12 +1,15 @@
 package com.zsy.loan.service.shiro.factory;
 
 import com.google.common.collect.Lists;
+import com.zsy.loan.bean.constant.Const;
+import com.zsy.loan.bean.entity.system.Dept;
 import com.zsy.loan.bean.vo.SpringContextHolder;
 import com.zsy.loan.bean.constant.state.ManagerStatus;
 import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.dao.system.MenuRepository;
 import com.zsy.loan.dao.system.UserRepository;
+import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.utils.Convert;
 import org.apache.shiro.authc.CredentialsException;
@@ -62,17 +65,6 @@ public class ShiroFactroy implements IShiro {
 //    shiroUser.setDeptId(user.getDeptid());    // 部门id
 //    shiroUser.setDeptName(ConstantFactory.me().getDeptName(user.getDeptid()));// 部门名称
 
-    /**
-     * 部门集设置
-     */
-    Integer[] depoArray = Convert.toIntArray(user.getDeptid());
-    shiroUser.setDeptList(Lists.newArrayList(depoArray));
-    List<String> depoNames = Lists.newArrayList();
-    for (int depoId : depoArray) {
-      depoNames.add(ConstantFactory.me().getDeptName(depoId));
-    }
-    shiroUser.setDeptNameList(depoNames);
-
     shiroUser.setName(user.getName());        // 用户名称
 
     Integer[] roleArray = Convert.toIntArray(user.getRoleid());// 角色集合
@@ -85,7 +77,40 @@ public class ShiroFactroy implements IShiro {
     shiroUser.setRoleList(roleList);
     shiroUser.setRoleNames(roleNameList);
 
+    /**
+     * 部门集设置
+     */
+    Integer[] deptArray = Convert.toIntArray(user.getDeptid());
+    shiroUser.setDeptList(Lists.newArrayList(deptArray));
+    List<String> deptNames = Lists.newArrayList();
+
+    if(isAdmin(roleList)){
+      List<Dept> depts = ConstantFactory.me().getDeptAll();
+      List<Integer> deptList = new ArrayList<>();
+      for (Dept dept:depts
+      ) {
+        deptList.add(dept.getId());
+        deptNames.add(dept.getFullname());
+      }
+      shiroUser.setDeptList(deptList);
+    }else {
+      for (int deptId : deptArray) {
+        deptNames.add(ConstantFactory.me().getDeptName(deptId));
+      }
+    }
+    shiroUser.setDeptNameList(deptNames);
+
     return shiroUser;
+  }
+
+  public boolean isAdmin(List<Integer> roleList) {
+    for (Integer integer : roleList) {
+      String singleRoleTip = ConstantFactory.me().getSingleRoleTip(integer);
+      if (singleRoleTip.equals(Const.ADMIN_NAME)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override

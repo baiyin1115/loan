@@ -4,6 +4,7 @@ package com.zsy.loan.service.task;
 import com.zsy.loan.bean.entity.system.Task;
 import com.zsy.loan.bean.entity.system.TaskLog;
 import com.zsy.loan.utils.factory.Page;
+import java.util.Optional;
 
 /**
  * 任务计划服务
@@ -28,7 +29,7 @@ public interface TaskService {
   /**
    * 获取任务计划
    */
-  Task get(Long id);
+  Optional<Task> get(Long id);
 
   /**
    * 禁用任务计划

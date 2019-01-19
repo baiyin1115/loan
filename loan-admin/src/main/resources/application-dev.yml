@@ -5,11 +5,11 @@ server:
 spring:
 ## 开发环境配置
   #开启热部署
-  devtools:
-    restart:
-      enabled: true
-      additional-paths: loan-admin/target/classes/,loan-service/target/classes/,loan-dao/target/classes/,loan-entity/target/classes/,loan-utils/target/classes/
-      additional-exclude: static/**,WEB-INF/**
+#  devtools:
+#    restart:
+#      enabled: true
+#      additional-paths: loan-admin/target/classes/,loan-service/target/classes/,loan-dao/target/classes/,loan-entity/target/classes/,loan-utils/target/classes/
+#      additional-exclude: static/**,WEB-INF/**
 #      exclude: ./loan-dao/src/main/webapp/**
   application:
     name: loan-admin-dev
@@ -58,3 +58,6 @@ beetl:
   resource-tagsuffix: tag
   #是否检测文件变化,开发用true合适，但线上要改为false
   resource-auto-check: true
+
+#动态加载java文件
+management.endpoints.web.exposure.include: all

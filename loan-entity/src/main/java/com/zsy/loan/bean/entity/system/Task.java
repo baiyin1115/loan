@@ -12,7 +12,8 @@ import java.util.Date;
 public class Task {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
   private Long id;
   @Column(columnDefinition = "VARCHAR(50) COMMENT '任务名'")
   private String name;

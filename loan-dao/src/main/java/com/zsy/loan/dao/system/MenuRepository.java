@@ -1,6 +1,9 @@
 package com.zsy.loan.dao.system;
 
 import com.zsy.loan.bean.entity.system.Menu;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -13,11 +16,12 @@ import java.util.List;
  *
  * @author enilu
  */
-public interface MenuRepository extends PagingAndSortingRepository<Menu, Long> {
+public interface MenuRepository extends PagingAndSortingRepository<Menu, Long>
+    , JpaRepository< Menu, Long>, JpaSpecificationExecutor< Menu> {
 
   Menu findByCode(String code);
 
-  Menu findById(Long id);
+  Optional<Menu> findById(Long id);
 
   List<Menu> findByPcodesLike(String code);
 

@@ -75,7 +75,7 @@ public class RoleServiceImpl implements RoleService {
   @Override
   public void delRoleById(Integer roleId) {
     //删除角色
-    roleRepository.delete(roleId);
+    roleRepository.deleteById(roleId);
 
     // 删除该角色所有的权限
     relationRepository.deleteByRoleId(roleId);

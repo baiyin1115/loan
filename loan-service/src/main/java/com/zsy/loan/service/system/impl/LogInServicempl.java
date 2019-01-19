@@ -35,7 +35,7 @@ public class LogInServicempl implements LogInService {
     tokenCache.put(token, idUser);
     LogManager.me().executeLog(
     LogTaskFactory.loginLog(idUser, HttpKit.getIp()));
-    User user = userRepository.findOne(idUser.intValue());
+    User user = userRepository.findById(idUser.intValue()).get();
     Integer[] roleArray = Convert.toIntArray(user.getRoleid());
     ShiroUser shiroUser = new ShiroUser();
     shiroUser.setAccount(user.getAccount());

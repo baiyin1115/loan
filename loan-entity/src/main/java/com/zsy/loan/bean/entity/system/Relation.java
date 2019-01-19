@@ -16,7 +16,7 @@ public class Relation {
   private Integer roleid;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   public Integer getId() {
     return id;

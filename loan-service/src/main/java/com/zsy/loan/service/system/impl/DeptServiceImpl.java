@@ -76,10 +76,10 @@ public class DeptServiceImpl implements DeptService {
 
   @Override
   public void deleteDept(Integer deptId) {
-    Dept dept = deptRepository.findOne(deptId);
+    Dept dept = deptRepository.findById(deptId).get();
 
     List<Dept> subDepts = deptRepository.findByPidsLike("%[" + dept.getId() + "]%");
-    deptRepository.delete(subDepts);
+    deptRepository.deleteAll(subDepts);
     deptRepository.delete(dept);
   }
 
@@ -97,7 +97,7 @@ public class DeptServiceImpl implements DeptService {
       dept.setPids("[0],");
     } else {
       int pid = dept.getPid();
-      Dept temp = deptRepository.findOne(pid);
+      Dept temp = deptRepository.findById(pid).get();
       String pids = temp.getPids();
       dept.setPid(pid);
       dept.setPids(pids + "[" + pid + "],");

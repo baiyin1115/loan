@@ -20,7 +20,7 @@ public class Notice {
   private Integer creater;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   public Integer getId() {
     return id;

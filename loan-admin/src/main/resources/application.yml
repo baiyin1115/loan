@@ -1,8 +1,8 @@
 spring:
   profiles:
+    active: dev
 #    active: preproduction
 #    active: staging
-    active: development
 #    active: production
 
 ###################  spring配置  ###################

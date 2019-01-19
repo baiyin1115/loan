@@ -66,7 +66,7 @@ public class DictController extends BaseController {
   @Permission(Const.ADMIN_NAME)
   @RequestMapping("/dict_edit/{dictId}")
   public String deptUpdate(@PathVariable Integer dictId, Model model) {
-    Dict dict = dictRepository.findOne(dictId);
+    Dict dict = dictRepository.getOne(dictId);
     model.addAttribute("dict", dict);
     List<Dict> subDicts = dictRepository.findByPid(dictId.intValue());
     model.addAttribute("subDicts", subDicts);
@@ -109,7 +109,7 @@ public class DictController extends BaseController {
   @Permission(Const.ADMIN_NAME)
   @ResponseBody
   public Object detail(@PathVariable("dictId") Integer dictId) {
-    return dictRepository.findOne(dictId);
+    return dictRepository.getOne(dictId);
   }
 
   /**

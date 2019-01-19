@@ -73,7 +73,7 @@ public class ProductController extends BaseController {
   @Permission
   @RequestMapping("/product_update/{productId}")
   public String productUpdate(@PathVariable Long productId, Model model) {
-    TBizProductInfo product = productInfoRepo.findOne(productId);
+    TBizProductInfo product = productInfoRepo.findById(productId).get();
     model.addAttribute(product);
     LogObjectHolder.me().set(product);
     return PREFIX + "product_edit.html";
@@ -111,7 +111,7 @@ public class ProductController extends BaseController {
   @Permission
   @ResponseBody
   public Object detail(@PathVariable("productId") Long productId) {
-    return productInfoRepo.findOne(productId);
+    return productInfoRepo.findById(productId).get();
   }
 
   /**
@@ -139,7 +139,7 @@ public class ProductController extends BaseController {
   public Object delete(@RequestParam Long productId) {
     //缓存被删除的产品名称
     LogObjectHolder.me().set(ConstantFactory.me().getProductName(productId));
-    productInfoRepo.delete(productId);
+    productInfoRepo.deleteById(productId);
     return SUCCESS_TIP;
   }
 
