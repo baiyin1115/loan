@@ -36,6 +36,7 @@ public class DefaultFastjsonConfig {
     converter.setFastJsonConfig(fastjsonConfig());
     converter.setSupportedMediaTypes(getSupportedMediaType());
     return converter;
+
   }
 
   /**

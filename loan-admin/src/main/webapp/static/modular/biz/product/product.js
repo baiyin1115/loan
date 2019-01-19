@@ -49,7 +49,7 @@ Product.openAddProduct = function () {
     var index = layer.open({
         type: 2,
         title: '添加产品',
-        area: ['800px', '420px'], //宽高
+        area: ['800px', '600px'], //宽高
         fix: false, //不固定
         maxmin: true,
         content: Feng.ctxPath + '/product/product_add'

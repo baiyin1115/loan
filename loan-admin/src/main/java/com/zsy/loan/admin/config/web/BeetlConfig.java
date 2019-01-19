@@ -31,6 +31,7 @@ public class BeetlConfig {
             beetlProperties.getPrefix()));
     beetlConfiguration.setConfigProperties(beetlProperties.getProperties());
     return beetlConfiguration;
+
   }
 
   /**
@@ -42,6 +43,7 @@ public class BeetlConfig {
     beetlSpringViewResolver.setConfig(beetlConfiguration());
     beetlSpringViewResolver.setContentType("text/html;charset=UTF-8");
     beetlSpringViewResolver.setOrder(0);
+//    beetlSpringViewResolver.setCache(false);
     return beetlSpringViewResolver;
   }
 }

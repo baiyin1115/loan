@@ -2,13 +2,15 @@ server:
   port: 8091
   tomcat.max-threads: 800
 
-## 开发环境配置
 spring:
+## 开发环境配置
   #开启热部署
   devtools:
     restart:
       enabled: true
-      additional-paths: ./loan-admin/src/main/java,./loan-dao/src/main/java,./loan-entity/src/main/java,./loan-service/src/main/java,./loan-utils/src/main/java
+      additional-paths: loan-admin/target/classes/,loan-service/target/classes/,loan-dao/target/classes/,loan-entity/target/classes/,loan-utils/target/classes/
+      additional-exclude: static/**,WEB-INF/**
+#      exclude: ./loan-dao/src/main/webapp/**
   application:
     name: loan-admin-dev
   datasource:
@@ -45,3 +47,14 @@ spring:
         login-username: root
         login-password: 123456
       aop-patterns: com.zsy.loan.service.*
+
+###################  beetl配置  ###################
+beetl:
+  #开始结束标签(yaml不允许@开头)
+  delimiter-statement-start: \@
+  delimiter-statement-end: null
+  #自定义标签文件Root目录和后缀
+  resource-tagroot: common/tags
+  resource-tagsuffix: tag
+  #是否检测文件变化,开发用true合适，但线上要改为false
+  resource-auto-check: true
