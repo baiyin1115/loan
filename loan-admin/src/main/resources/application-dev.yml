@@ -1,5 +1,5 @@
 server:
-  port: 8091
+  port: 8090
   tomcat.max-threads: 800
 
 spring:
@@ -15,7 +15,7 @@ spring:
     name: loan-admin-dev
   datasource:
     url: jdbc:log4jdbc:mysql://localhost:3306/loan?useUnicode=true&characterEncoding=UTF-8&useSSL=false
-    username: root
+    username: loanuser
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
