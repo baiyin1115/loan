@@ -4,7 +4,7 @@ import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.bean.dictmap.base.AbstractDictMap;
 import com.zsy.loan.bean.vo.SpringContextHolder;
-import com.zsy.loan.dao.cache.TokenCache;
+import com.zsy.loan.dao.cache.impl.SessionCache;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.factory.Contrast;
 import com.zsy.loan.service.platform.log.LogManager;
@@ -74,7 +74,7 @@ public class LogAop {
     HttpServletRequest request = HttpKit.getRequest();
     String token = request.getHeader("Authorization");
     if (StringUtils.isNotEmpty(token)) {
-      idUser = SpringContextHolder.getBean(TokenCache.class).get(token);
+      idUser = SpringContextHolder.getBean(SessionCache.class).getToken(token);
     }
     if (idUser == null) {
       //如果当前用户未登录，不做日志

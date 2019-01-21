@@ -227,6 +227,10 @@ public class DateUtil {
     return new Timestamp(date.getTime());
   }
 
+  public static Timestamp getTimestamp() {
+    return new Timestamp(new Date().getTime());
+  }
+
   /**
    * 校验日期是否合法
    *

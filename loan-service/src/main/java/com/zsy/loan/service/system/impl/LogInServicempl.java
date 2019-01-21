@@ -3,7 +3,7 @@ package com.zsy.loan.service.system.impl;
 import com.google.common.collect.Lists;
 import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.bean.entity.system.User;
-import com.zsy.loan.dao.cache.TokenCache;
+import com.zsy.loan.dao.cache.impl.SessionCache;
 import com.zsy.loan.dao.system.UserRepository;
 import com.zsy.loan.service.system.LogInService;
 import com.zsy.loan.service.platform.log.LogManager;
@@ -25,14 +25,14 @@ import org.springframework.stereotype.Service;
 public class LogInServicempl implements LogInService {
 
   @Autowired
-  private TokenCache tokenCache;
+  private SessionCache tokenCache;
   @Autowired
   private UserRepository userRepository;
 
   @Override
   public String login(Long idUser) {
     String token = UUID.randomUUID().toString();
-    tokenCache.put(token, idUser);
+    tokenCache.putToken(token, idUser);
     LogManager.me().executeLog(
     LogTaskFactory.loginLog(idUser, HttpKit.getIp()));
     User user = userRepository.findById(idUser.intValue()).get();
@@ -65,12 +65,12 @@ public class LogInServicempl implements LogInService {
     }
     shiroUser.setDeptNameList(depoNames);
 
-    tokenCache.setUser(token, shiroUser);
+    tokenCache.setUserToken(token, shiroUser);
     return token;
   }
 
   @Override
   public void logout(String token) {
-    tokenCache.remove(token);
+    tokenCache.removeToken(token);
   }
 }

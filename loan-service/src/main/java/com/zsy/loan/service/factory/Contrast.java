@@ -133,7 +133,7 @@ public class Contrast {
         if ("serialVersionUID".equals(field.getName())) {
           continue;
         }
-        String prefix = "get";
+        String prefix = "getToken";
         int prefixLength = 3;
         if (field.getType().getName().equals("java.lang.Boolean")) {
           prefix = "is";

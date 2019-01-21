@@ -1,7 +1,7 @@
 package com.zsy.loan.admin.core.aop;
 
-import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.admin.core.base.tips.ErrorTip;
+import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.exception.LoanExceptionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class BaseControllerExceptionHandler {
   @ResponseBody
   public ErrorTip notFount(LoanException e) {
     log.error("业务异常:", e);
-    return new ErrorTip(e.getCode(), e.getMessage());
+    return new ErrorTip(e.getCode(), e.getMessage() + (e.getData() == null ? "" : e.getData()));
   }
 
   /**

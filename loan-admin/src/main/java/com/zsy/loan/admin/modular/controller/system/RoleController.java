@@ -3,6 +3,7 @@ package com.zsy.loan.admin.modular.controller.system;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.constant.Const;
+import com.zsy.loan.bean.constant.cache.CacheName;
 import com.zsy.loan.bean.dictmap.RoleDict;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.admin.core.base.controller.BaseController;
@@ -15,7 +16,6 @@ import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.warpper.RoleWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
-import com.zsy.loan.bean.constant.cache.Cache;
 import com.zsy.loan.bean.entity.system.Role;
 import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.dao.system.RoleRepository;
@@ -150,7 +150,7 @@ public class RoleController extends BaseController {
     this.roleRepository.save(role);
 
     //删除缓存
-    CacheKit.removeAll(Cache.CONSTANT);
+    CacheKit.removeAll(CacheName.CONSTANT);
     return SUCCESS_TIP;
   }
 
@@ -177,7 +177,7 @@ public class RoleController extends BaseController {
     this.roleService.delRoleById(roleId);
 
     //删除缓存
-    CacheKit.removeAll(Cache.CONSTANT);
+    CacheKit.removeAll(CacheName.CONSTANT);
     return SUCCESS_TIP;
   }
 

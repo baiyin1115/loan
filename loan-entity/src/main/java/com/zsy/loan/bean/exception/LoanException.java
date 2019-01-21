@@ -12,9 +12,17 @@ public class LoanException extends RuntimeException {
 
   private String message;
 
+  private String data;
+
   public LoanException(ServiceExceptionEnum serviceExceptionEnum) {
     this.code = serviceExceptionEnum.getCode();
     this.message = serviceExceptionEnum.getMessage();
+  }
+
+  public LoanException(ServiceExceptionEnum serviceExceptionEnum, String data) {
+    this.code = serviceExceptionEnum.getCode();
+    this.message = serviceExceptionEnum.getMessage();
+    this.data = data;
   }
 
   public Integer getCode() {
@@ -32,5 +40,13 @@ public class LoanException extends RuntimeException {
 
   public void setMessage(String message) {
     this.message = message;
+  }
+
+  public String getData() {
+    return data;
+  }
+
+  public void setData(String data) {
+    this.data = data;
   }
 }

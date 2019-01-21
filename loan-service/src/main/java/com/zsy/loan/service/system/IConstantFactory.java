@@ -158,11 +158,6 @@ public interface IConstantFactory {
   String getCfg(String cfgName);
 
   /**
-   * 获取公司名称
-   */
-  String getOrgNoName(Integer id);
-
-  /**
    * 获取服务费收取方式名称
    */
   String getServiceFeeTypeName(Long id);
@@ -191,5 +186,10 @@ public interface IConstantFactory {
    * 获取产品名称
    */
   String getProductName(Long deptId);
+
+  /**
+   * 获取公司名称
+   */
+  String getOrgNoName(Integer id);
 
 }

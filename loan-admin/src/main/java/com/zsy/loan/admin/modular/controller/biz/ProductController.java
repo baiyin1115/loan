@@ -9,10 +9,12 @@ import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.exception.LoanException;
+import com.zsy.loan.bean.request.ProductInfoRequest;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.system.UserRepository;
 import com.zsy.loan.service.biz.impl.ProductServiceImpl;
+import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.warpper.DeptWarpper;
@@ -22,12 +24,20 @@ import com.zsy.loan.utils.Convert;
 import com.zsy.loan.utils.ToolUtil;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.omg.CORBA.portable.ApplicationException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 产品控制器
@@ -35,6 +45,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @Author zhangxh
  * @Date 2019-01-18  14:38
  */
+@Slf4j
 @Controller
 @RequestMapping("/product")
 public class ProductController extends BaseController {
@@ -87,11 +98,19 @@ public class ProductController extends BaseController {
   @RequestMapping(value = "/add")
   @Permission
   @ResponseBody
-  public Object add(TBizProductInfo product) {
-    if (ToolUtil.isOneEmpty(product, product.getProductName())) {
-      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+  public Object add(@Valid ProductInfoRequest product,BindingResult error) {
+
+    List<ObjectError> errors = error.getAllErrors();
+    if (CollectionUtils.isNotEmpty(errors)) {
+      StringBuilder errorMsg = new StringBuilder();
+      errors.stream().forEach(x -> errorMsg.append(x.getDefaultMessage()).append(";"));
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL,errorMsg.toString());
     }
-    return this.productInfoRepo.save(product);
+
+    //设置操作员
+    product.setOperator(ShiroKit.getUser().getId());
+
+    return productService.save(product);
   }
 
   /**

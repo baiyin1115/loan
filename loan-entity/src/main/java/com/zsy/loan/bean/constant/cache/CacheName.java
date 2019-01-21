@@ -6,10 +6,12 @@ package com.zsy.loan.bean.constant.cache;
  * @author fengshuonan
  * @date 2017-04-24 21:56
  */
-public interface Cache {
+public interface CacheName {
 
   /**
    * 常量缓存
    */
-  String CONSTANT = "CONSTANT";
+  public static final String CONSTANT = "CONSTANT";
+
+  public static final String SESSION = "SESSION";
 }

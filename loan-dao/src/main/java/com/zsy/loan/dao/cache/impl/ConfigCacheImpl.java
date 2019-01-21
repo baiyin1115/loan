@@ -1,13 +1,14 @@
 package com.zsy.loan.dao.cache.impl;
 
+import com.zsy.loan.bean.constant.cache.CacheName;
 import com.zsy.loan.bean.entity.system.Cfg;
 import com.zsy.loan.dao.cache.CacheDao;
 import com.zsy.loan.dao.cache.ConfigCache;
 import com.zsy.loan.dao.system.CfgRepository;
 import com.zsy.loan.utils.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,18 +19,18 @@ import java.util.List;
  * @author enilu
  * @version 2018/12/20 0020
  */
+@Slf4j
 @Service
 public class ConfigCacheImpl implements ConfigCache {
 
-  private static final Logger logger = LoggerFactory.getLogger(ConfigCacheImpl.class);
   @Autowired
   private CfgRepository cfgRepository;
-  @Autowired
+  @Autowired@Qualifier("ehcacheDao")
   private CacheDao cacheDao;
 
   @Override
   public Object get(String key) {
-    return (String) cacheDao.hget(EhcacheDao.CONSTANT, key);
+    return (String) cacheDao.hget(CacheName.CONSTANT, key);
   }
 
   @Override
@@ -56,17 +57,18 @@ public class ConfigCacheImpl implements ConfigCache {
 
   @Override
   public void set(String key, Object val) {
-    cacheDao.hset(EhcacheDao.CONSTANT, key, val);
+    log.info("加载缓存："+ CacheName.CONSTANT+":"+ key+":"+val);
+    cacheDao.hset(CacheName.CONSTANT, key, val);
   }
 
   @Override
   public void del(String key, String val) {
-    cacheDao.hdel(EhcacheDao.CONSTANT, val);
+    cacheDao.hdel(CacheName.CONSTANT, val);
   }
 
   @Override
   public void cache() {
-    logger.info("reset config cache");
+    log.info("reset config cache");
     List<Cfg> list = cfgRepository.findAll();
     if (list != null && !list.isEmpty()) {
       for (Cfg cfg : list) {

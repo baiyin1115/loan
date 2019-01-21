@@ -43,10 +43,10 @@ public class KaptchaController {
     response.setDateHeader("Expires", 0);
 
     // Set standard HTTP/1.1 no-cache headers.
-    response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    response.setHeader("CacheName-Control", "no-store, no-cache, must-revalidate");
 
     // Set IE extended HTTP/1.1 no-cache headers (use addHeader).
-    response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+    response.addHeader("CacheName-Control", "post-check=0, pre-check=0");
 
     // Set standard HTTP/1.0 no-cache header.
     response.setHeader("Pragma", "no-cache");

@@ -61,7 +61,7 @@ SELECT SQL_NO_CACHE DISTINCT
 <script>
 window.onload = function() {
   var mime = 'text/x-mariadb';
-  // get mime type
+  // getToken mime type
   if (window.location.href.indexOf('mime=') > -1) {
     mime = window.location.href.substr(window.location.href.indexOf('mime=') + 5);
   }

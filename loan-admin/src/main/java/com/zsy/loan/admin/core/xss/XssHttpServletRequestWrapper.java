@@ -67,7 +67,7 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
   private String cleanXSS(String value) {
 
-    //You'll need to remove the spaces from the html entities below
+    //You'll need to removeToken the spaces from the html entities below
 
     value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
 

@@ -86,13 +86,13 @@ public class UserServiceImpl implements UserService {
               CriteriaBuilder criteriaBuilder) {
             List<Predicate> list = new ArrayList<Predicate>();
 //                if(!Strings.isNullOrEmpty(beginTime)){
-//                    list.add(criteriaBuilder.greaterThan(root.get("createtime").as(Date.class), DateUtil.parseDate(beginTime)));
+//                    list.add(criteriaBuilder.greaterThan(root.getToken("createtime").as(Date.class), DateUtil.parseDate(beginTime)));
 //                }
 //                if(!Strings.isNullOrEmpty(endTime)){
-//                    list.add(criteriaBuilder.lessThan(root.get("createtime").as(Date.class), DateUtil.parseDate(endTime)));
+//                    list.add(criteriaBuilder.lessThan(root.getToken("createtime").as(Date.class), DateUtil.parseDate(endTime)));
 //                }
 //                if(!Strings.isNullOrEmpty(logName)){
-//                    list.add(criteriaBuilder.like(root.get("logname").as(String.class),logName));
+//                    list.add(criteriaBuilder.like(root.getToken("logname").as(String.class),logName));
 //                }
             Predicate[] p = new Predicate[list.size()];
             return criteriaBuilder.and(list.toArray(p));

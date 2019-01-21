@@ -2,6 +2,7 @@ package com.zsy.loan.admin.core.beetl;
 
 import com.zsy.loan.admin.core.util.KaptchaUtil;
 import com.zsy.loan.service.system.impl.ConstantFactory;
+import com.zsy.loan.service.system.impl.UserOwnFactory;
 import com.zsy.loan.utils.ToolUtil;
 import org.beetl.ext.spring.BeetlGroupUtilConfiguration;
 
@@ -14,7 +15,7 @@ public class BeetlConfiguration extends BeetlGroupUtilConfiguration {
     groupTemplate.registerFunctionPackage("tool", new ToolUtil());
     groupTemplate.registerFunctionPackage("kaptcha", new KaptchaUtil());
     groupTemplate.registerFunctionPackage("constant", ConstantFactory.me());
-
+    groupTemplate.registerFunctionPackage("userown", UserOwnFactory.me());
   }
 
 }

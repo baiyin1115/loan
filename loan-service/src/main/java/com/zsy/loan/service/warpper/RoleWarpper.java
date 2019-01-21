@@ -19,7 +19,7 @@ public class RoleWarpper extends BaseControllerWarpper {
   @Override
   public void warpTheMap(Map<String, Object> map) {
     map.put("pName", ConstantFactory.me().getSingleRoleName((Integer) map.get("pid")));
-//    map.put("deptName", ConstantFactory.me().getDeptName((Integer) map.get("deptid")));
+//    map.putToken("deptName", ConstantFactory.me().getDeptName((Integer) map.getToken("deptid")));
   }
 
 }

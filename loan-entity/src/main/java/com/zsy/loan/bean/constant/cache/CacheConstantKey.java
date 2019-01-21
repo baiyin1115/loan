@@ -1,12 +1,12 @@
 package com.zsy.loan.bean.constant.cache;
 
 /**
- * 缓存的key集合
+ * 缓存的key集合---constant----全局永不过期
  *
  * @author fengshuonan
  * @date 2017-04-25 9:37
  */
-public interface CacheKey {
+public interface CacheConstantKey {
 
   /**
    * ConstantFactory中的缓存
@@ -29,4 +29,5 @@ public interface CacheKey {
   String CFG = "cfg_";
   String MENU_NAME = "menu_name_";
   String SYS_USER_NAME = "SYS_USER_NAME";
+  String DICT_ORG_ALL = "公司";
 }

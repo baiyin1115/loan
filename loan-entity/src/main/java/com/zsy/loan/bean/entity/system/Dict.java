@@ -2,6 +2,10 @@ package com.zsy.loan.bean.entity.system;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Created  on 2018/4/2 0002.
@@ -9,65 +13,33 @@ import java.io.Serializable;
  * @author enilu
  */
 @Entity
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "t_sys_dict")
 public class Dict implements Serializable {
-
-  private Integer id;
-  private String num;
-  private Integer pid;
-  private String name;
-  private String tips;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
+  private Integer id;
 
   @Basic
   @Column(name = "num")
-  public String getNum() {
-    return num;
-  }
-
-  public void setNum(String num) {
-    this.num = num;
-  }
+  private String num;
 
   @Basic
   @Column(name = "pid")
-  public Integer getPid() {
-    return pid;
-  }
-
-  public void setPid(Integer pid) {
-    this.pid = pid;
-  }
+  private Integer pid;
 
   @Basic
   @Column(name = "name")
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
+  private String name;
 
   @Basic
   @Column(name = "tips")
-  public String getTips() {
-    return tips;
-  }
-
-  public void setTips(String tips) {
-    this.tips = tips;
-  }
+  private String tips;
 
   @Override
   public boolean equals(Object o) {

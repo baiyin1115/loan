@@ -1,7 +1,10 @@
 package com.zsy.loan.service.warpper;
 
 import com.zsy.loan.service.system.impl.ConstantFactory;
+import com.zsy.loan.utils.ExactCompute;
+import com.zsy.loan.utils.StringUtils;
 import com.zsy.loan.utils.ToolUtil;
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -19,8 +22,30 @@ public class ProductWarpper extends BaseControllerWarpper {
   @Override
   public void warpTheMap(Map<String, Object> map) {
 
-    Integer id = (Integer) map.get("id");
+    map.put("orgNoName", ConstantFactory.me().getDeptName(((Long) map.get("orgNo")).intValue()));
+    map.put("serviceFeeTypeName", ConstantFactory.me().getServiceFeeTypeName((Long) map.get("serviceFeeType")));
+    map.put("isPenName", ConstantFactory.me().getIsPenName((Long) map.get("isPen")));
+    map.put("penNumberName", ConstantFactory.me().getPenNumberName((Long) map.get("penNumber")));
+    map.put("repayTypeName", ConstantFactory.me().getRepayTypeName((Long) map.get("repayType")));
+    map.put("loanTypeName", ConstantFactory.me().getLoanTypeName((Long) map.get("loanType")));
 
+    map.put("rateFormat", ExactCompute.formatHundred((BigDecimal) map.get("rate")));
+    map.put("serviceFeeScaleFormat", ExactCompute.formatHundred((BigDecimal) map.get("serviceFeeScale")));
+    map.put("penRateFormat", ExactCompute.formatHundred((BigDecimal) map.get("penRate")));
+    map.put("cycleIntervalFormat", map.get("cycleInterval")+"天");
+
+
+//    put("orgNo", "公司");
+//    put("productName", "产品名称");
+//    put("rate", "产品利率");
+//    put("serviceFeeScale", "服务费比例");
+//    put("serviceFeeType", "服务费收取方式");
+//    put("penRate", "罚息利率");
+//    put("isPen", "是否罚息");
+//    put("penNumber", "罚息基数");
+//    put("repayType", "还款方式");
+//    put("loanType", "贷款类型");
+//    put("cycleInterval", "周期间隔");
 
   }
 

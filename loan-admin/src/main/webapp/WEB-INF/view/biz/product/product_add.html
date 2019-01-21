@@ -8,9 +8,11 @@
             <div class="row">
                 <div class="col-sm-6 b-r">
 
-                    <input id="orgNo_" name="公司" underline="true" readonly="readonly" hidden="orgNo"
-                    clickFun="UserInfoDlg.showProductSelectTree(); return false;"
-                    style="background-color: #ffffff !important;"/>
+                    <#select id="orgNo" name="公司" underline="false">
+                        @for(dict in constant.getDicts('公司')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
 
                     <#input id="productName" name="产品名称" underline="true"/>
 

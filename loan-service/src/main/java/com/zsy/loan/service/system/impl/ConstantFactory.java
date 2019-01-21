@@ -1,6 +1,6 @@
 package com.zsy.loan.service.system.impl;
 
-import com.zsy.loan.bean.constant.cache.CacheKey;
+import com.zsy.loan.bean.constant.cache.CacheConstantKey;
 import com.zsy.loan.bean.constant.state.ManagerStatus;
 import com.zsy.loan.bean.constant.state.MenuStatus;
 import com.zsy.loan.bean.entity.biz.TBizProductInfo;
@@ -26,7 +26,6 @@ import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.utils.Convert;
 import com.zsy.loan.utils.StrKit;
 import com.zsy.loan.utils.StringUtils;
-import com.zsy.loan.utils.cache.TimeCacheMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,10 +45,9 @@ import org.springframework.stereotype.Component;
 @CacheConfig
 public class ConstantFactory implements IConstantFactory {
 
-  public static TimeCacheMap<String, String> cache = new TimeCacheMap<String, String>(3600, 2);
+  //  public static TimeCacheMap<String, String> cache = new TimeCacheMap<String, String>(3600, 2);
   private RoleRepository roleRepository = SpringContextHolder.getBean(RoleRepository.class);
   private DeptRepository deptRepository = SpringContextHolder.getBean(DeptRepository.class);
-  private DictCache dictCache = SpringContextHolder.getBean(DictCache.class);
   private DictRepository dictRepository = SpringContextHolder.getBean(DictRepository.class);
   private UserRepository userRepository = SpringContextHolder.getBean(UserRepository.class);
   private MenuRepository menuRepository = SpringContextHolder.getBean(MenuRepository.class);
@@ -58,18 +56,24 @@ public class ConstantFactory implements IConstantFactory {
   private ProductInfoRepo productInfoRepo = SpringContextHolder.getBean(ProductInfoRepo.class);
 
   private ConfigCache configCache = SpringContextHolder.getBean(ConfigCache.class);
+  private DictCache dictCache = SpringContextHolder.getBean(DictCache.class);
 
   public static IConstantFactory me() {
     return SpringContextHolder.getBean("constantFactory");
   }
 
   public String get(String key) {
-    return cache.get(key);
+    return configCache.get(key) == null ? null : (String) configCache.get(key);
+  }
+  public void set(String key, String val) {
+    configCache.set(key, val);
   }
 
-  public void set(String key, String val) {
-    cache.put(key, val);
-
+  public String getDict(String key) {
+    return configCache.get(key) == null ? null : (String) dictCache.get(key);
+  }
+  public void setDict(String key, String val) {
+    dictCache.set(key, val);
   }
 
   /**
@@ -80,7 +84,7 @@ public class ConstantFactory implements IConstantFactory {
    */
   @Override
   public String getUserNameById(Integer userId) {
-    String val = get(CacheKey.SYS_USER_NAME + userId);
+    String val = get(CacheConstantKey.SYS_USER_NAME + userId);
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
@@ -88,7 +92,7 @@ public class ConstantFactory implements IConstantFactory {
     User user = optUser.get();
     if (user != null) {
       val = user.getName();
-      set(CacheKey.SYS_USER_NAME + userId, val);
+      set(CacheConstantKey.SYS_USER_NAME + userId, val);
       return val;
     } else {
       return "--";
@@ -117,7 +121,7 @@ public class ConstantFactory implements IConstantFactory {
    */
   @Override
   public String getRoleName(String roleIds) {
-    String val = get(CacheKey.ROLES_NAME + roleIds);
+    String val = get(CacheConstantKey.ROLES_NAME + roleIds);
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
@@ -131,7 +135,7 @@ public class ConstantFactory implements IConstantFactory {
       }
     }
     val = StrKit.removeSuffix(sb.toString(), ",");
-    set(CacheKey.ROLES_NAME + roleIds, val);
+    set(CacheConstantKey.ROLES_NAME + roleIds, val);
     return val;
   }
 
@@ -171,14 +175,14 @@ public class ConstantFactory implements IConstantFactory {
    */
   @Override
   public String getDeptName(Integer deptId) {
-    String val = get(CacheKey.DEPT_NAME + deptId);
+    String val = get(CacheConstantKey.DEPT_NAME + deptId);
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
     Dept dept = deptRepository.getOne(deptId);
     if (StringUtils.isNotNullOrEmpty(dept) && StringUtils.isNotEmpty(dept.getFullname())) {
       val = dept.getFullname();
-      set(CacheKey.DEPT_NAME + deptId, val);
+      set(CacheConstantKey.DEPT_NAME + deptId, val);
       return val;
     }
     return "";
@@ -189,7 +193,7 @@ public class ConstantFactory implements IConstantFactory {
    */
   @Override
   public String getDeptName(String deptIds) {
-    String val = get(CacheKey.DEPT_NAME + deptIds);
+    String val = get(CacheConstantKey.DEPT_NAME + deptIds);
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
@@ -202,11 +206,11 @@ public class ConstantFactory implements IConstantFactory {
       }
     }
     val = StrKit.removeSuffix(sb.toString(), ",");
-    set(CacheKey.DEPT_NAME + deptIds, val);
+    set(CacheConstantKey.DEPT_NAME + deptIds, val);
     return val;
   }
 
-  public List<Dept> getDeptAll(){
+  public List<Dept> getDeptAll() {
     return deptRepository.findAll();
   }
 
@@ -276,12 +280,12 @@ public class ConstantFactory implements IConstantFactory {
   @Override
   public String getDictName(Integer dictId) {
 
-    String val = get(CacheKey.DICT_NAME + dictId);
+    String val = get(CacheConstantKey.DICT_NAME + dictId);
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
     val = dictCache.getDict(dictId);
-    set(CacheKey.DICT_NAME + dictId, val);
+    set(CacheConstantKey.DICT_NAME + dictId, val);
     return val;
 
   }
@@ -306,7 +310,7 @@ public class ConstantFactory implements IConstantFactory {
    */
   @Override
   public String getDictsByName(String name, String val) {
-    String result = get(CacheKey.DICT_NAME + name + val);
+    String result = getDict(CacheConstantKey.DICT_NAME + name + val);
     if (StringUtils.isNotEmpty(result)) {
       return result;
     }
@@ -314,7 +318,7 @@ public class ConstantFactory implements IConstantFactory {
     for (Dict item : dicts) {
       if (item.getNum() != null && item.getNum().equals(val)) {
         result = item.getName();
-        set(CacheKey.DICT_NAME + name + val, result);
+        setDict(CacheConstantKey.DICT_NAME + name + val, result);
         return result;
       }
     }
@@ -415,17 +419,18 @@ public class ConstantFactory implements IConstantFactory {
 
   @Override
   public List<Dict> getDicts(String pname) {
-    return dictCache.getDictsByPname(pname);
+    List<Dict> result = dictCache.getDictsByPname(pname);
+    return result;
   }
 
   @Override
   public String getCfg(String cfgName) {
-    String val = get(CacheKey.CFG + cfgName);
+    String val = get(CacheConstantKey.CFG + cfgName);
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
     val = (String) configCache.get(cfgName);
-    set(CacheKey.CFG + cfgName, val);
+    set(CacheConstantKey.CFG + cfgName, val);
     return val;
   }
 
@@ -463,8 +468,8 @@ public class ConstantFactory implements IConstantFactory {
   }
 
   @Override
-  public String getProductName(Long deptId) {
-    TBizProductInfo info = productInfoRepo.findById(deptId).get();
+  public String getProductName(Long productId) {
+    TBizProductInfo info = productInfoRepo.findById(productId).get();
 
     if (info == null) {
       return "";
