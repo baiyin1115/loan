@@ -77,6 +77,7 @@ public class ProductController extends BaseController {
     model.addAttribute(product);
     LogObjectHolder.me().set(product);
     return PREFIX + "product_edit.html";
+
   }
 
   /**

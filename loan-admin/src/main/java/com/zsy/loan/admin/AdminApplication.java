@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
-import springboot.reload.plugin.annotation.EnableOnlineReload;
 
 /**
  * SpringBoot方式启动类
@@ -19,9 +18,10 @@ import springboot.reload.plugin.annotation.EnableOnlineReload;
 @EnableAutoConfiguration
 @SpringBootApplication
 @EnableCaching
-@ComponentScan(basePackages = {"com.zsy.loan", "springboot.reload.plugin"})
+@ComponentScan(basePackages = "com.zsy.loan")
 @EntityScan(basePackages = "com.zsy.loan.bean.entity")
-@EnableOnlineReload(activeProfile = {"dev"}, needAuth = true)
+//@ComponentScan(basePackages = {"com.zsy.loan", "springboot.reload.plugin"})
+//@EnableOnlineReload(activeProfile = {"dev"}, needAuth = true)
 public class AdminApplication {
 
   protected final static Logger logger = LoggerFactory.getLogger(AdminApplication.class);

@@ -14,7 +14,7 @@
     <module>loan-utils</module>
     <module>loan-service</module>
     <module>loan-admin</module>
-    <module>springboot-reload-plugin</module>
+    <!--<module>springboot-reload-plugin</module>-->
   </modules>
 
   <!--<parent>-->
