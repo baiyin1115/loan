@@ -33,7 +33,7 @@ public class OperationLog {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "logtype")
   public String getLogtype() {
     return logtype;
@@ -43,7 +43,7 @@ public class OperationLog {
     this.logtype = logtype;
   }
 
-  @Basic
+
   @Column(name = "logname")
   public String getLogname() {
     return logname;
@@ -53,7 +53,7 @@ public class OperationLog {
     this.logname = logname;
   }
 
-  @Basic
+
   @Column(name = "userid")
   public Integer getUserid() {
     return userid;
@@ -63,7 +63,7 @@ public class OperationLog {
     this.userid = userid;
   }
 
-  @Basic
+
   @Column(name = "classname")
   public String getClassname() {
     return classname;
@@ -73,7 +73,7 @@ public class OperationLog {
     this.classname = classname;
   }
 
-  @Basic
+
   @Column(name = "method")
   public String getMethod() {
     return method;
@@ -83,7 +83,7 @@ public class OperationLog {
     this.method = method;
   }
 
-  @Basic
+
   @Column(name = "createtime")
   public Date getCreatetime() {
     return createtime;
@@ -93,7 +93,7 @@ public class OperationLog {
     this.createtime = createtime;
   }
 
-  @Basic
+
   @Column(name = "succeed")
   public String getSucceed() {
     return succeed;
@@ -103,7 +103,7 @@ public class OperationLog {
     this.succeed = succeed;
   }
 
-  @Basic
+
   @Column(name = "message")
   public String getMessage() {
     return message;

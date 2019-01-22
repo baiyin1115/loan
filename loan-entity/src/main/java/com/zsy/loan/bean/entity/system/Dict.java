@@ -25,19 +25,19 @@ public class Dict implements Serializable {
   @Column(name = "id")
   private Integer id;
 
-  @Basic
+
   @Column(name = "num")
   private String num;
 
-  @Basic
+
   @Column(name = "pid")
   private Integer pid;
 
-  @Basic
+
   @Column(name = "name")
   private String name;
 
-  @Basic
+
   @Column(name = "tips")
   private String tips;
 

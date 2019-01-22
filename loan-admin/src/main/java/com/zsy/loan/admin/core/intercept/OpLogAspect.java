@@ -42,35 +42,35 @@ public class OpLogAspect {
     log.info("请求参数为：" + opRequest.toString());
   }
 
-  @Around("pointcut()")
-  public Object handle(ProceedingJoinPoint joinPoint) {
-    long startTime = 0;
-    long endTime = 0;
-    try {
-      startTime = System.currentTimeMillis();
-      Object returnVal = joinPoint.proceed();
-
-      endTime = System.currentTimeMillis();
-      logEvent(joinPoint, returnVal, endTime - startTime);
-      return returnVal;
-      //} catch (Exception ex) {
-      //  log.error("异常信息:{}", ex);
-    } catch (Throwable throwable) {
-      //log.error("异常信息：", throwable);
-      LoanException exception = null;
-      if (throwable instanceof LoanException) {
-        exception = (LoanException) throwable;
-      } else {
-        log.error("异常信息：", throwable);
-        exception = new LoanException(LoanExceptionEnum.SERVER_ERROR);
-      }
-
-      logEvent(joinPoint, exception, endTime - startTime);
-      throw exception;
-      //  log.error("异常信息：" + throwable);
-    }
-
-  }
+//  @Around("pointcut()")
+//  public Object handle(ProceedingJoinPoint joinPoint) {
+//    long startTime = 0;
+//    long endTime = 0;
+//    try {
+//      startTime = System.currentTimeMillis();
+//      Object returnVal = joinPoint.proceed();
+//
+//      endTime = System.currentTimeMillis();
+//      logEvent(joinPoint, returnVal, endTime - startTime);
+//      return returnVal;
+//      //} catch (Exception ex) {
+//      //  log.error("异常信息:{}", ex);
+//    } catch (Throwable throwable) {
+//      //log.error("异常信息：", throwable);
+//      LoanException exception = null;
+//      if (throwable instanceof LoanException) {
+//        exception = (LoanException) throwable;
+//      } else {
+//        log.error("异常信息：", throwable);
+//        exception = new LoanException(LoanExceptionEnum.SERVER_ERROR);
+//      }
+//
+//      logEvent(joinPoint, exception, endTime - startTime);
+//      throw exception;
+//      //  log.error("异常信息：" + throwable);
+//    }
+//
+//  }
 
   /*@AfterThrowing(
       pointcut = "pointcut()",

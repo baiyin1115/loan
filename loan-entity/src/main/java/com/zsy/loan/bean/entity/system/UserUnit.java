@@ -26,7 +26,7 @@ public class UserUnit {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "userId")
   public String getUserId() {
     return userId;
@@ -36,7 +36,7 @@ public class UserUnit {
     this.userId = userId;
   }
 
-  @Basic
+
   @Column(name = "unitId")
   public String getUnitId() {
     return unitId;

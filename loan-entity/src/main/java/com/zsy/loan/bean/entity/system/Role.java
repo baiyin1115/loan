@@ -30,7 +30,7 @@ public class Role {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "num")
   public Integer getNum() {
     return num;
@@ -40,7 +40,7 @@ public class Role {
     this.num = num;
   }
 
-  @Basic
+
   @Column(name = "pid")
   public Integer getPid() {
     return pid;
@@ -50,7 +50,7 @@ public class Role {
     this.pid = pid;
   }
 
-  @Basic
+
   @Column(name = "name")
   public String getName() {
     return name;
@@ -60,7 +60,7 @@ public class Role {
     this.name = name;
   }
 
-  @Basic
+
   @Column(name = "deptid")
   public Integer getDeptid() {
     return deptid;
@@ -70,7 +70,7 @@ public class Role {
     this.deptid = deptid;
   }
 
-  @Basic
+
   @Column(name = "tips")
   public String getTips() {
     return tips;
@@ -80,7 +80,7 @@ public class Role {
     this.tips = tips;
   }
 
-  @Basic
+
   @Column(name = "version")
   public Integer getVersion() {
     return version;

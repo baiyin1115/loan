@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  *
@@ -26,7 +32,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "t_biz_invest_info", schema = "loan", catalog = "")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "t_biz_invest_info")
 public class TBizInvestInfo {
 
   @Id
@@ -34,93 +41,109 @@ public class TBizInvestInfo {
   @Column(name = "id")
   private long id;
 
-  @Basic
+
   @Column(name = "org_no")
   private long orgNo;
 
-  @Basic
+
   @Column(name = "user_no")
   private long userNo;
 
-  @Basic
+
   @Column(name = "in_acct_no")
   private long inAcctNo;
 
-  @Basic
+
   @Column(name = "external_acct")
   private String externalAcct;
 
-  @Basic
+
   @Column(name = "prin")
   private BigDecimal prin;
 
-  @Basic
+
   @Column(name = "acct_date")
   private Date acctDate;
 
-  @Basic
+
   @Column(name = "begin_date")
   private Date beginDate;
 
-  @Basic
+
   @Column(name = "end_date")
   private Date endDate;
 
-  @Basic
+
   @Column(name = "rate")
   private BigDecimal rate;
 
-  @Basic
+
   @Column(name = "term_no")
   private Long termNo;
 
-  @Basic
+
   @Column(name = "cycle_interval")
   private long cycleInterval;
 
-  @Basic
+
   @Column(name = "status")
   private long status;
 
-  @Basic
+
   @Column(name = "dd_date")
   private Long ddDate;
 
-  @Basic
+
   @Column(name = "extension_no")
   private Long extensionNo;
 
-  @Basic
+
   @Column(name = "extension_rate")
   private BigDecimal extensionRate;
 
-  @Basic
+
   @Column(name = "tot_schd_bigint")
   private BigDecimal totSchdBigint;
 
-  @Basic
+
   @Column(name = "tot_paid_prin")
   private BigDecimal totPaidPrin;
 
-  @Basic
+
   @Column(name = "tot_paid_bigint")
   private BigDecimal totPaidBigint;
 
-  @Basic
+
   @Column(name = "tot_wav_amt")
   private BigDecimal totWavAmt;
 
-  @Basic
-  @Column(name = "operator")
-  private long operator;
+  /**
+   * 创建人
+   */
+  @Column(name = "create_by", updatable = false)
+  @CreatedBy
+  private Long createBy;
 
-  @Basic
-  @Column(name = "create_at")
+  /**
+   * 修改人
+   */
+  @Column(name = "modified_by")
+  @LastModifiedBy
+  private Long modifiedBy;
+
+  /**
+   * 创建时间
+   */
+  @CreatedDate
+  @Column(name = "create_at", updatable = false)
   private Timestamp createAt;
 
-  @Basic
+  /**
+   * 修改时间
+   */
+  @LastModifiedDate
   @Column(name = "update_at")
-  private Timestamp updateAt;
+  protected Timestamp updateAt;
 
   @Override
   public boolean equals(Object o) {
@@ -151,9 +174,7 @@ public class TBizInvestInfo {
     if (status != that.status) {
       return false;
     }
-    if (operator != that.operator) {
-      return false;
-    }
+
     if (externalAcct != null ? !externalAcct.equals(that.externalAcct)
         : that.externalAcct != null) {
       return false;
@@ -232,7 +253,6 @@ public class TBizInvestInfo {
     result = 31 * result + (totPaidPrin != null ? totPaidPrin.hashCode() : 0);
     result = 31 * result + (totPaidBigint != null ? totPaidBigint.hashCode() : 0);
     result = 31 * result + (totWavAmt != null ? totWavAmt.hashCode() : 0);
-    result = 31 * result + (int) (operator ^ (operator >>> 32));
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);
     return result;

@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 回款计划表
@@ -26,7 +32,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "t_biz_invest_plan", schema = "loan", catalog = "")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "t_biz_invest_plan")
 public class TBizInvestPlan {
 
   @Id
@@ -34,69 +41,85 @@ public class TBizInvestPlan {
   @Column(name = "id")
   private long id;
 
-  @Basic
+
   @Column(name = "invest_no")
   private long investNo;
 
-  @Basic
+
   @Column(name = "org_no")
   private long orgNo;
 
-  @Basic
+
   @Column(name = "user_no")
   private long userNo;
 
-  @Basic
+
   @Column(name = "term_no")
   private long termNo;
 
-  @Basic
+
   @Column(name = "dd_date")
   private Date ddDate;
 
-  @Basic
+
   @Column(name = "rate")
   private BigDecimal rate;
 
-  @Basic
+
   @Column(name = "begin_date")
   private Date beginDate;
 
-  @Basic
+
   @Column(name = "end_date")
   private Date endDate;
 
-  @Basic
+
   @Column(name = "dd_num")
   private long ddNum;
 
-  @Basic
+
   @Column(name = "dd_prin")
   private BigDecimal ddPrin;
 
-  @Basic
+
   @Column(name = "chd_bigint")
   private BigDecimal chdBigint;
 
-  @Basic
+
   @Column(name = "paid_bigint")
   private BigDecimal paidBigint;
 
-  @Basic
+
   @Column(name = "status")
   private long status;
 
-  @Basic
-  @Column(name = "operator")
-  private long operator;
+  /**
+   * 创建人
+   */
+  @Column(name = "create_by", updatable = false)
+  @CreatedBy
+  private Long createBy;
 
-  @Basic
-  @Column(name = "create_at")
+  /**
+   * 修改人
+   */
+  @Column(name = "modified_by")
+  @LastModifiedBy
+  private Long modifiedBy;
+
+  /**
+   * 创建时间
+   */
+  @CreatedDate
+  @Column(name = "create_at", updatable = false)
   private Timestamp createAt;
 
-  @Basic
+  /**
+   * 修改时间
+   */
+  @LastModifiedDate
   @Column(name = "update_at")
-  private Timestamp updateAt;
+  protected Timestamp updateAt;
 
 
   @Override
@@ -129,9 +152,6 @@ public class TBizInvestPlan {
       return false;
     }
     if (status != that.status) {
-      return false;
-    }
-    if (operator != that.operator) {
       return false;
     }
     if (ddDate != null ? !ddDate.equals(that.ddDate) : that.ddDate != null) {
@@ -181,7 +201,6 @@ public class TBizInvestPlan {
     result = 31 * result + (chdBigint != null ? chdBigint.hashCode() : 0);
     result = 31 * result + (paidBigint != null ? paidBigint.hashCode() : 0);
     result = 31 * result + (int) (status ^ (status >>> 32));
-    result = 31 * result + (int) (operator ^ (operator >>> 32));
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);
     return result;

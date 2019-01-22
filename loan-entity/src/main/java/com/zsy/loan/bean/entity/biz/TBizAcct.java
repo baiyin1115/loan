@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +14,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 账户表
@@ -25,7 +31,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "t_biz_acct", schema = "loan", catalog = "")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "t_biz_acct")
 public class TBizAcct {
 
   @Id
@@ -33,37 +40,53 @@ public class TBizAcct {
   @Column(name = "id")
   private long id;
 
-  @Basic
+
   @Column(name = "user_no", nullable = false)
   private long userNo;
 
-  @Basic
+
   @Column(name = "available_balance", nullable = false, precision = 2)
   private BigDecimal availableBalance;
 
-  @Basic
+
   @Column(name = "freeze_balance", nullable = false, precision = 2)
   private BigDecimal freezeBalance;
 
-  @Basic
+
   @Column(name = "acct_type", nullable = false)
   private long acctType;
 
-  @Basic
+
   @Column(name = "balance_type", nullable = true)
   private Long balanceType;
 
-  @Basic
-  @Column(name = "operator", nullable = false)
-  private long operator;
+  /**
+   * 创建人
+   */
+  @Column(name = "create_by", updatable = false)
+  @CreatedBy
+  private Long createBy;
 
-  @Basic
-  @Column(name = "create_at", nullable = true)
+  /**
+   * 修改人
+   */
+  @Column(name = "modified_by")
+  @LastModifiedBy
+  private Long modifiedBy;
+
+  /**
+   * 创建时间
+   */
+  @CreatedDate
+  @Column(name = "create_at", updatable = false)
   private Timestamp createAt;
 
-  @Basic
-  @Column(name = "update_at", nullable = true)
-  private Timestamp updateAt;
+  /**
+   * 修改时间
+   */
+  @LastModifiedDate
+  @Column(name = "update_at")
+  protected Timestamp updateAt;
 
   @Override
   public boolean equals(Object o) {
@@ -85,9 +108,7 @@ public class TBizAcct {
     if (acctType != tBizAcct.acctType) {
       return false;
     }
-    if (operator != tBizAcct.operator) {
-      return false;
-    }
+
     if (availableBalance != null ? !availableBalance.equals(tBizAcct.availableBalance)
         : tBizAcct.availableBalance != null) {
       return false;
@@ -118,7 +139,6 @@ public class TBizAcct {
     result = 31 * result + (freezeBalance != null ? freezeBalance.hashCode() : 0);
     result = 31 * result + (int) (acctType ^ (acctType >>> 32));
     result = 31 * result + (balanceType != null ? balanceType.hashCode() : 0);
-    result = 31 * result + (int) (operator ^ (operator >>> 32));
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);
     return result;

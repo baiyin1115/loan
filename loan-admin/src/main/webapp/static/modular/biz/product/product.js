@@ -4,6 +4,7 @@
 var Product = {
   id: "ProductTable",	//表格id
   seItem: null,		//选中的条目
+  seItems: null, //批量删除的数组
   table: null,
   layerIndex: -1
 };
@@ -13,7 +14,7 @@ var Product = {
  */
 Product.initColumn = function () {
   return [
-    {field: 'selectItem', radio: true},
+    {field: 'selectItem', radio: false},
     {
       title: 'id',
       field: 'id',
@@ -105,11 +106,27 @@ Product.initColumn = function () {
  */
 Product.check = function () {
   var selected = $('#' + this.id).bootstrapTable('getSelections');
-  if (selected.length == 0) {
+  if (selected.length != 1) {
     Feng.info("请先选中表格中的某一记录！");
     return false;
   } else {
     Product.seItem = selected[0];
+    return true;
+  }
+};
+
+Product.checkAll = function () {
+  var selected = $('#' + this.id).bootstrapTable('getSelections');
+  if (selected.length == 0) {
+    Feng.info("请先选中表格中的记录！");
+    return false;
+  } else {
+
+    Product.seItems = new Array();
+    for (var i = 0; i < selected.length; i++) {
+      Product.seItems.push(selected[i].id);
+    }
+
     return true;
   }
 };
@@ -150,7 +167,7 @@ Product.openProductDetail = function () {
  * 删除产品
  */
 Product.delete = function () {
-  if (this.check()) {
+  if (this.checkAll()) {
 
     var operation = function () {
       var ajax = new $ax(Feng.ctxPath + "/product/delete", function () {
@@ -159,7 +176,8 @@ Product.delete = function () {
       }, function (data) {
         Feng.error("删除失败!" + data.responseJSON.message + "!");
       });
-      ajax.set("productId", Product.seItem.id);
+      ajax.setData(Product.seItems);
+      ajax.setContentType("application/json")
       ajax.start();
     };
 
@@ -168,18 +186,27 @@ Product.delete = function () {
 };
 
 /**
+ * 查询表单提交参数对象
+ * @returns {{}}
+ */
+Product.formParams = function () {
+  var queryData = {};
+  queryData['condition'] = $("#condition").val();
+  return queryData;
+}
+
+/**
  * 查询产品列表
  */
 Product.search = function () {
-  var queryData = {};
-  queryData['condition'] = $("#condition").val();
-  Product.table.refresh({query: queryData});
+  Product.table.refresh({query: Product.formParams()});
 };
 
 $(function () {
   var defaultColunms = Product.initColumn();
   var table = new BSTable(Product.id, "/product/list", defaultColunms);
-  table.setPaginationType("client");
+  table.setPaginationType("server");
+  table.setQueryParams(Product.formParams());
   table.init();
   Product.table = table;
 });

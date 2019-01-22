@@ -1,6 +1,7 @@
 package com.zsy.loan.service.system;
 
 
+import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.entity.system.Dept;
 import com.zsy.loan.bean.entity.system.Dict;
 import com.zsy.loan.bean.vo.DictVo;
@@ -186,6 +187,11 @@ public interface IConstantFactory {
    * 获取产品名称
    */
   String getProductName(Long deptId);
+
+  /**
+   * 获取产品名称
+   */
+  List<TBizProductInfo> getProductNames(List<Long> deptId);
 
   /**
    * 获取公司名称

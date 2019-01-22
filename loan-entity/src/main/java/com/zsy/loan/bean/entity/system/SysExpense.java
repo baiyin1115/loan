@@ -32,7 +32,7 @@ public class SysExpense {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "money")
   public BigDecimal getMoney() {
     return money;
@@ -42,7 +42,7 @@ public class SysExpense {
     this.money = money;
   }
 
-  @Basic
+
   @Column(name = "desc")
   public String getDesc() {
     return desc;
@@ -52,7 +52,7 @@ public class SysExpense {
     this.desc = desc;
   }
 
-  @Basic
+
   @Column(name = "createtime")
   public Date getCreatetime() {
     return createtime;
@@ -62,7 +62,7 @@ public class SysExpense {
     this.createtime = createtime;
   }
 
-  @Basic
+
   @Column(name = "state")
   public Integer getState() {
     return state;
@@ -72,7 +72,7 @@ public class SysExpense {
     this.state = state;
   }
 
-  @Basic
+
   @Column(name = "userid")
   public Integer getUserid() {
     return userid;
@@ -82,7 +82,7 @@ public class SysExpense {
     this.userid = userid;
   }
 
-  @Basic
+
   @Column(name = "processId")
   public String getProcessId() {
     return processId;

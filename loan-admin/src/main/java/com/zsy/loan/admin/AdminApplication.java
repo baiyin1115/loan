@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 /**
  * SpringBoot方式启动类
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableCaching
 @ComponentScan(basePackages = "com.zsy.loan")
 @EntityScan(basePackages = "com.zsy.loan.bean.entity")
+@EnableJpaAuditing
 //@ComponentScan(basePackages = {"com.zsy.loan", "springboot.reload.plugin"})
 //@EnableOnlineReload(activeProfile = {"dev"}, needAuth = true)
 public class AdminApplication {

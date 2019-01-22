@@ -5,7 +5,10 @@ import com.zsy.loan.bean.entity.biz. TBizProductInfo;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 产品代码Repo
@@ -17,4 +20,9 @@ public interface ProductInfoRepo extends PagingAndSortingRepository< TBizProduct
     , JpaRepository< TBizProductInfo, Long>, JpaSpecificationExecutor< TBizProductInfo> {
 
   List<TBizProductInfo> findByProductNameLike(String condition);
+
+  @Modifying
+  @Transactional
+  @Query(nativeQuery = true, value="delete t from t_biz_product_info t where t.id in (?1) ")
+  int deleteByIds(List<Long> ids);
 }

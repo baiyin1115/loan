@@ -2,6 +2,8 @@ package com.zsy.loan.bean.request;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,10 +34,12 @@ public class ProductInfoRequest {
 
   @ApiModelProperty(required = true, value = "产品利率")
   @NotNull(message = "[产品利率]不能为空！")
+  @DecimalMax(value = "1.00", message = "[产品利率]不能超过1.00")
   private BigDecimal rate;
 
   @ApiModelProperty(required = true, value = "服务费比例")
   @NotNull(message = "[服务费比例]不能为空！")
+  @DecimalMax(value = "1.00", message = "[服务费比例]不能超过1.00")
   private BigDecimal serviceFeeScale;
 
   @ApiModelProperty(required = true, value = "服务费收取方式")
@@ -44,6 +48,7 @@ public class ProductInfoRequest {
 
   @ApiModelProperty(required = true, value = "罚息利率")
   @NotNull(message = "[罚息利率]不能为空！")
+  @DecimalMax(value = "1.00", message = "[服务费比例]不能超过1.00")
   private BigDecimal penRate;
 
   @ApiModelProperty(required = true, value = "是否罚息")
@@ -64,6 +69,7 @@ public class ProductInfoRequest {
 
   @ApiModelProperty(required = true, value = "周期间隔")
   @NotNull(message = "[周期间隔]不能为空！")
+  @Max(value = 30, message = "[周期间隔]不能超过30天")
   private Long cycleInterval;
 
   @ApiModelProperty(required = true, value = "操作员")

@@ -33,7 +33,7 @@ public class LoginLog {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "logname")
   public String getLogname() {
     return logname;
@@ -43,7 +43,7 @@ public class LoginLog {
     this.logname = logname;
   }
 
-  @Basic
+
   @Column(name = "userid")
   public Integer getUserid() {
     return userid;
@@ -53,7 +53,7 @@ public class LoginLog {
     this.userid = userid;
   }
 
-  @Basic
+
   @Column(name = "createtime")
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
   public Date getCreatetime() {
@@ -64,7 +64,7 @@ public class LoginLog {
     this.createtime = createtime;
   }
 
-  @Basic
+
   @Column(name = "succeed")
   public String getSucceed() {
     return succeed;
@@ -74,7 +74,7 @@ public class LoginLog {
     this.succeed = succeed;
   }
 
-  @Basic
+
   @Column(name = "message")
   public String getMessage() {
     return message;
@@ -84,7 +84,7 @@ public class LoginLog {
     this.message = message;
   }
 
-  @Basic
+
   @Column(name = "ip")
   public String getIp() {
     return ip;

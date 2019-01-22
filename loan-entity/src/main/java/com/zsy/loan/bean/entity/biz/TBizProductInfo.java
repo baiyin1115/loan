@@ -2,9 +2,9 @@ package com.zsy.loan.bean.entity.biz;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +13,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 产品代码表
@@ -25,7 +30,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "t_biz_product_info", schema = "loan", catalog = "")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "t_biz_product_info")
 public class TBizProductInfo {
 
   @Id
@@ -33,61 +39,77 @@ public class TBizProductInfo {
   @Column(name = "id")
   private Long id;
 
-  @Basic
+
   @Column(name = "org_no")
   private Long orgNo;
 
-  @Basic
+
   @Column(name = "product_name")
   private String productName;
 
-  @Basic
+
   @Column(name = "rate")
   private BigDecimal rate;
 
-  @Basic
+
   @Column(name = "service_fee_scale")
   private BigDecimal serviceFeeScale;
 
-  @Basic
+
   @Column(name = "service_fee_type")
   private Long serviceFeeType;
 
-  @Basic
+
   @Column(name = "pen_rate")
   private BigDecimal penRate;
 
-  @Basic
+
   @Column(name = "is_pen")
   private Long isPen;
 
-  @Basic
+
   @Column(name = "pen_number")
   private Long penNumber;
 
-  @Basic
+
   @Column(name = "repay_type")
   private Long repayType;
 
-  @Basic
+
   @Column(name = "loan_type")
   private Long loanType;
 
-  @Basic
+
   @Column(name = "cycle_interval")
   private Long cycleInterval;
 
-  @Basic
-  @Column(name = "operator")
-  private Long operator;
+  /**
+   * 创建人
+   */
+  @Column(name = "create_by", updatable = false)
+  @CreatedBy
+  private Long createBy;
 
-  @Basic
-  @Column(name = "create_at")
+  /**
+   * 修改人
+   */
+  @Column(name = "modified_by")
+  @LastModifiedBy
+  private Long modifiedBy;
+
+  /**
+   * 创建时间
+   */
+  @CreatedDate
+  @Column(name = "create_at", updatable = false)
   private Timestamp createAt;
 
-  @Basic
+  /**
+   * 修改时间
+   */
+  @LastModifiedDate
   @Column(name = "update_at")
-  private Timestamp updateAt;
+  protected Timestamp updateAt;
 
 
   @Override
@@ -114,9 +136,6 @@ public class TBizProductInfo {
       return false;
     }
     if (cycleInterval != that.cycleInterval) {
-      return false;
-    }
-    if (operator != that.operator) {
       return false;
     }
     if (productName != null ? !productName.equals(that.productName) : that.productName != null) {
@@ -166,7 +185,6 @@ public class TBizProductInfo {
     result = 31 * result + (int) (repayType ^ (repayType >>> 32));
     result = 31 * result + (int) (loanType ^ (loanType >>> 32));
     result = 31 * result + (int) (cycleInterval ^ (cycleInterval >>> 32));
-    result = 31 * result + (int) (operator ^ (operator >>> 32));
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);
     return result;

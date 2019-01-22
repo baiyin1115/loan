@@ -57,7 +57,8 @@ public class DictCacheImpl implements DictCache {
       set(String.valueOf(dict.getId()), children);
       set(dict.getName(), children);
       for (Dict child : children) {
-        set(CacheConstantKey.DICT_NAME + String.valueOf(child.getId()), child.getName());
+        set(CacheConstantKey.DICT_NAME + dict.getName() + String.valueOf(child.getNum()),
+            child.getName());
       }
 
     }

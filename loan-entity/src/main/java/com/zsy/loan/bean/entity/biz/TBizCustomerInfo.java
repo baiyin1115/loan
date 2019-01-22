@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +13,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 客户信息表
@@ -24,7 +30,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "t_biz_customer_info", schema = "loan", catalog = "")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "t_biz_customer_info")
 public class TBizCustomerInfo {
 
   @Id
@@ -32,49 +39,65 @@ public class TBizCustomerInfo {
   @Column(name = "id")
   private long id;
 
-  @Basic
+
   @Column(name = "cert_no")
   private String certNo;
 
-  @Basic
+
   @Column(name = "cert_type")
   private long certType;
 
-  @Basic
+
   @Column(name = "name")
   private String name;
 
-  @Basic
+
   @Column(name = "gender")
   private long gender;
 
-  @Basic
+
   @Column(name = "mobile")
   private String mobile;
 
-  @Basic
+
   @Column(name = "phone")
   private String phone;
 
-  @Basic
+
   @Column(name = "email")
   private String email;
 
-  @Basic
+
   @Column(name = "status")
   private Long status;
 
-  @Basic
-  @Column(name = "operator")
-  private long operator;
+  /**
+   * 创建人
+   */
+  @Column(name = "create_by", updatable = false)
+  @CreatedBy
+  private Long createBy;
 
-  @Basic
-  @Column(name = "create_at")
+  /**
+   * 修改人
+   */
+  @Column(name = "modified_by")
+  @LastModifiedBy
+  private Long modifiedBy;
+
+  /**
+   * 创建时间
+   */
+  @CreatedDate
+  @Column(name = "create_at", updatable = false)
   private Timestamp createAt;
 
-  @Basic
+  /**
+   * 修改时间
+   */
+  @LastModifiedDate
   @Column(name = "update_at")
-  private Timestamp updateAt;
+  protected Timestamp updateAt;
 
   @Override
   public boolean equals(Object o) {
@@ -96,9 +119,7 @@ public class TBizCustomerInfo {
     if (gender != that.gender) {
       return false;
     }
-    if (operator != that.operator) {
-      return false;
-    }
+
     if (certNo != null ? !certNo.equals(that.certNo) : that.certNo != null) {
       return false;
     }
@@ -138,7 +159,6 @@ public class TBizCustomerInfo {
     result = 31 * result + (phone != null ? phone.hashCode() : 0);
     result = 31 * result + (email != null ? email.hashCode() : 0);
     result = 31 * result + (status != null ? status.hashCode() : 0);
-    result = 31 * result + (int) (operator ^ (operator >>> 32));
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);
     return result;

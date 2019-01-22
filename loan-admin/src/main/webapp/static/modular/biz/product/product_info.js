@@ -45,6 +45,7 @@ ProductInfoDlg.clearData = function () {
 ProductInfoDlg.set = function (key, val) {
   this.productInfoData[key] = (typeof value == "undefined") ? $("#" + key).val()
       : value;
+  //alert($("#" + key).val())
   return this;
 }
 
@@ -106,7 +107,7 @@ ProductInfoDlg.close = function () {
  * 收集数据
  */
 ProductInfoDlg.collectData = function () {
-  this.set('orgNo').set('productName').set('rate').set('serviceFeeScale').set('serviceFeeType').set(
+  this.set('id').set('orgNo').set('productName').set('rate').set('serviceFeeScale').set('serviceFeeType').set(
       'penRate').set('isPen').set('penNumber').set('repayType').set('loanType').set('cycleInterval');
 }
 
@@ -132,7 +133,7 @@ ProductInfoDlg.addSubmit = function () {
     return;
   }
 
-  Feng.success("添加成功3333");
+ // Feng.success("添加成功3333");
 
   //提交信息
   var ajax = new $ax(Feng.ctxPath + "/product/add", function (data) {
@@ -143,6 +144,7 @@ ProductInfoDlg.addSubmit = function () {
     Feng.error("添加失败!" + data.responseJSON.message + "!");
   });
   ajax.set(this.productInfoData);
+  ajax.setContentType("application/json")
   ajax.start();
 }
 
@@ -167,6 +169,7 @@ ProductInfoDlg.editSubmit = function () {
     Feng.error("修改失败!" + data.responseJSON.message + "!");
   });
   ajax.set(this.productInfoData);
+  ajax.setContentType("application/json")
   ajax.start();
 }
 
@@ -180,6 +183,14 @@ ProductInfoDlg.editSubmit = function () {
 //
 $(function () {
   Feng.initValidator("productInfoForm", ProductInfoDlg.validateFields);
+
+  //初始化
+  $("#orgNo").val($("#orgNoValue").val());
+  $("#serviceFeeType").val($("#serviceFeeTypeValue").val());
+  $("#isPen").val($("#isPenValue").val());
+  $("#penNumber").val($("#penNumberValue").val());
+  $("#repayType").val($("#repayTypeValue").val());
+  $("#loanType").val($("#loanTypeValue").val());
 
   // var ztree = new $ZTree("parentProductMenuTree", "/product/tree");
   // ztree.bindOnClick(ProductInfoDlg.onClickProduct);

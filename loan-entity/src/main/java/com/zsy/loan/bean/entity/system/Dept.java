@@ -31,7 +31,7 @@ public class Dept {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "num")
   public Integer getNum() {
     return num;
@@ -41,7 +41,7 @@ public class Dept {
     this.num = num;
   }
 
-  @Basic
+
   @Column(name = "pid")
   public Integer getPid() {
     return pid;
@@ -51,7 +51,7 @@ public class Dept {
     this.pid = pid;
   }
 
-  @Basic
+
   @Column(name = "pids")
   public String getPids() {
     return pids;
@@ -61,7 +61,7 @@ public class Dept {
     this.pids = pids;
   }
 
-  @Basic
+
   @Column(name = "simplename")
   public String getSimplename() {
     return simplename;
@@ -71,7 +71,7 @@ public class Dept {
     this.simplename = simplename;
   }
 
-  @Basic
+
   @Column(name = "fullname")
   public String getFullname() {
     return fullname;
@@ -81,7 +81,7 @@ public class Dept {
     this.fullname = fullname;
   }
 
-  @Basic
+
   @Column(name = "tips")
   public String getTips() {
     return tips;
@@ -91,7 +91,7 @@ public class Dept {
     this.tips = tips;
   }
 
-  @Basic
+
   @Column(name = "version")
   public Integer getVersion() {
     return version;

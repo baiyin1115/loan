@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 账户资金流水表
@@ -26,7 +32,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "t_biz_acct_record", schema = "loan", catalog = "")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "t_biz_acct_record")
 public class TBizAcctRecord {
 
   @Id
@@ -34,57 +41,73 @@ public class TBizAcctRecord {
   @Column(name = "id")
   private long id;
 
-  @Basic
+
   @Column(name = "group_no")
   private long groupNo;
 
-  @Basic
+
   @Column(name = "org_no")
   private long orgNo;
 
-  @Basic
+
   @Column(name = "voucher_no")
   private long voucherNo;
 
-  @Basic
+
   @Column(name = "acct_no")
   private long acctNo;
 
-  @Basic
+
   @Column(name = "type")
   private long type;
 
-  @Basic
+
   @Column(name = "amt_type")
   private long amtType;
 
-  @Basic
+
   @Column(name = "acct_date")
   private Date acctDate;
 
-  @Basic
+
   @Column(name = "amt")
   private BigDecimal amt;
 
-  @Basic
+
   @Column(name = "bal_dir")
   private String balDir;
 
-  @Basic
+
   @Column(name = "status")
   private long status;
 
-  @Basic
-  @Column(name = "operator")
-  private long operator;
+  /**
+   * 创建人
+   */
+  @Column(name = "create_by", updatable = false)
+  @CreatedBy
+  private Long createBy;
 
-  @Basic
-  @Column(name = "create_at")
+  /**
+   * 修改人
+   */
+  @Column(name = "modified_by")
+  @LastModifiedBy
+  private Long modifiedBy;
+
+  /**
+   * 创建时间
+   */
+  @CreatedDate
+  @Column(name = "create_at", updatable = false)
   private Timestamp createAt;
 
-  @Basic
+  /**
+   * 修改时间
+   */
+  @LastModifiedDate
   @Column(name = "update_at")
-  private Timestamp updateAt;
+  protected Timestamp updateAt;
 
   @Override
   public boolean equals(Object o) {
@@ -121,9 +144,7 @@ public class TBizAcctRecord {
     if (status != that.status) {
       return false;
     }
-    if (operator != that.operator) {
-      return false;
-    }
+
     if (acctDate != null ? !acctDate.equals(that.acctDate) : that.acctDate != null) {
       return false;
     }
@@ -156,7 +177,6 @@ public class TBizAcctRecord {
     result = 31 * result + (amt != null ? amt.hashCode() : 0);
     result = 31 * result + (balDir != null ? balDir.hashCode() : 0);
     result = 31 * result + (int) (status ^ (status >>> 32));
-    result = 31 * result + (int) (operator ^ (operator >>> 32));
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);
     return result;

@@ -7,6 +7,7 @@
     this.async = false;
     this.success = success;
     this.error = error;
+    this.contentType = "application/x-www-form-urlencoded";
   };
 
   $ax.prototype = {
@@ -19,8 +20,13 @@
         this.url = this.url + "&jstime=" + new Date().getTime();
       }
 
+      if(this.contentType == "application/json"){
+        this.data = JSON.stringify(this.data)
+      }
+
       $.ajax({
         type: this.type,
+        contentType: this.contentType,
         url: this.url,
         dataType: this.dataType,
         async: this.async,
@@ -49,11 +55,18 @@
         this.data[key] = (typeof value == "undefined") ? $("#" + key).val()
             : value;
       }
+      //alert(JSON.stringify(this.data));
       return this;
     },
 
     setData: function (data) {
       this.data = data;
+      //alert(JSON.stringify(this.data));
+      return this;
+    },
+
+    setContentType: function (data) {
+      this.contentType = data;
       return this;
     },
 

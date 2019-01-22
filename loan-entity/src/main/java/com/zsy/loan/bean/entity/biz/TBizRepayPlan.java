@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 还款计划表
@@ -26,7 +32,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "t_biz_repay_plan", schema = "loan", catalog = "")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "t_biz_repay_plan")
 public class TBizRepayPlan {
 
   @Id
@@ -34,109 +41,125 @@ public class TBizRepayPlan {
   @Column(name = "id")
   private long id;
 
-  @Basic
+
   @Column(name = "loan_no")
   private long loanNo;
 
-  @Basic
+
   @Column(name = "org_no")
   private long orgNo;
 
-  @Basic
+
   @Column(name = "product_no")
   private long productNo;
 
-  @Basic
+
   @Column(name = "cust_no")
   private long custNo;
 
-  @Basic
+
   @Column(name = "acct_date")
   private Date acctDate;
 
-  @Basic
+
   @Column(name = "term_no")
   private long termNo;
 
-  @Basic
+
   @Column(name = "rate")
   private BigDecimal rate;
 
-  @Basic
+
   @Column(name = "begin_date")
   private Date beginDate;
 
-  @Basic
+
   @Column(name = "end_date")
   private Date endDate;
 
-  @Basic
+
   @Column(name = "dd_num")
   private long ddNum;
 
-  @Basic
+
   @Column(name = "dd_date")
   private Date ddDate;
 
-  @Basic
+
   @Column(name = "external_acct")
   private String externalAcct;
 
-  @Basic
+
   @Column(name = "in_acct_no")
   private long inAcctNo;
 
-  @Basic
+
   @Column(name = "ctd_prin")
   private BigDecimal ctdPrin;
 
-  @Basic
+
   @Column(name = "ctd_bigint")
   private BigDecimal ctdBigint;
 
-  @Basic
+
   @Column(name = "ctd_serv_fee")
   private BigDecimal ctdServFee;
 
-  @Basic
+
   @Column(name = "ctd_pen")
   private BigDecimal ctdPen;
 
-  @Basic
+
   @Column(name = "paid_prin")
   private BigDecimal paidPrin;
 
-  @Basic
+
   @Column(name = "paid_bigint")
   private BigDecimal paidBigint;
 
-  @Basic
+
   @Column(name = "paid_serv_fee")
   private BigDecimal paidServFee;
 
-  @Basic
+
   @Column(name = "paid_pen")
   private BigDecimal paidPen;
 
-  @Basic
+
   @Column(name = "wav_amt")
   private BigDecimal wavAmt;
 
-  @Basic
+
   @Column(name = "status")
   private long status;
 
-  @Basic
-  @Column(name = "operator")
-  private long operator;
+  /**
+   * 创建人
+   */
+  @Column(name = "create_by", updatable = false)
+  @CreatedBy
+  private Long createBy;
 
-  @Basic
-  @Column(name = "create_at")
+  /**
+   * 修改人
+   */
+  @Column(name = "modified_by")
+  @LastModifiedBy
+  private Long modifiedBy;
+
+  /**
+   * 创建时间
+   */
+  @CreatedDate
+  @Column(name = "create_at", updatable = false)
   private Timestamp createAt;
 
-  @Basic
+  /**
+   * 修改时间
+   */
+  @LastModifiedDate
   @Column(name = "update_at")
-  private Timestamp updateAt;
+  protected Timestamp updateAt;
 
   @Override
   public boolean equals(Object o) {
@@ -174,9 +197,6 @@ public class TBizRepayPlan {
       return false;
     }
     if (status != that.status) {
-      return false;
-    }
-    if (operator != that.operator) {
       return false;
     }
     if (acctDate != null ? !acctDate.equals(that.acctDate) : that.acctDate != null) {
@@ -261,7 +281,6 @@ public class TBizRepayPlan {
     result = 31 * result + (paidPen != null ? paidPen.hashCode() : 0);
     result = 31 * result + (wavAmt != null ? wavAmt.hashCode() : 0);
     result = 31 * result + (int) (status ^ (status >>> 32));
-    result = 31 * result + (int) (operator ^ (operator >>> 32));
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);
     return result;

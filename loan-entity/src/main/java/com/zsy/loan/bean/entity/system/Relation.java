@@ -26,7 +26,7 @@ public class Relation {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "menuid")
   public Long getMenuid() {
     return menuid;
@@ -36,7 +36,7 @@ public class Relation {
     this.menuid = menuid;
   }
 
-  @Basic
+
   @Column(name = "roleid")
   public Integer getRoleid() {
     return roleid;

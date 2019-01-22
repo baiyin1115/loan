@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 转账凭证表
@@ -27,7 +33,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "t_biz_transfer_voucher_info", schema = "loan", catalog = "")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "t_biz_transfer_voucher_info")
 public class TBizTransferVoucherInfo {
 
   @Id
@@ -35,43 +42,57 @@ public class TBizTransferVoucherInfo {
   @Column(name = "id")
   private long id;
 
-  @Basic
+
   @Column(name = "in_acct_no")
   private long inAcctNo;
 
-  @Basic
+
   @Column(name = "out_acct_no")
   private long outAcctNo;
 
-  @Basic
+
   @Column(name = "amt")
   private BigDecimal amt;
 
-  @Basic
+
   @Column(name = "type")
   private long type;
 
-  @Basic
+
   @Column(name = "status")
   private long status;
 
-  @Basic
+
   @Column(name = "operator")
   private long operator;
 
-  @Basic
-  @Column(name = "create_at")
+  /**
+   * 创建人
+   */
+  @Column(name = "create_by", updatable = false)
+  @CreatedBy
+  private Long createBy;
+
+  /**
+   * 修改人
+   */
+  @Column(name = "modified_by")
+  @LastModifiedBy
+  private Long modifiedBy;
+
+  /**
+   * 创建时间
+   */
+  @CreatedDate
+  @Column(name = "create_at", updatable = false)
   private Timestamp createAt;
 
-  @Basic
+  /**
+   * 修改时间
+   */
+  @LastModifiedDate
   @Column(name = "update_at")
-  private Timestamp updateAt;
-
-  @Id
-  @Column(name = "id")
-  public long getId() {
-    return id;
-  }
+  protected Timestamp updateAt;
 
   @Override
   public boolean equals(Object o) {
@@ -99,9 +120,6 @@ public class TBizTransferVoucherInfo {
     if (status != that.status) {
       return false;
     }
-    if (operator != that.operator) {
-      return false;
-    }
     if (amt != null ? !amt.equals(that.amt) : that.amt != null) {
       return false;
     }
@@ -123,7 +141,6 @@ public class TBizTransferVoucherInfo {
     result = 31 * result + (amt != null ? amt.hashCode() : 0);
     result = 31 * result + (int) (type ^ (type >>> 32));
     result = 31 * result + (int) (status ^ (status >>> 32));
-    result = 31 * result + (int) (operator ^ (operator >>> 32));
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);
     return result;

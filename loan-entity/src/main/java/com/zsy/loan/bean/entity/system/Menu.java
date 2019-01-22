@@ -36,7 +36,7 @@ public class Menu {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "code")
   public String getCode() {
     return code;
@@ -46,7 +46,7 @@ public class Menu {
     this.code = code;
   }
 
-  @Basic
+
   @Column(name = "pcode")
   public String getPcode() {
     return pcode;
@@ -56,7 +56,7 @@ public class Menu {
     this.pcode = pcode;
   }
 
-  @Basic
+
   @Column(name = "pcodes")
   public String getPcodes() {
     return pcodes;
@@ -66,7 +66,7 @@ public class Menu {
     this.pcodes = pcodes;
   }
 
-  @Basic
+
   @Column(name = "name")
   public String getName() {
     return name;
@@ -76,7 +76,7 @@ public class Menu {
     this.name = name;
   }
 
-  @Basic
+
   @Column(name = "icon")
   public String getIcon() {
     return icon;
@@ -86,7 +86,7 @@ public class Menu {
     this.icon = icon;
   }
 
-  @Basic
+
   @Column(name = "url")
   public String getUrl() {
     return url;
@@ -96,7 +96,7 @@ public class Menu {
     this.url = url;
   }
 
-  @Basic
+
   @Column(name = "num")
   public Integer getNum() {
     return num;
@@ -106,7 +106,7 @@ public class Menu {
     this.num = num;
   }
 
-  @Basic
+
   @Column(name = "levels")
   public Integer getLevels() {
     return levels;
@@ -116,7 +116,7 @@ public class Menu {
     this.levels = levels;
   }
 
-  @Basic
+
   @Column(name = "ismenu")
   public Integer getIsmenu() {
     return ismenu;
@@ -126,7 +126,7 @@ public class Menu {
     this.ismenu = ismenu;
   }
 
-  @Basic
+
   @Column(name = "tips")
   public String getTips() {
     return tips;
@@ -136,7 +136,7 @@ public class Menu {
     this.tips = tips;
   }
 
-  @Basic
+
   @Column(name = "status")
   public Integer getStatus() {
     return status;
@@ -146,7 +146,7 @@ public class Menu {
     this.status = status;
   }
 
-  @Basic
+
   @Column(name = "isopen")
   public Integer getIsopen() {
     return isopen;

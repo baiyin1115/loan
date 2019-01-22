@@ -27,7 +27,7 @@ public class Cfg {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "cfg_name")
   public String getCfgName() {
     return cfgName;
@@ -37,7 +37,7 @@ public class Cfg {
     this.cfgName = cfgName;
   }
 
-  @Basic
+
   @Column(name = "cfg_value")
   public String getCfgValue() {
     return cfgValue;
@@ -47,7 +47,7 @@ public class Cfg {
     this.cfgValue = cfgValue;
   }
 
-  @Basic
+
   @Column(name = "cfg_desc")
   public String getCfgDesc() {
     return cfgDesc;

@@ -70,7 +70,7 @@ public class ConstantFactory implements IConstantFactory {
   }
 
   public String getDict(String key) {
-    return configCache.get(key) == null ? null : (String) dictCache.get(key);
+    return dictCache.get(key) == null ? null : (String) dictCache.get(key);
   }
   public void setDict(String key, String val) {
     dictCache.set(key, val);
@@ -475,6 +475,17 @@ public class ConstantFactory implements IConstantFactory {
       return "";
     } else {
       return info.getProductName();
+    }
+  }
+
+  @Override
+  public List<TBizProductInfo> getProductNames(List<Long> productIds) {
+    List<TBizProductInfo> infos = productInfoRepo.findAllById(productIds);
+
+    if (infos == null) {
+      return null;
+    } else {
+      return infos;
     }
   }
 

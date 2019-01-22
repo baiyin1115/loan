@@ -30,7 +30,7 @@ public class Notice {
     this.id = id;
   }
 
-  @Basic
+
   @Column(name = "title")
   public String getTitle() {
     return title;
@@ -40,7 +40,7 @@ public class Notice {
     this.title = title;
   }
 
-  @Basic
+
   @Column(name = "type")
   public Integer getType() {
     return type;
@@ -50,7 +50,7 @@ public class Notice {
     this.type = type;
   }
 
-  @Basic
+
   @Column(name = "content")
   public String getContent() {
     return content;
@@ -60,7 +60,7 @@ public class Notice {
     this.content = content;
   }
 
-  @Basic
+
   @Column(name = "createtime")
   public Date getCreatetime() {
     return createtime;
@@ -70,7 +70,7 @@ public class Notice {
     this.createtime = createtime;
   }
 
-  @Basic
+
   @Column(name = "creater")
   public Integer getCreater() {
     return creater;
