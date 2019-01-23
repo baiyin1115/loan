@@ -11,7 +11,7 @@
  Target Server Version : 50724
  File Encoding         : 65001
 
- Date: 21/01/2019 09:36:36
+ Date: 23/01/2019 21:29:48
 */
 
 SET NAMES utf8mb4;
@@ -23,14 +23,17 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `t_biz_acct`;
 CREATE TABLE `t_biz_acct`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '账户,自增',
-  `user_no` bigint(20) NOT NULL COMMENT '用户编号,如果是融资账户指的是用户编号\r\n如果是公司卡账户，为1\r\n如果是借款人账户，指的是客户编号\r\n如果是代偿账户，为4\r\n如果是暂收暂付账户，为5',
+  `user_no` bigint(20) NOT NULL COMMENT '用户编号,如果是融资账户指的是客户编号\r\n如果是公司卡账户，为1\r\n如果是借款人账户，指的是客户编号\r\n如果是代偿账户，为4\r\n如果是暂收暂付账户，为5',
   `available_balance` decimal(15, 2) NOT NULL COMMENT '可用余额,默认0.00',
   `freeze_balance` decimal(15, 2) NOT NULL COMMENT '冻结余额,默认0.00',
   `acct_type` bigint(20) NOT NULL COMMENT '账户类型,公司卡账户:1,融资账户:2,借款人账\r\n户:3,代偿账户:4,往来户:5',
-  `balance_type` bigint(20) DEFAULT NULL COMMENT '余额性质,可透支:1,不可透支:2',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `status` bigint(20) NOT NULL COMMENT '账户状态，有效:1,冻结:2,止用:3',
+  `balance_type` bigint(20) NOT NULL COMMENT '余额性质,可透支:1,不可透支:2',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '账户表（借款人,融资,公司卡账户）' ROW_FORMAT = Dynamic;
 
@@ -50,9 +53,11 @@ CREATE TABLE `t_biz_acct_record`  (
   `amt` decimal(15, 2) NOT NULL COMMENT '发生金额,',
   `bal_dir` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '发生方向,‘+/-’,通过符号表示，相对当前账户来说，是增加还是减少',
   `status` bigint(20) NOT NULL COMMENT '交易状态,成功:1,失败:2',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '账户资金流水表（资金变动流水信息）' ROW_FORMAT = Dynamic;
 
@@ -65,16 +70,26 @@ CREATE TABLE `t_biz_customer_info`  (
   `cert_no` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '证件号码,',
   `cert_type` bigint(20) NOT NULL COMMENT '证件类型,1:身份证,2:护照,3:营业执照,4:组织机构代\r\n码,5:统一社会信用代码',
   `name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '客户姓名,',
-  `gender` bigint(20) NOT NULL COMMENT '性别,1:男,2:女',
-  `mobile` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '手机号,',
+  `sex` bigint(20) NOT NULL COMMENT '性别,1:男,2:女',
+  `mobile` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '手机号,',
   `phone` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '电话,',
   `email` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '电子邮箱,',
-  `status` bigint(20) DEFAULT NULL COMMENT '客户状态,正常:1,黑名单:2',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `type` bigint(20) NOT NULL COMMENT '客户类型,1:借款人账户,2:融资人账户',
+  `status` bigint(20) NOT NULL COMMENT '客户状态,正常:1,黑名单:2,删除:3',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息表（描述的是借款人信息）' ROW_FORMAT = Dynamic;
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `cus_u_index`(`cert_no`, `cert_type`) USING BTREE COMMENT '证件号码、证件类型唯一'
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息表（描述的是借款人信息）' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of t_biz_customer_info
+-- ----------------------------
+INSERT INTO `t_biz_customer_info` VALUES (1, '130803199701014011', 1, '张三', 1, '13910673518', '04713988057', 'msjfkg@baiqishi.com', 2, 1, 1, 1, '2019-01-23 17:59:03', '2019-01-23 19:08:26', '22222\n222222222222222\n22222            \n            ');
+INSERT INTO `t_biz_customer_info` VALUES (2, '130803199701014054', 1, '操作员', 1, '13911673518', '047139880572', 'msjfkg@baiqishi.com', 2, 2, 1, 1, '2019-01-23 19:09:50', '2019-01-23 19:09:50', '的冯绍峰的是非得失            ');
 
 -- ----------------------------
 -- Table structure for t_biz_in_out_voucher_info
@@ -87,9 +102,11 @@ CREATE TABLE `t_biz_in_out_voucher_info`  (
   `amt` decimal(15, 2) NOT NULL COMMENT '金额,',
   `type` bigint(20) NOT NULL COMMENT '用途,一般预算支出:1,办公支出:2,其他支出:3,股东分润:5,对公支出:6,对公收入:7,利息收入:8',
   `status` bigint(20) NOT NULL COMMENT '状态,成功:1,失败:2',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '收支信息表（描述收支凭证信息）' ROW_FORMAT = Dynamic;
 
@@ -118,9 +135,11 @@ CREATE TABLE `t_biz_invest_info`  (
   `tot_paid_prin` decimal(15, 2) DEFAULT NULL COMMENT '已提本金累计,',
   `tot_paid_bigint` decimal(15, 2) DEFAULT NULL COMMENT '已提利息累计,',
   `tot_wav_amt` decimal(15, 2) DEFAULT NULL COMMENT '收益调整金额累计,融资提现时增加或者扣除的\r\n金额',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '融资信息表（描述融资的融资信息）' ROW_FORMAT = Dynamic;
 
@@ -143,9 +162,11 @@ CREATE TABLE `t_biz_invest_plan`  (
   `chd_bigint` decimal(15, 2) DEFAULT NULL COMMENT '本期应收利息,',
   `paid_bigint` decimal(15, 2) DEFAULT NULL COMMENT '本期已回利息,',
   `status` bigint(20) NOT NULL COMMENT '回款状态,未计息:1,已计息:2,已结息:3,已终止:4',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '回款计划表（描述融资的回款计划信息）' ROW_FORMAT = Dynamic;
 
@@ -190,9 +211,11 @@ CREATE TABLE `t_biz_loan_info`  (
   `tot_paid_pen` decimal(15, 2) DEFAULT NULL COMMENT '已还罚息累计,',
   `tot_wav_amt` decimal(15, 2) DEFAULT NULL COMMENT '减免金额累计,',
   `status` bigint(20) NOT NULL COMMENT '借据状态,登记:1,已放款:2,还款中:3,\r\n已逾期:4,已展期:5,已结清:6,已代偿:7,已终止:8',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '借据表（借款具体信息，描述具体的借款情况，整个借款的生命周期中，主要变更这个表）' ROW_FORMAT = Dynamic;
 
@@ -205,9 +228,11 @@ CREATE TABLE `t_biz_loan_voucher_info`  (
   `loan_no` bigint(20) NOT NULL COMMENT '借据编号,',
   `type` bigint(20) NOT NULL COMMENT '凭证类型,身份证:1,电子合同:2,房本:3,解押手\r\n续:4',
   `path` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '凭证存储地址,',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '借据凭证信息（描述的是贷款的原始凭证信息）' ROW_FORMAT = Dynamic;
 
@@ -228,11 +253,20 @@ CREATE TABLE `t_biz_product_info`  (
   `repay_type` bigint(20) NOT NULL COMMENT '产品还款方式,等额本息:1,等额本金:2;\r\n先息后本:3,先息后本（上交息）:4,一次性还本付息:5',
   `loan_type` bigint(20) NOT NULL COMMENT '贷款类型,抵押:1,网签:2,3:其他',
   `cycle_interval` bigint(20) NOT NULL COMMENT '周期间隔,一期的天数，默认是30天',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
-  `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
+  `update_at` datetime(0) NOT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间,默认为当前系统时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品代码表（描述贷款产品信息，不同公司的产品编码不能一致）' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品代码表（描述贷款产品信息，不同公司的产品编码不能一致）' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of t_biz_product_info
+-- ----------------------------
+INSERT INTO `t_biz_product_info` VALUES (3, 28, '投资公司上交息001', 0.053, 0.000, 1, 0.020, 1, 1, 4, 1, 30, 1, 1, '2019-01-22 15:07:02', '2019-01-23 13:56:59', NULL);
+INSERT INTO `t_biz_product_info` VALUES (25, 24, '典当行上交息002', 0.053, 0.000, 1, 0.020, 1, 1, 1, 1, 30, 1, 1, '2019-01-22 20:13:47', '2019-01-22 20:43:42', NULL);
+INSERT INTO `t_biz_product_info` VALUES (26, 28, '投资公司上交息002', 0.053, 0.000, 1, 0.020, 1, 2, 1, 1, 30, 1, 1, '2019-01-22 20:44:05', '2019-01-23 13:56:41', NULL);
 
 -- ----------------------------
 -- Table structure for t_biz_repay_plan
@@ -263,9 +297,11 @@ CREATE TABLE `t_biz_repay_plan`  (
   `paid_pen` decimal(15, 2) DEFAULT NULL COMMENT '本期已收罚息,',
   `wav_amt` decimal(15, 2) DEFAULT NULL COMMENT '本期减免,',
   `status` bigint(20) NOT NULL COMMENT '还款状态,待还:1,已还:2,已逾期:3,\r\n已代偿:4,已终止:5',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '还款计划表（客户的还款计划信息，根据借据的期数，生成多条记录）' ROW_FORMAT = Dynamic;
 
@@ -280,9 +316,11 @@ CREATE TABLE `t_biz_transfer_voucher_info`  (
   `amt` decimal(15, 2) NOT NULL COMMENT '金额,',
   `type` bigint(20) NOT NULL COMMENT '用途,账户调整:1,服务费补偿:2,融资人贴息:3,其他:4',
   `status` bigint(20) NOT NULL COMMENT '状态,成功:1,失败:2',
-  `operator` bigint(20) NOT NULL COMMENT '操作员,',
+  `create_by` bigint(20) NOT NULL COMMENT '操作员,',
+  `modified_by` bigint(20) NOT NULL COMMENT '修改操作员,',
   `create_at` datetime(0) DEFAULT NULL COMMENT '创建时间,',
   `update_at` datetime(0) DEFAULT NULL COMMENT '更新时间,默认为当前系统时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '转账凭证表（描述转账凭证信息）' ROW_FORMAT = Dynamic;
 
@@ -338,7 +376,7 @@ CREATE TABLE `t_sys_dict`  (
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '名称',
   `tips` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '提示',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '字典表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 114 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '字典表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_sys_dict
@@ -394,6 +432,13 @@ INSERT INTO `t_sys_dict` VALUES (97, '3', 94, '其它', NULL);
 INSERT INTO `t_sys_dict` VALUES (104, '0', 0, '罚息基数', NULL);
 INSERT INTO `t_sys_dict` VALUES (105, '1', 104, '本金', NULL);
 INSERT INTO `t_sys_dict` VALUES (106, '2', 104, '未还金额', NULL);
+INSERT INTO `t_sys_dict` VALUES (107, '0', 0, '客户类型', NULL);
+INSERT INTO `t_sys_dict` VALUES (108, '1', 107, '借款人账户', NULL);
+INSERT INTO `t_sys_dict` VALUES (109, '2', 107, '融资人账户', NULL);
+INSERT INTO `t_sys_dict` VALUES (110, '0', 0, '客户状态', NULL);
+INSERT INTO `t_sys_dict` VALUES (111, '1', 110, '正常', NULL);
+INSERT INTO `t_sys_dict` VALUES (112, '2', 110, '黑名单', NULL);
+INSERT INTO `t_sys_dict` VALUES (113, '3', 110, '删除', NULL);
 
 -- ----------------------------
 -- Table structure for t_sys_expense
@@ -423,7 +468,7 @@ CREATE TABLE `t_sys_login_log`  (
   `message` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '具体消息',
   `ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '登录ip',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 463 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '登录记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 551 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '登录记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_sys_menu
@@ -444,7 +489,7 @@ CREATE TABLE `t_sys_menu`  (
   `status` int(65) DEFAULT NULL COMMENT '菜单状态 :  1:启用   0:不启用',
   `isopen` int(11) DEFAULT NULL COMMENT '是否打开:    1:打开   0:不打开',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 228 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '菜单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 244 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '菜单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_sys_menu
@@ -516,16 +561,15 @@ INSERT INTO `t_sys_menu` VALUES (204, 'task_update', 'task', '[0],[system],[task
 INSERT INTO `t_sys_menu` VALUES (205, 'task_delete', 'task', '[0],[system],[task],', '删除任务', '', '/task/delete', 3, 3, 0, '', 1, NULL);
 INSERT INTO `t_sys_menu` VALUES (206, 'biz', '0', '[0],', '业务管理', 'fa-shopping-cart', '#', 6, 1, 1, NULL, 1, NULL);
 INSERT INTO `t_sys_menu` VALUES (207, 'product', 'biz', '[0],[biz],', '产品管理', '', '/product', 1, 2, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (208, 'product_acc', 'business', '[0],[business],', '产品账户', '', '#', 2, 2, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (209, 'customer', 'business', '[0],[business],', '客户管理', '', '#', 3, 2, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (210, 'bill', 'business', '[0],[business],', '借据管理', '', '#', 4, 2, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (211, 'repayment', 'business', '[0],[business],', '还款管理', '', '#', 5, 2, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (212, 'txn', 'business', '[0],[business],', '交易流水', '', '#', 6, 2, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (213, 'upAccount', 'business', '[0],[business],', '调账', '', '#', 7, 2, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (214, 'report', 'business', '[0],[business],', '报表查询', '', '#', 8, 2, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (215, 'loan_account_serial', 'report', '[0],[business],[report],', '贷款台账报表查询', '', '#', 1, 3, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (216, 'in_out_details', 'report', '[0],[business],[report],', '收支明细报表查询', '', '#', 2, 3, 1, NULL, 1, NULL);
-INSERT INTO `t_sys_menu` VALUES (217, 'interest', 'report', '[0],[business],[report],', '利润报表查询', '', '#', 3, 3, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (208, 'account', 'biz', '[0],[biz],', '账户管理', '', '/account', 3, 2, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (209, 'customer', 'biz', '[0],[biz],', '客户管理', '', '/customer', 2, 2, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (210, 'loan', 'biz', '[0],[biz],', '贷款管理', '', '/loan', 4, 2, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (212, 'txn', 'query', '[0],[biz],[query],', '交易流水查询', '', '/query/txn', 8, 3, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (213, 'accountant', 'biz', '[0],[biz],', '账务处理', '', '/accountant', 7, 2, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (214, 'query', 'biz', '[0],[biz],', '数据查询', '', '/query', 9, 2, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (215, 'loan_account_serial', 'query', '[0],[biz],[query],', '贷款台账报表查询', '', '/query/loan_account_serial', 1, 3, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (216, 'in_out_details', 'query', '[0],[biz],[query],', '收支明细报表查询', '', '/query/in_outDetails', 2, 3, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (217, 'interest', 'query', '[0],[biz],[query],', '利润报表查询', '', '/query/interest', 3, 3, 1, NULL, 1, NULL);
 INSERT INTO `t_sys_menu` VALUES (218, 'mgr_setDept', 'mgr', '[0],[system],[mgr],', '分配部门', '', '/mgr/setDept', 11, 3, 0, NULL, 1, NULL);
 INSERT INTO `t_sys_menu` VALUES (219, 'mgr_depo_assign', 'mgr', '[0],[system],[mgr],', '分配部门跳转', '', '/mgr/depo_assign', 12, 3, 0, NULL, 1, NULL);
 INSERT INTO `t_sys_menu` VALUES (221, 'product_add', 'product', '[0],[biz],[product],', '添加产品', NULL, '/product/add', 1, 3, 0, NULL, 1, NULL);
@@ -534,6 +578,22 @@ INSERT INTO `t_sys_menu` VALUES (224, 'product_delete', 'product', '[0],[biz],[p
 INSERT INTO `t_sys_menu` VALUES (225, 'to_product_update', 'product', '[0],[biz],[product],', '修改产品跳转', '', '/product/product_update', 4, 3, 0, NULL, 1, NULL);
 INSERT INTO `t_sys_menu` VALUES (226, 'product_list', 'product', '[0],[biz],[product],', '产品列表', '', '/product/list', 5, 3, 0, NULL, 1, NULL);
 INSERT INTO `t_sys_menu` VALUES (227, 'product_detail', 'product', '[0],[biz],[product],', '产品详情', '', '/product/detail', 6, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (228, 'customer_add', 'customer', '[0],[biz],[customer],', '添加客户', NULL, '/customer/add', 1, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (229, 'customer_update', 'customer', '[0],[biz],[customer],', '修改客户', NULL, '/customer/update', 2, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (230, 'customer_delete', 'customer', '[0],[biz],[customer],', '删除客户', '', '/customer/logic_delete', 3, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (231, 'to_customer_update', 'customer', '[0],[biz],[customer],', '修改客户跳转', '', '/customer/customer_update', 4, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (232, 'customer_list', 'customer', '[0],[biz],[customer],', '客户列表', '', '/customer/list', 5, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (233, 'customer_detail', 'customer', '[0],[biz],[customer],', '客户详情', '', '/customer/detail', 6, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (234, 'in_out', 'biz', '[0],[biz],', '收支管理', '', '/biz/in_out', 5, 2, 1, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (235, 'set_black_list', 'customer', '[0],[biz],[customer],', '设置黑名单', '', '/customer/set_black_list', 7, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (236, 'account_add', 'account', '[0],[biz],[account],', '添加账户', NULL, '/account/add', 1, 3, 0, NULL, 1, 0);
+INSERT INTO `t_sys_menu` VALUES (237, 'account_edit', 'account', '[0],[biz],[account],', '修改账户', NULL, '/account/edit', 2, 3, 0, NULL, 1, 0);
+INSERT INTO `t_sys_menu` VALUES (238, 'account_delete', 'account', '[0],[biz],[account],', '删除账户', NULL, '/account/delete', 3, 3, 0, NULL, 1, 0);
+INSERT INTO `t_sys_menu` VALUES (239, 'account_freeze', 'account', '[0],[biz],[account],', '冻结账户', NULL, '/account/freeze', 5, 3, 0, NULL, 1, 0);
+INSERT INTO `t_sys_menu` VALUES (240, 'account_unfreeze', 'account', '[0],[biz],[account],', '解除冻结账户', NULL, '/account/unfreeze', 6, 3, 0, NULL, 1, 0);
+INSERT INTO `t_sys_menu` VALUES (241, 'to_account_edit', 'account', '[0],[biz],[account],', '编辑账户跳转', '', '/account/account_edit', 9, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (242, 'account_list', 'account', '[0],[biz],[account],', '账户列表', '', '/account/list', 10, 3, 0, NULL, 1, NULL);
+INSERT INTO `t_sys_menu` VALUES (243, 'cancel_black_list', 'customer', '[0],[biz],[customer],', '取消黑名单', '', '/customer/cancel_black_list', 8, 3, 0, NULL, 1, NULL);
 
 -- ----------------------------
 -- Table structure for t_sys_notice
@@ -569,13 +629,13 @@ CREATE TABLE `t_sys_operation_log`  (
   `succeed` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '是否成功',
   `message` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 130 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '操作日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 287 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '操作日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_sys_operation_log
 -- ----------------------------
-INSERT INTO `t_sys_operation_log` VALUES (128, '业务日志', '清空业务日志', 1, 'com.zsy.loan.admin.modular.controller.system.LogController', 'delLog', '2019-01-21 09:36:02', '成功', '主键id=null');
-INSERT INTO `t_sys_operation_log` VALUES (129, '业务日志', '清空登录日志', 1, 'com.zsy.loan.admin.modular.controller.system.LoginLogController', 'delLog', '2019-01-21 09:36:07', '成功', '主键id=null');
+INSERT INTO `t_sys_operation_log` VALUES (285, '业务日志', '清空业务日志', 1, 'com.zsy.loan.admin.modular.controller.system.LogController', 'delLog', '2019-01-23 21:29:26', '成功', '主键id=null');
+INSERT INTO `t_sys_operation_log` VALUES (286, '业务日志', '清空登录日志', 1, 'com.zsy.loan.admin.modular.controller.system.LoginLogController', 'delLog', '2019-01-23 21:29:31', '成功', '主键id=null');
 
 -- ----------------------------
 -- Table structure for t_sys_relation
@@ -586,7 +646,7 @@ CREATE TABLE `t_sys_relation`  (
   `menuid` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '菜单id',
   `roleid` int(11) DEFAULT NULL COMMENT '角色id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 699 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1460 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_sys_relation
@@ -596,95 +656,109 @@ INSERT INTO `t_sys_relation` VALUES (305, '207', 2);
 INSERT INTO `t_sys_relation` VALUES (306, '208', 2);
 INSERT INTO `t_sys_relation` VALUES (307, '209', 2);
 INSERT INTO `t_sys_relation` VALUES (308, '210', 2);
-INSERT INTO `t_sys_relation` VALUES (309, '211', 2);
 INSERT INTO `t_sys_relation` VALUES (310, '212', 2);
 INSERT INTO `t_sys_relation` VALUES (311, '213', 2);
 INSERT INTO `t_sys_relation` VALUES (312, '214', 2);
 INSERT INTO `t_sys_relation` VALUES (313, '215', 2);
 INSERT INTO `t_sys_relation` VALUES (314, '216', 2);
 INSERT INTO `t_sys_relation` VALUES (315, '217', 2);
-INSERT INTO `t_sys_relation` VALUES (617, '105', 1);
-INSERT INTO `t_sys_relation` VALUES (618, '106', 1);
-INSERT INTO `t_sys_relation` VALUES (619, '107', 1);
-INSERT INTO `t_sys_relation` VALUES (620, '108', 1);
-INSERT INTO `t_sys_relation` VALUES (621, '109', 1);
-INSERT INTO `t_sys_relation` VALUES (622, '110', 1);
-INSERT INTO `t_sys_relation` VALUES (623, '111', 1);
-INSERT INTO `t_sys_relation` VALUES (624, '112', 1);
-INSERT INTO `t_sys_relation` VALUES (625, '113', 1);
-INSERT INTO `t_sys_relation` VALUES (626, '165', 1);
-INSERT INTO `t_sys_relation` VALUES (627, '166', 1);
-INSERT INTO `t_sys_relation` VALUES (628, '167', 1);
-INSERT INTO `t_sys_relation` VALUES (629, '218', 1);
-INSERT INTO `t_sys_relation` VALUES (630, '219', 1);
-INSERT INTO `t_sys_relation` VALUES (631, '114', 1);
-INSERT INTO `t_sys_relation` VALUES (632, '115', 1);
-INSERT INTO `t_sys_relation` VALUES (633, '116', 1);
-INSERT INTO `t_sys_relation` VALUES (634, '117', 1);
-INSERT INTO `t_sys_relation` VALUES (635, '118', 1);
-INSERT INTO `t_sys_relation` VALUES (636, '162', 1);
-INSERT INTO `t_sys_relation` VALUES (637, '163', 1);
-INSERT INTO `t_sys_relation` VALUES (638, '164', 1);
-INSERT INTO `t_sys_relation` VALUES (639, '119', 1);
-INSERT INTO `t_sys_relation` VALUES (640, '120', 1);
-INSERT INTO `t_sys_relation` VALUES (641, '121', 1);
-INSERT INTO `t_sys_relation` VALUES (642, '122', 1);
-INSERT INTO `t_sys_relation` VALUES (643, '150', 1);
-INSERT INTO `t_sys_relation` VALUES (644, '151', 1);
-INSERT INTO `t_sys_relation` VALUES (645, '128', 1);
-INSERT INTO `t_sys_relation` VALUES (646, '134', 1);
-INSERT INTO `t_sys_relation` VALUES (647, '158', 1);
-INSERT INTO `t_sys_relation` VALUES (648, '159', 1);
-INSERT INTO `t_sys_relation` VALUES (649, '130', 1);
-INSERT INTO `t_sys_relation` VALUES (650, '131', 1);
-INSERT INTO `t_sys_relation` VALUES (651, '135', 1);
-INSERT INTO `t_sys_relation` VALUES (652, '136', 1);
-INSERT INTO `t_sys_relation` VALUES (653, '137', 1);
-INSERT INTO `t_sys_relation` VALUES (654, '152', 1);
-INSERT INTO `t_sys_relation` VALUES (655, '153', 1);
-INSERT INTO `t_sys_relation` VALUES (656, '154', 1);
-INSERT INTO `t_sys_relation` VALUES (657, '132', 1);
-INSERT INTO `t_sys_relation` VALUES (658, '138', 1);
-INSERT INTO `t_sys_relation` VALUES (659, '139', 1);
-INSERT INTO `t_sys_relation` VALUES (660, '140', 1);
-INSERT INTO `t_sys_relation` VALUES (661, '155', 1);
-INSERT INTO `t_sys_relation` VALUES (662, '156', 1);
-INSERT INTO `t_sys_relation` VALUES (663, '157', 1);
-INSERT INTO `t_sys_relation` VALUES (664, '133', 1);
-INSERT INTO `t_sys_relation` VALUES (665, '160', 1);
-INSERT INTO `t_sys_relation` VALUES (666, '161', 1);
-INSERT INTO `t_sys_relation` VALUES (667, '141', 1);
-INSERT INTO `t_sys_relation` VALUES (668, '142', 1);
-INSERT INTO `t_sys_relation` VALUES (669, '143', 1);
-INSERT INTO `t_sys_relation` VALUES (670, '144', 1);
-INSERT INTO `t_sys_relation` VALUES (671, '202', 1);
-INSERT INTO `t_sys_relation` VALUES (672, '203', 1);
-INSERT INTO `t_sys_relation` VALUES (673, '204', 1);
-INSERT INTO `t_sys_relation` VALUES (674, '205', 1);
-INSERT INTO `t_sys_relation` VALUES (675, '145', 1);
-INSERT INTO `t_sys_relation` VALUES (676, '148', 1);
-INSERT INTO `t_sys_relation` VALUES (677, '149', 1);
-INSERT INTO `t_sys_relation` VALUES (678, '199', 1);
-INSERT INTO `t_sys_relation` VALUES (679, '200', 1);
-INSERT INTO `t_sys_relation` VALUES (680, '201', 1);
-INSERT INTO `t_sys_relation` VALUES (681, '206', 1);
-INSERT INTO `t_sys_relation` VALUES (682, '207', 1);
-INSERT INTO `t_sys_relation` VALUES (683, '221', 1);
-INSERT INTO `t_sys_relation` VALUES (684, '223', 1);
-INSERT INTO `t_sys_relation` VALUES (685, '224', 1);
-INSERT INTO `t_sys_relation` VALUES (686, '225', 1);
-INSERT INTO `t_sys_relation` VALUES (687, '226', 1);
-INSERT INTO `t_sys_relation` VALUES (688, '227', 1);
-INSERT INTO `t_sys_relation` VALUES (689, '208', 1);
-INSERT INTO `t_sys_relation` VALUES (690, '209', 1);
-INSERT INTO `t_sys_relation` VALUES (691, '210', 1);
-INSERT INTO `t_sys_relation` VALUES (692, '211', 1);
-INSERT INTO `t_sys_relation` VALUES (693, '212', 1);
-INSERT INTO `t_sys_relation` VALUES (694, '213', 1);
-INSERT INTO `t_sys_relation` VALUES (695, '214', 1);
-INSERT INTO `t_sys_relation` VALUES (696, '215', 1);
-INSERT INTO `t_sys_relation` VALUES (697, '216', 1);
-INSERT INTO `t_sys_relation` VALUES (698, '217', 1);
+INSERT INTO `t_sys_relation` VALUES (1363, '105', 1);
+INSERT INTO `t_sys_relation` VALUES (1364, '106', 1);
+INSERT INTO `t_sys_relation` VALUES (1365, '107', 1);
+INSERT INTO `t_sys_relation` VALUES (1366, '108', 1);
+INSERT INTO `t_sys_relation` VALUES (1367, '109', 1);
+INSERT INTO `t_sys_relation` VALUES (1368, '110', 1);
+INSERT INTO `t_sys_relation` VALUES (1369, '111', 1);
+INSERT INTO `t_sys_relation` VALUES (1370, '112', 1);
+INSERT INTO `t_sys_relation` VALUES (1371, '113', 1);
+INSERT INTO `t_sys_relation` VALUES (1372, '165', 1);
+INSERT INTO `t_sys_relation` VALUES (1373, '166', 1);
+INSERT INTO `t_sys_relation` VALUES (1374, '167', 1);
+INSERT INTO `t_sys_relation` VALUES (1375, '218', 1);
+INSERT INTO `t_sys_relation` VALUES (1376, '219', 1);
+INSERT INTO `t_sys_relation` VALUES (1377, '114', 1);
+INSERT INTO `t_sys_relation` VALUES (1378, '115', 1);
+INSERT INTO `t_sys_relation` VALUES (1379, '116', 1);
+INSERT INTO `t_sys_relation` VALUES (1380, '117', 1);
+INSERT INTO `t_sys_relation` VALUES (1381, '118', 1);
+INSERT INTO `t_sys_relation` VALUES (1382, '162', 1);
+INSERT INTO `t_sys_relation` VALUES (1383, '163', 1);
+INSERT INTO `t_sys_relation` VALUES (1384, '164', 1);
+INSERT INTO `t_sys_relation` VALUES (1385, '119', 1);
+INSERT INTO `t_sys_relation` VALUES (1386, '120', 1);
+INSERT INTO `t_sys_relation` VALUES (1387, '121', 1);
+INSERT INTO `t_sys_relation` VALUES (1388, '122', 1);
+INSERT INTO `t_sys_relation` VALUES (1389, '150', 1);
+INSERT INTO `t_sys_relation` VALUES (1390, '151', 1);
+INSERT INTO `t_sys_relation` VALUES (1391, '128', 1);
+INSERT INTO `t_sys_relation` VALUES (1392, '134', 1);
+INSERT INTO `t_sys_relation` VALUES (1393, '158', 1);
+INSERT INTO `t_sys_relation` VALUES (1394, '159', 1);
+INSERT INTO `t_sys_relation` VALUES (1395, '130', 1);
+INSERT INTO `t_sys_relation` VALUES (1396, '131', 1);
+INSERT INTO `t_sys_relation` VALUES (1397, '135', 1);
+INSERT INTO `t_sys_relation` VALUES (1398, '136', 1);
+INSERT INTO `t_sys_relation` VALUES (1399, '137', 1);
+INSERT INTO `t_sys_relation` VALUES (1400, '152', 1);
+INSERT INTO `t_sys_relation` VALUES (1401, '153', 1);
+INSERT INTO `t_sys_relation` VALUES (1402, '154', 1);
+INSERT INTO `t_sys_relation` VALUES (1403, '132', 1);
+INSERT INTO `t_sys_relation` VALUES (1404, '138', 1);
+INSERT INTO `t_sys_relation` VALUES (1405, '139', 1);
+INSERT INTO `t_sys_relation` VALUES (1406, '140', 1);
+INSERT INTO `t_sys_relation` VALUES (1407, '155', 1);
+INSERT INTO `t_sys_relation` VALUES (1408, '156', 1);
+INSERT INTO `t_sys_relation` VALUES (1409, '157', 1);
+INSERT INTO `t_sys_relation` VALUES (1410, '133', 1);
+INSERT INTO `t_sys_relation` VALUES (1411, '160', 1);
+INSERT INTO `t_sys_relation` VALUES (1412, '161', 1);
+INSERT INTO `t_sys_relation` VALUES (1413, '141', 1);
+INSERT INTO `t_sys_relation` VALUES (1414, '142', 1);
+INSERT INTO `t_sys_relation` VALUES (1415, '143', 1);
+INSERT INTO `t_sys_relation` VALUES (1416, '144', 1);
+INSERT INTO `t_sys_relation` VALUES (1417, '202', 1);
+INSERT INTO `t_sys_relation` VALUES (1418, '203', 1);
+INSERT INTO `t_sys_relation` VALUES (1419, '204', 1);
+INSERT INTO `t_sys_relation` VALUES (1420, '205', 1);
+INSERT INTO `t_sys_relation` VALUES (1421, '145', 1);
+INSERT INTO `t_sys_relation` VALUES (1422, '148', 1);
+INSERT INTO `t_sys_relation` VALUES (1423, '149', 1);
+INSERT INTO `t_sys_relation` VALUES (1424, '199', 1);
+INSERT INTO `t_sys_relation` VALUES (1425, '200', 1);
+INSERT INTO `t_sys_relation` VALUES (1426, '201', 1);
+INSERT INTO `t_sys_relation` VALUES (1427, '206', 1);
+INSERT INTO `t_sys_relation` VALUES (1428, '207', 1);
+INSERT INTO `t_sys_relation` VALUES (1429, '221', 1);
+INSERT INTO `t_sys_relation` VALUES (1430, '223', 1);
+INSERT INTO `t_sys_relation` VALUES (1431, '224', 1);
+INSERT INTO `t_sys_relation` VALUES (1432, '225', 1);
+INSERT INTO `t_sys_relation` VALUES (1433, '226', 1);
+INSERT INTO `t_sys_relation` VALUES (1434, '227', 1);
+INSERT INTO `t_sys_relation` VALUES (1435, '208', 1);
+INSERT INTO `t_sys_relation` VALUES (1436, '236', 1);
+INSERT INTO `t_sys_relation` VALUES (1437, '237', 1);
+INSERT INTO `t_sys_relation` VALUES (1438, '238', 1);
+INSERT INTO `t_sys_relation` VALUES (1439, '239', 1);
+INSERT INTO `t_sys_relation` VALUES (1440, '240', 1);
+INSERT INTO `t_sys_relation` VALUES (1441, '241', 1);
+INSERT INTO `t_sys_relation` VALUES (1442, '242', 1);
+INSERT INTO `t_sys_relation` VALUES (1443, '209', 1);
+INSERT INTO `t_sys_relation` VALUES (1444, '228', 1);
+INSERT INTO `t_sys_relation` VALUES (1445, '229', 1);
+INSERT INTO `t_sys_relation` VALUES (1446, '230', 1);
+INSERT INTO `t_sys_relation` VALUES (1447, '231', 1);
+INSERT INTO `t_sys_relation` VALUES (1448, '232', 1);
+INSERT INTO `t_sys_relation` VALUES (1449, '233', 1);
+INSERT INTO `t_sys_relation` VALUES (1450, '235', 1);
+INSERT INTO `t_sys_relation` VALUES (1451, '243', 1);
+INSERT INTO `t_sys_relation` VALUES (1452, '210', 1);
+INSERT INTO `t_sys_relation` VALUES (1453, '213', 1);
+INSERT INTO `t_sys_relation` VALUES (1454, '214', 1);
+INSERT INTO `t_sys_relation` VALUES (1455, '212', 1);
+INSERT INTO `t_sys_relation` VALUES (1456, '215', 1);
+INSERT INTO `t_sys_relation` VALUES (1457, '216', 1);
+INSERT INTO `t_sys_relation` VALUES (1458, '217', 1);
+INSERT INTO `t_sys_relation` VALUES (1459, '234', 1);
 
 -- ----------------------------
 -- Table structure for t_sys_role
@@ -784,7 +858,7 @@ CREATE TABLE `t_sys_user`  (
 -- Records of t_sys_user
 -- ----------------------------
 INSERT INTO `t_sys_user` VALUES (1, NULL, 'admin', '6ab1f386d715cfb6be85de941d438b02', '8pgby', '管理员', '2017-05-05 00:00:00', 2, '', '', '1', '0', 1, '2016-01-29 08:49:53', NULL, NULL, NULL, 25);
-INSERT INTO `t_sys_user` VALUES (47, NULL, 'gaoyanpeng', '153a71ac3b83dda573ff3b967be0c262', '7zjbn', '高彦鹏', NULL, 1, '', '', '2', '0,24,28', 1, '2019-01-07 14:24:02', NULL, NULL, NULL, NULL);
+INSERT INTO `t_sys_user` VALUES (47, NULL, 'gaoyanpeng', '153a71ac3b83dda573ff3b967be0c262', '7zjbn', '高彦鹏', NULL, 1, '', '', '2', NULL, 1, '2019-01-07 14:24:02', NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for t_sys_user_role
@@ -817,5 +891,20 @@ CREATE TABLE `t_sys_user_unit`  (
 -- Records of t_sys_user_unit
 -- ----------------------------
 INSERT INTO `t_sys_user_unit` VALUES ('43e6c8d6d3134e5aa41ae2a85b87586b', 'cff0e38c05544085b56dee30e97383b4', 1);
+
+-- ----------------------------
+-- Table structure for tb_sys_status
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_sys_status`;
+CREATE TABLE `tb_sys_status`  (
+  `id` bigint(20) NOT NULL,
+  `acct_date` date NOT NULL COMMENT '系统时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of tb_sys_status
+-- ----------------------------
+INSERT INTO `tb_sys_status` VALUES (2019, '2019-01-23');
 
 SET FOREIGN_KEY_CHECKS = 1;
