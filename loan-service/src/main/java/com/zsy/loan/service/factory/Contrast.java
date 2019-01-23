@@ -1,6 +1,6 @@
 package com.zsy.loan.service.factory;
 
-import com.zsy.loan.bean.dictmap.base.AbstractDictMap;
+import com.zsy.loan.bean.dictmap.AbstractDictMap;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.StrKit;
 

@@ -12,11 +12,11 @@
     <class>com.zsy.loan.bean.entity.system.OperationLog</class>
     <class>com.zsy.loan.bean.entity.system.Relation</class>
     <class>com.zsy.loan.bean.entity.system.Role</class>
-    <class>com.zsy.loan.bean.entity.system.RoleMenu</class>
+    <!--<class>com.zsy.loan.bean.entity.system.RoleMenu</class>-->
     <class>com.zsy.loan.bean.entity.system.User</class>
-    <class>com.zsy.loan.bean.entity.system.UserRole</class>
+    <!--<class>com.zsy.loan.bean.entity.system.UserRole</class>-->
     <class>com.zsy.loan.bean.entity.system.UserUnit</class>
-    <class>com.zsy.loan.bean.entity.system.TSysFinalAuditPlus</class>
+    <!--<class>com.zsy.loan.bean.entity.system.TSysFinalAuditPlus</class>-->
     <class>com.zsy.loan.bean.entity.biz.TBizAcct</class>
     <class>com.zsy.loan.bean.entity.biz.TBizAcctRecord</class>
     <class>com.zsy.loan.bean.entity.biz.TBizCustomerInfo</class>
@@ -29,22 +29,22 @@
     <class>com.zsy.loan.bean.entity.biz.TBizRepayPlan</class>
     <class>com.zsy.loan.bean.entity.biz.TBizTransferVoucherInfo</class>
     <properties>
-      <property name="eclipselink.jdbc.url" value="jdbc:mysql://localhost:3306/edu_finance"/>
-      <property name="eclipselink.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-      <property name="eclipselink.jdbc.user"/>
-      <property name="eclipselink.jdbc.password"/>
-      <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/edu_finance"/>
-      <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-      <property name="hibernate.connection.username"/>
-      <property name="hibernate.connection.password"/>
-      <property name="openjpa.ConnectionURL" value="jdbc:mysql://localhost:3306/edu_finance"/>
-      <property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver"/>
-      <property name="openjpa.ConnectionUserName"/>
-      <property name="openjpa.ConnectionPassword"/>
-      <property name="toplink.jdbc.url" value="jdbc:mysql://localhost:3306/loan"/>
-      <property name="toplink.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-      <property name="toplink.jdbc.user"/>
-      <property name="toplink.jdbc.password"/>
+      <!--<property name="eclipselink.jdbc.url" value="jdbc:mysql://localhost:3306/edu_finance"/>-->
+      <!--<property name="eclipselink.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->
+      <!--<property name="eclipselink.jdbc.user"/>-->
+      <!--<property name="eclipselink.jdbc.password"/>-->
+      <!--<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/edu_finance"/>-->
+      <!--<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>-->
+      <!--<property name="hibernate.connection.username"/>-->
+      <!--<property name="hibernate.connection.password"/>-->
+      <!--<property name="openjpa.ConnectionURL" value="jdbc:mysql://localhost:3306/edu_finance"/>-->
+      <!--<property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver"/>-->
+      <!--<property name="openjpa.ConnectionUserName"/>-->
+      <!--<property name="openjpa.ConnectionPassword"/>-->
+      <!--<property name="toplink.jdbc.url" value="jdbc:mysql://localhost:3306/loan"/>-->
+      <!--<property name="toplink.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->
+      <!--<property name="toplink.jdbc.user"/>-->
+      <!--<property name="toplink.jdbc.password"/>-->
     </properties>
   </persistence-unit>
 </persistence>

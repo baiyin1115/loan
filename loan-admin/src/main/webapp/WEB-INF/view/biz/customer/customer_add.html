@@ -1,0 +1,65 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="customerInfoForm">
+
+            <input type="hidden" id="id" value="">
+
+            <div class="row">
+                <div class="col-sm-6 b-r">
+
+                    <#input id="certNo" name="证件号码" underline="false"/>
+
+                    <#select id="certType" name="证件类型" underline="false">
+                        @for(dict in constant.getDicts('证件类型')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#input id="name" name="客户姓名" underline="false"/>
+
+                    <#select id="sex" name="性别" underline="false">
+                        @for(dict in constant.getDicts('性别')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#input id="mobile" name="手机号" underline="false"/>
+
+                </div>
+                <div class="col-sm-6">
+                    <#input id="phone" name="固定电话" underline="false"/>
+
+                    <#input id="email" name="电子邮箱" underline="false"/>
+
+                    <#select id="type" name="客户类型" underline="false">
+                        @for(dict in constant.getDicts('客户类型')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#select id="status" name="客户状态" underline="false">
+                        @for(dict in constant.getDicts('客户状态')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+                </div>
+            </div>
+            <div class="row" >
+                <div class="col-sm-9">
+                <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50"/>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="CustomerInfoDlg.addSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="CustomerInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/customer/customer_info.js"></script>
+@}

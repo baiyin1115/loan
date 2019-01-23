@@ -30,4 +30,6 @@ public interface CacheConstantKey {
   String MENU_NAME = "menu_name_";
   String SYS_USER_NAME = "SYS_USER_NAME";
   String DICT_ORG_ALL = "公司";
+
+  String SYS = "sys_";
 }

@@ -184,18 +184,18 @@ public interface IConstantFactory {
   String getLoanTypeName(Long id);
 
   /**
-   * 获取产品名称
-   */
-  String getProductName(Long deptId);
-
-  /**
-   * 获取产品名称
-   */
-  List<TBizProductInfo> getProductNames(List<Long> deptId);
-
-  /**
    * 获取公司名称
    */
   String getOrgNoName(Integer id);
+
+  /**
+   * 获取客户类型名称
+   */
+  String getCustomerTypeName(Long id);
+
+  /**
+   * 获取客户状态名称
+   */
+  String getCustomerStatusName(Long id);
 
 }

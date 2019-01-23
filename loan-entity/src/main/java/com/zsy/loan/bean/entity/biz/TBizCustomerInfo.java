@@ -37,7 +37,7 @@ public class TBizCustomerInfo {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
 
   @Column(name = "cert_no")
@@ -45,15 +45,15 @@ public class TBizCustomerInfo {
 
 
   @Column(name = "cert_type")
-  private long certType;
+  private Long certType;
 
 
   @Column(name = "name")
   private String name;
 
 
-  @Column(name = "gender")
-  private long gender;
+  @Column(name = "sex")
+  private Long sex;
 
 
   @Column(name = "mobile")
@@ -67,6 +67,8 @@ public class TBizCustomerInfo {
   @Column(name = "email")
   private String email;
 
+  @Column(name = "type")
+  private Long type;
 
   @Column(name = "status")
   private Long status;
@@ -99,6 +101,9 @@ public class TBizCustomerInfo {
   @Column(name = "update_at")
   protected Timestamp updateAt;
 
+  @Column(name = "remark")
+  private String remark;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -116,7 +121,7 @@ public class TBizCustomerInfo {
     if (certType != that.certType) {
       return false;
     }
-    if (gender != that.gender) {
+    if (sex != that.sex) {
       return false;
     }
 
@@ -154,7 +159,7 @@ public class TBizCustomerInfo {
     result = 31 * result + (certNo != null ? certNo.hashCode() : 0);
     result = 31 * result + (int) (certType ^ (certType >>> 32));
     result = 31 * result + (name != null ? name.hashCode() : 0);
-    result = 31 * result + (int) (gender ^ (gender >>> 32));
+    result = 31 * result + (int) (sex ^ (sex >>> 32));
     result = 31 * result + (mobile != null ? mobile.hashCode() : 0);
     result = 31 * result + (phone != null ? phone.hashCode() : 0);
     result = 31 * result + (email != null ? email.hashCode() : 0);

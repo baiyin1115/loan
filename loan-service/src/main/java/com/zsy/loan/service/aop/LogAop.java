@@ -2,7 +2,7 @@ package com.zsy.loan.service.aop;
 
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.core.ShiroUser;
-import com.zsy.loan.bean.dictmap.base.AbstractDictMap;
+import com.zsy.loan.bean.dictmap.AbstractDictMap;
 import com.zsy.loan.bean.vo.SpringContextHolder;
 import com.zsy.loan.dao.cache.impl.SessionCache;
 import com.zsy.loan.service.system.LogObjectHolder;

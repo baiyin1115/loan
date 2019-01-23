@@ -88,6 +88,9 @@ public class TBizInOutVoucherInfo {
   @Column(name = "update_at")
   protected Timestamp updateAt;
 
+  @Column(name = "remark")
+  private String remark;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

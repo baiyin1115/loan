@@ -4,7 +4,7 @@ import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.constant.factory.PageFactory;
-import com.zsy.loan.bean.dictmap.ProductDict;
+import com.zsy.loan.bean.dictmap.biz.ProductDict;
 import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.exception.LoanException;
@@ -13,10 +13,9 @@ import com.zsy.loan.bean.request.ProductInfoRequest;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.system.UserRepository;
 import com.zsy.loan.service.biz.impl.ProductServiceImpl;
-import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.ProductWarpper;
+import com.zsy.loan.service.warpper.biz.ProductWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.factory.Page;
 import java.util.List;
@@ -32,7 +31,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -47,9 +45,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ProductController extends BaseController {
 
   private String PREFIX = "/biz/product/";
-
-  @Resource
-  UserRepository userRepository;
 
   @Resource
   ProductInfoRepo productInfoRepo;
@@ -90,23 +85,18 @@ public class ProductController extends BaseController {
   /**
    * 新增产品
    */
-  @BussinessLog(value = "添加产品", key = "productName", dict = ProductDict.class)
+  @BussinessLog(value = "添加产品", dict = ProductDict.class)
   @RequestMapping(value = "/add")
   @Permission
   @ResponseBody
   public Object add(@Valid @RequestBody ProductInfoRequest product, BindingResult error) {
 
-    List<ObjectError> errors = error.getAllErrors();
-    if (CollectionUtils.isNotEmpty(errors)) {
-      StringBuilder errorMsg = new StringBuilder();
-      errors.stream().forEach(x -> errorMsg.append(x.getDefaultMessage()).append(";"));
-      throw new LoanException(BizExceptionEnum.REQUEST_NULL, errorMsg.toString());
-    }
+    /**
+     * 处理error
+     */
+    exportErr(error);
 
-    //设置操作员
-    product.setOperator(ShiroKit.getUser().getId());
-
-    return productService.save(product,false);
+    return productService.save(product);
   }
 
   /**
@@ -118,12 +108,13 @@ public class ProductController extends BaseController {
   public Object list(String condition) {
 //    List<TBizProductInfo> list = productService.query(condition);
 //    return super.warpObject(new ProductWarpper(BeanUtil.objectsToMaps(list)));
-      Page<TBizProductInfo> page = new PageFactory<TBizProductInfo>().defaultPage();
+    Page<TBizProductInfo> page = new PageFactory<TBizProductInfo>().defaultPage();
 
-      page = productService.getTBizProducts(page, condition);
-      page.setRecords(
-          (List<TBizProductInfo>) new ProductWarpper(BeanUtil.objectsToMaps(page.getRecords())).warp());
-      return super.packForBT(page);
+    page = productService.getTBizProducts(page, condition);
+    page.setRecords(
+        (List<TBizProductInfo>) new ProductWarpper(BeanUtil.objectsToMaps(page.getRecords()))
+            .warp());
+    return super.packForBT(page);
   }
 
   /**
@@ -139,42 +130,39 @@ public class ProductController extends BaseController {
   /**
    * 修改产品
    */
-  @BussinessLog(value = "修改产品", key = "productName", dict = ProductDict.class)
+  @BussinessLog(value = "修改产品", dict = ProductDict.class)
   @RequestMapping(value = "/update")
   @Permission
   @ResponseBody
   public Object update(@Valid @RequestBody ProductInfoRequest product, BindingResult error) {
-    List<ObjectError> errors = error.getAllErrors();
-    if (CollectionUtils.isNotEmpty(errors)) {
-      StringBuilder errorMsg = new StringBuilder();
-      errors.stream().forEach(x -> errorMsg.append(x.getDefaultMessage()).append(";"));
-      throw new LoanException(BizExceptionEnum.REQUEST_NULL, errorMsg.toString());
-    }
+    /**
+     * 处理error
+     */
+    exportErr(error);
 
     if (product.getId() == null) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
-    //设置操作员
-    product.setOperator(ShiroKit.getUser().getId());
-
-    productService.save(product,true);
+    productService.save(product);
     return SUCCESS_TIP;
   }
 
   /**
    * 删除产品
    */
-  @BussinessLog(value = "删除产品", key = "productName", dict = ProductDict.class)
-  @RequestMapping(value = "/delete",method= RequestMethod.POST)
+  @BussinessLog(value = "删除产品", dict = ProductDict.class)
+  @RequestMapping(value = "/delete", method = RequestMethod.POST)
   @Permission
   @ResponseBody
   @OpLog
   public Object delete(@RequestBody List<Long> productIds) {
+
     //缓存被删除的产品名称
-    LogObjectHolder.me().set(ConstantFactory.me().getProductNames(productIds));
+    LogObjectHolder.me().set(productService.getProductNames(productIds));
     productInfoRepo.deleteByIds(productIds);
     return SUCCESS_TIP;
+
   }
 
 }

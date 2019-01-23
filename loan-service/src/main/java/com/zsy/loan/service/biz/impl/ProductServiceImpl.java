@@ -78,12 +78,32 @@ public class ProductServiceImpl {
     return page;
   }
 
-  public Object save(ProductInfoRequest product, boolean isUp) {
+  public Object save(ProductInfoRequest product) {
 
     TBizProductInfo info = TBizProductInfo.builder().build();
     BeanUtils.copyProperties(product, info);
 
     return productRepo.save(info);
 
+  }
+
+  public String getProductName(Long productId) {
+    TBizProductInfo info = productRepo.findById(productId).get();
+
+    if (info == null) {
+      return "";
+    } else {
+      return info.getProductName();
+    }
+  }
+
+  public List<TBizProductInfo> getProductNames(List<Long> productIds) {
+    List<TBizProductInfo> infos = productRepo.findAllById(productIds);
+
+    if (infos == null) {
+      return null;
+    } else {
+      return infos;
+    }
   }
 }

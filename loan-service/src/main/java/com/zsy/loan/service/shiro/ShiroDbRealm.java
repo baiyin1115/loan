@@ -1,5 +1,6 @@
 package com.zsy.loan.service.shiro;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.service.shiro.factory.IShiro;
@@ -8,6 +9,7 @@ import com.zsy.loan.utils.ToolUtil;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -20,6 +22,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
+@Slf4j
 public class ShiroDbRealm extends AuthorizingRealm {
 
   /**
@@ -64,6 +67,8 @@ public class ShiroDbRealm extends AuthorizingRealm {
     SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
     info.addStringPermissions(permissionSet);
     info.addRoles(roleNameSet);
+
+    log.info("当前登录用户的权限信息："+ JSONUtils.toJSONString(permissionSet));
     return info;
   }
 

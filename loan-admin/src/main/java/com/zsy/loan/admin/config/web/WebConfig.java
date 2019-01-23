@@ -107,7 +107,8 @@ public class WebConfig implements WebMvcConfigurer {
     // super.addInterceptors(registry);
     // 注册自定义的拦截器passwordStateInterceptor
     registry.addInterceptor(logInterceptor)
-        .addPathPatterns("/**"); //匹配要过滤的路径
+        .addPathPatterns("/**") //匹配要过滤的路径
+        .excludePathPatterns("/static/**");
   }
 
 }

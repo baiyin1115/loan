@@ -1,6 +1,6 @@
-package com.zsy.loan.bean.dictmap;
+package com.zsy.loan.bean.dictmap.biz;
 
-import com.zsy.loan.bean.dictmap.base.AbstractDictMap;
+import com.zsy.loan.bean.dictmap.AbstractDictMap;
 
 /**
  * 产品的映射

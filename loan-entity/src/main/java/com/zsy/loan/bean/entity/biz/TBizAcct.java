@@ -60,6 +60,10 @@ public class TBizAcct {
   @Column(name = "balance_type", nullable = true)
   private Long balanceType;
 
+
+  @Column(name = "status", nullable = true)
+  private Long status;
+
   /**
    * 创建人
    */
@@ -87,6 +91,9 @@ public class TBizAcct {
   @LastModifiedDate
   @Column(name = "update_at")
   protected Timestamp updateAt;
+
+  @Column(name = "remark")
+  private String remark;
 
   @Override
   public boolean equals(Object o) {

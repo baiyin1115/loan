@@ -1,7 +1,7 @@
 package com.zsy.loan.bean.annotion.core;
 
-import com.zsy.loan.bean.dictmap.base.AbstractDictMap;
-import com.zsy.loan.bean.dictmap.SystemDict;
+import com.zsy.loan.bean.dictmap.AbstractDictMap;
+import com.zsy.loan.bean.dictmap.system.SystemDict;
 
 import java.lang.annotation.*;
 

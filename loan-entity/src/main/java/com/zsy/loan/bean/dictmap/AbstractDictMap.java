@@ -1,4 +1,4 @@
-package com.zsy.loan.bean.dictmap.base;
+package com.zsy.loan.bean.dictmap;
 
 import java.util.HashMap;
 

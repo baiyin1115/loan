@@ -443,6 +443,16 @@ public class ConstantFactory implements IConstantFactory {
   }
 
   @Override
+  public String getCustomerTypeName(Long id) {
+    return getDictsByName("客户类型", String.valueOf(id));
+  }
+
+  @Override
+  public String getCustomerStatusName(Long id) {
+    return getDictsByName("客户状态", String.valueOf(id));
+  }
+
+  @Override
   public String getServiceFeeTypeName(Long id) {
     return getDictsByName("服务费收取方式", String.valueOf(id));
   }
@@ -467,26 +477,5 @@ public class ConstantFactory implements IConstantFactory {
     return getDictsByName("贷款类型", String.valueOf(id));
   }
 
-  @Override
-  public String getProductName(Long productId) {
-    TBizProductInfo info = productInfoRepo.findById(productId).get();
-
-    if (info == null) {
-      return "";
-    } else {
-      return info.getProductName();
-    }
-  }
-
-  @Override
-  public List<TBizProductInfo> getProductNames(List<Long> productIds) {
-    List<TBizProductInfo> infos = productInfoRepo.findAllById(productIds);
-
-    if (infos == null) {
-      return null;
-    } else {
-      return infos;
-    }
-  }
 
 }

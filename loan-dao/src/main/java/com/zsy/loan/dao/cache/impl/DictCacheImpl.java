@@ -43,7 +43,7 @@ public class DictCacheImpl implements DictCache {
 
   @Override
   public String getDict(Integer dictId) {
-    return (String) get(CacheConstantKey.DICT_NAME + String.valueOf(dictId));
+    return get(CacheConstantKey.DICT_NAME + String.valueOf(dictId)).toString();
   }
 
   @Override

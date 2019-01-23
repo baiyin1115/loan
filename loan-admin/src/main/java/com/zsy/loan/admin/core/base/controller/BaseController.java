@@ -2,10 +2,14 @@ package com.zsy.loan.admin.core.base.controller;
 
 import com.zsy.loan.admin.core.base.tips.SuccessTip;
 import com.zsy.loan.admin.core.util.FileUtil;
+import com.zsy.loan.bean.enumeration.BizExceptionEnum;
+import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.service.warpper.BaseControllerWarpper;
 import com.zsy.loan.utils.HttpKit;
 import com.zsy.loan.utils.factory.Page;
 import com.zsy.loan.admin.core.page.PageInfoBT;
+import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 
 public class BaseController {
 
@@ -111,5 +117,14 @@ public class BaseController {
     headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
     headers.setContentDispositionFormData("attachment", dfileName);
     return new ResponseEntity<byte[]>(fileBytes, headers, HttpStatus.CREATED);
+  }
+
+  protected void exportErr(BindingResult error) {
+    List<ObjectError> errors = error.getAllErrors();
+    if (CollectionUtils.isNotEmpty(errors)) {
+      StringBuilder errorMsg = new StringBuilder();
+      errors.stream().forEach(x -> errorMsg.append(x.getDefaultMessage()).append(";"));
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL, errorMsg.toString());
+    }
   }
 }

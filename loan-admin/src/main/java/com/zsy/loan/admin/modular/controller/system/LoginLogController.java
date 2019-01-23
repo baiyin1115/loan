@@ -6,7 +6,7 @@ import com.zsy.loan.bean.constant.Const;
 import com.zsy.loan.bean.constant.factory.PageFactory;
 import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.service.system.LoginLogService;
-import com.zsy.loan.service.warpper.LogWarpper;
+import com.zsy.loan.service.warpper.system.LogWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.entity.system.LoginLog;
 import com.zsy.loan.dao.system.LoginLogRepository;

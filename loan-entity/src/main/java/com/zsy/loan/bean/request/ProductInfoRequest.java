@@ -2,6 +2,8 @@ package com.zsy.loan.bean.request;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import javax.persistence.Column;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -9,9 +11,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 /**
- * 产品代码表
+ * 产品请求
  *
  * @Author zhangxh
  * @Date 2019-01-18  12:30
@@ -72,7 +78,19 @@ public class ProductInfoRequest {
   @Max(value = 30, message = "[周期间隔]不能超过30天")
   private Long cycleInterval;
 
-  @ApiModelProperty(required = true, value = "操作员")
-  private Long operator;
+  @ApiModelProperty(required = true, value = "创建人")
+  private Long createBy;
+
+  @ApiModelProperty(required = true, value = "修改人")
+  private Long modifiedBy;
+
+  @ApiModelProperty(required = true, value = "创建时间")
+  private Timestamp createAt;
+
+  @ApiModelProperty(required = true, value = "修改时间")
+  private Timestamp updateAt;
+
+  @ApiModelProperty(required = true, value = "备注")
+  private String remark;
 
 }

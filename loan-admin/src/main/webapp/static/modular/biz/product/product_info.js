@@ -66,43 +66,6 @@ ProductInfoDlg.close = function () {
   parent.layer.close(window.parent.Product.layerIndex);
 }
 
-// /**
-//  * 点击产品ztree列表的选项时
-//  *
-//  * @param e
-//  * @param treeId
-//  * @param treeNode
-//  * @returns
-//  */
-// ProductInfoDlg.onClickProduct = function (e, treeId, treeNode) {
-//   $("#pName").attr("value", ProductInfoDlg.zTreeInstance.getSelectedVal());
-//   $("#pid").attr("value", treeNode.id);
-// }
-
-// /**
-//  * 显示产品选择的树
-//  *
-//  * @returns
-//  */
-// ProductInfoDlg.showProductSelectTree = function () {
-//   var pName = $("#pName");
-//   var pNameOffset = $("#pName").offset();
-//   $("#parentProductMenu").css({
-//     left: pNameOffset.left + "px",
-//     top: pNameOffset.top + pName.outerHeight() + "px"
-//   }).slideDown("fast");
-//
-//   $("body").bind("mousedown", onBodyDown);
-// }
-//
-// /**
-//  * 隐藏产品选择的树
-//  */
-// ProductInfoDlg.hideProductSelectTree = function () {
-//   $("#parentProductMenu").fadeOut("fast");
-//   $("body").unbind("mousedown", onBodyDown);// mousedown当鼠标按下就可以触发，不用弹起
-// }
-
 /**
  * 收集数据
  */
@@ -132,8 +95,6 @@ ProductInfoDlg.addSubmit = function () {
   if (!this.validate()) {
     return;
   }
-
- // Feng.success("添加成功3333");
 
   //提交信息
   var ajax = new $ax(Feng.ctxPath + "/product/add", function (data) {
@@ -173,14 +134,6 @@ ProductInfoDlg.editSubmit = function () {
   ajax.start();
 }
 
-// function onBodyDown(event) {
-//   if (!(event.target.id == "menuBtn" || event.target.id == "parentProductMenu"
-//       || $(
-//           event.target).parents("#parentProductMenu").length > 0)) {
-//     ProductInfoDlg.hideProductSelectTree();
-//   }
-// }
-//
 $(function () {
   Feng.initValidator("productInfoForm", ProductInfoDlg.validateFields);
 
@@ -192,8 +145,4 @@ $(function () {
   $("#repayType").val($("#repayTypeValue").val());
   $("#loanType").val($("#loanTypeValue").val());
 
-  // var ztree = new $ZTree("parentProductMenuTree", "/product/tree");
-  // ztree.bindOnClick(ProductInfoDlg.onClickProduct);
-  // ztree.init();
-  // ProductInfoDlg.zTreeInstance = ztree;
 });

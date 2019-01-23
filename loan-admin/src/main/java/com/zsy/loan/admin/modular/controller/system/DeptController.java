@@ -2,7 +2,7 @@ package com.zsy.loan.admin.modular.controller.system;
 
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
-import com.zsy.loan.bean.dictmap.DeptDict;
+import com.zsy.loan.bean.dictmap.system.DeptDict;
 import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.admin.core.base.controller.BaseController;
@@ -12,7 +12,7 @@ import com.zsy.loan.dao.system.UserRepository;
 import com.zsy.loan.service.system.DeptService;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.DeptWarpper;
+import com.zsy.loan.service.warpper.system.DeptWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.bean.entity.system.Dept;

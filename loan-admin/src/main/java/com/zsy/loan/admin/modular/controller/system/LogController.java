@@ -8,7 +8,7 @@ import com.zsy.loan.bean.constant.state.BizLogType;
 import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.admin.core.support.BeanKit;
 import com.zsy.loan.service.system.OperationLogService;
-import com.zsy.loan.service.warpper.LogWarpper;
+import com.zsy.loan.service.warpper.system.LogWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.entity.system.OperationLog;
 import com.zsy.loan.dao.system.OperationLogRepository;
