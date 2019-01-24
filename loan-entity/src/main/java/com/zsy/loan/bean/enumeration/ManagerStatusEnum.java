@@ -1,4 +1,4 @@
-package com.zsy.loan.bean.constant.state;
+package com.zsy.loan.bean.enumeration;
 
 /**
  * 管理员的状态
@@ -6,14 +6,14 @@ package com.zsy.loan.bean.constant.state;
  * @author fengshuonan
  * @Date 2017年1月10日 下午9:54:13
  */
-public enum ManagerStatus {
+public enum ManagerStatusEnum {
 
   OK(1, "启用"), FREEZED(2, "冻结"), DELETED(3, "被删除");
 
   int code;
   String message;
 
-  ManagerStatus(int code, String message) {
+  ManagerStatusEnum(int code, String message) {
     this.code = code;
     this.message = message;
   }
@@ -38,7 +38,7 @@ public enum ManagerStatus {
     if (value == null) {
       return "";
     } else {
-      for (ManagerStatus ms : ManagerStatus.values()) {
+      for (ManagerStatusEnum ms : ManagerStatusEnum.values()) {
         if (ms.getCode() == value) {
           return ms.getMessage();
         }

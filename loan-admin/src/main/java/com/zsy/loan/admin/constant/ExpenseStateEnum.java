@@ -1,4 +1,4 @@
-package com.zsy.loan.admin.common.constant.state;
+package com.zsy.loan.admin.constant;
 
 /**
  * 是否是菜单的枚举
@@ -6,7 +6,7 @@ package com.zsy.loan.admin.common.constant.state;
  * @author fengshuonan
  * @date 2017年6月1日22:50:11
  */
-public enum ExpenseState {
+public enum ExpenseStateEnum {
 
   SUBMITING(1, "待提交"),
   CHECKING(2, "待审核"),
@@ -16,7 +16,7 @@ public enum ExpenseState {
   int code;
   String message;
 
-  ExpenseState(int code, String message) {
+  ExpenseStateEnum(int code, String message) {
     this.code = code;
     this.message = message;
   }
@@ -41,7 +41,7 @@ public enum ExpenseState {
     if (status == null) {
       return "";
     } else {
-      for (ExpenseState s : ExpenseState.values()) {
+      for (ExpenseStateEnum s : ExpenseStateEnum.values()) {
         if (s.getCode() == status) {
           return s.getMessage();
         }

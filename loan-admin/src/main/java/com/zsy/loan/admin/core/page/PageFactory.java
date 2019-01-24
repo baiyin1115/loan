@@ -1,11 +1,10 @@
-package com.zsy.loan.bean.constant.factory;
+package com.zsy.loan.admin.core.page;
 
-import com.zsy.loan.bean.constant.state.Order;
+import com.zsy.loan.bean.enumeration.OrderEnum;
 import com.zsy.loan.utils.HttpKit;
+import com.zsy.loan.utils.StringUtils;
 import com.zsy.loan.utils.ToolUtil;
 import com.zsy.loan.utils.factory.Page;
-import com.zsy.loan.utils.StringUtils;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -39,7 +38,7 @@ public class PageFactory<T> {
       return page;
     } else {
       Page<T> page = new Page<>((offset / limit + 1), limit, sort);
-      if (Order.ASC.getDes().equals(order)) {
+      if (OrderEnum.ASC.getDes().equals(order)) {
         page.setAsc(true);
       } else {
         page.setAsc(false);

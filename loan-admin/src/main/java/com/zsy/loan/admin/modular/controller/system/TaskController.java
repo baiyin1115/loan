@@ -1,7 +1,7 @@
 package com.zsy.loan.admin.modular.controller.system;
 
 import com.zsy.loan.admin.core.base.controller.BaseController;
-import com.zsy.loan.bean.constant.factory.PageFactory;
+import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.bean.entity.system.Task;
 import com.zsy.loan.bean.entity.system.TaskLog;

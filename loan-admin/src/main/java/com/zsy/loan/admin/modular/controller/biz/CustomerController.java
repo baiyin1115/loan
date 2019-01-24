@@ -1,9 +1,9 @@
 package com.zsy.loan.admin.modular.controller.biz;
 
 import com.zsy.loan.admin.core.base.controller.BaseController;
+import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
-import com.zsy.loan.bean.constant.factory.PageFactory;
 import com.zsy.loan.bean.dictmap.biz.CustomerDict;
 import com.zsy.loan.bean.entity.biz.TBizCustomerInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;

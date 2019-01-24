@@ -1,9 +1,8 @@
 package com.zsy.loan.service.system.impl;
 
 import com.zsy.loan.bean.constant.cache.CacheConstantKey;
-import com.zsy.loan.bean.constant.state.ManagerStatus;
-import com.zsy.loan.bean.constant.state.MenuStatus;
-import com.zsy.loan.bean.entity.biz.TBizProductInfo;
+import com.zsy.loan.bean.enumeration.ManagerStatusEnum;
+import com.zsy.loan.bean.enumeration.MenuStatusEnum;
 import com.zsy.loan.bean.entity.system.Dept;
 import com.zsy.loan.bean.entity.system.Dict;
 import com.zsy.loan.bean.entity.system.Menu;
@@ -354,7 +353,7 @@ public class ConstantFactory implements IConstantFactory {
    */
   @Override
   public String getStatusName(Integer status) {
-    return ManagerStatus.valueOf(status);
+    return ManagerStatusEnum.valueOf(status);
   }
 
   /**
@@ -362,7 +361,7 @@ public class ConstantFactory implements IConstantFactory {
    */
   @Override
   public String getMenuStatusName(Integer status) {
-    return MenuStatus.valueOf(status);
+    return MenuStatusEnum.valueOf(status);
   }
 
   /**

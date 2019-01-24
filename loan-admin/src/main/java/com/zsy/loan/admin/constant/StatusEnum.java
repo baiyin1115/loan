@@ -1,4 +1,4 @@
-package com.zsy.loan.admin.common.constant.enums;
+package com.zsy.loan.admin.constant;
 
 import java.io.Serializable;
 
@@ -7,13 +7,13 @@ import java.io.Serializable;
  *
  * @author zhfish
  */
-public enum Status {
+public enum StatusEnum {
   未启用(0),
   启用(1);
 
   private int value;
 
-  Status(final int value) {
+  StatusEnum(final int value) {
     this.value = value;
   }
 

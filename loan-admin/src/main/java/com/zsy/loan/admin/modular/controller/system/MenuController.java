@@ -8,13 +8,13 @@ import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.admin.core.base.tips.Tip;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.admin.core.support.BeanKit;
-import com.zsy.loan.bean.constant.state.MenuStatus;
+import com.zsy.loan.bean.enumeration.MenuStatusEnum;
 import com.zsy.loan.dao.system.MenuRepository;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.MenuService;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.warpper.system.MenuWarpper;
+import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.ToolUtil;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
@@ -112,7 +112,7 @@ public class MenuController extends BaseController {
     }
     //设置父级菜单编号
     menuService.menuSetPcode(menu);
-    menu.setStatus(MenuStatus.ENABLE.getCode());
+    menu.setStatus(MenuStatusEnum.ENABLE.getCode());
     this.menuRepository.save(menu);
     return SUCCESS_TIP;
   }
@@ -164,7 +164,7 @@ public class MenuController extends BaseController {
     //设置父级菜单编号
     menuService.menuSetPcode(menu);
 
-    menu.setStatus(MenuStatus.ENABLE.getCode());
+    menu.setStatus(MenuStatusEnum.ENABLE.getCode());
     this.menuRepository.save(menu);
     return SUCCESS_TIP;
   }

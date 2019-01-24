@@ -1,4 +1,4 @@
-package com.zsy.loan.bean.constant.state;
+package com.zsy.loan.bean.enumeration;
 
 /**
  * 日志类型
@@ -6,7 +6,7 @@ package com.zsy.loan.bean.constant.state;
  * @author fengshuonan
  * @Date 2017年1月22日 下午12:14:59
  */
-public enum LogType {
+public enum LogTypeEnum {
 
   LOGIN("登录日志"),
   LOGIN_FAIL("登录失败日志"),
@@ -16,7 +16,7 @@ public enum LogType {
 
   String message;
 
-  LogType(String message) {
+  LogTypeEnum(String message) {
     this.message = message;
   }
 

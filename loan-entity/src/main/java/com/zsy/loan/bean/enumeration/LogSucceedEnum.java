@@ -1,4 +1,4 @@
-package com.zsy.loan.bean.constant.state;
+package com.zsy.loan.bean.enumeration;
 
 /**
  * 业务是否成功的日志记录
@@ -6,14 +6,14 @@ package com.zsy.loan.bean.constant.state;
  * @author fengshuonan
  * @Date 2017年1月22日 下午12:14:59
  */
-public enum LogSucceed {
+public enum LogSucceedEnum {
 
   SUCCESS("成功"),
   FAIL("失败");
 
   String message;
 
-  LogSucceed(String message) {
+  LogSucceedEnum(String message) {
     this.message = message;
   }
 

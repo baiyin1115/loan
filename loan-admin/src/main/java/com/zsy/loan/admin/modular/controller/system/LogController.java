@@ -1,14 +1,14 @@
 package com.zsy.loan.admin.modular.controller.system;
 
+import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.constant.Const;
-import com.zsy.loan.bean.constant.factory.PageFactory;
-import com.zsy.loan.bean.constant.state.BizLogType;
+import com.zsy.loan.bean.enumeration.BizLogTypeEnum;
 import com.zsy.loan.admin.core.base.controller.BaseController;
-import com.zsy.loan.admin.core.support.BeanKit;
 import com.zsy.loan.service.system.OperationLogService;
 import com.zsy.loan.service.warpper.system.LogWarpper;
+import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.entity.system.OperationLog;
 import com.zsy.loan.dao.system.OperationLogRepository;
@@ -63,7 +63,7 @@ public class LogController extends BaseController {
     Page<OperationLog> page = new PageFactory<OperationLog>().defaultPage();
 
     page = operationLogService
-        .getOperationLogs(page, beginTime, endTime, logName, BizLogType.valueOf(logType));
+        .getOperationLogs(page, beginTime, endTime, logName, BizLogTypeEnum.valueOf(logType));
     page.setRecords(
         (List<OperationLog>) new LogWarpper(BeanUtil.objectsToMaps(page.getRecords())).warp());
     return super.packForBT(page);

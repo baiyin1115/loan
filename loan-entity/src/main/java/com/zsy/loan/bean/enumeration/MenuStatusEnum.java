@@ -1,20 +1,20 @@
-package com.zsy.loan.admin.common.constant.state;
+package com.zsy.loan.bean.enumeration;
 
 /**
- * 是否是菜单的枚举
+ * 菜单的状态
  *
  * @author fengshuonan
- * @date 2017年6月1日22:50:11
+ * @Date 2017年1月22日 下午12:14:59
  */
-public enum IsMenu {
+public enum MenuStatusEnum {
 
-  YES(1, "是"),
-  NO(0, "不是");//不是菜单的是按钮
+  ENABLE(1, "启用"),
+  DISABLE(0, "禁用");
 
   int code;
   String message;
 
-  IsMenu(int code, String message) {
+  MenuStatusEnum(int code, String message) {
     this.code = code;
     this.message = message;
   }
@@ -39,7 +39,7 @@ public enum IsMenu {
     if (status == null) {
       return "";
     } else {
-      for (IsMenu s : IsMenu.values()) {
+      for (MenuStatusEnum s : MenuStatusEnum.values()) {
         if (s.getCode() == status) {
           return s.getMessage();
         }

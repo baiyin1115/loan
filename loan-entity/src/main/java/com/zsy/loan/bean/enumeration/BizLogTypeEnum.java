@@ -1,4 +1,4 @@
-package com.zsy.loan.bean.constant.state;
+package com.zsy.loan.bean.enumeration;
 
 /**
  * 业务日志类型
@@ -6,7 +6,7 @@ package com.zsy.loan.bean.constant.state;
  * @author fengshuonan
  * @Date 2017年1月22日 下午12:14:59
  */
-public enum BizLogType {
+public enum BizLogTypeEnum {
 
   ALL(0, null),//全部日志
   BUSSINESS(1, "业务日志"),
@@ -15,7 +15,7 @@ public enum BizLogType {
   Integer val;
   String message;
 
-  BizLogType(Integer val, String message) {
+  BizLogTypeEnum(Integer val, String message) {
     this.val = val;
     this.message = message;
   }
@@ -40,7 +40,7 @@ public enum BizLogType {
     if (value == null) {
       return null;
     } else {
-      for (BizLogType bizLogType : BizLogType.values()) {
+      for (BizLogTypeEnum bizLogType : BizLogTypeEnum.values()) {
         if (bizLogType.getVal().equals(value)) {
           return bizLogType.getMessage();
         }

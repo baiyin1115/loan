@@ -18,7 +18,7 @@ import com.zsy.loan.service.factory.UserFactory;
 import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.warpper.system.UserWarpper;
 import com.zsy.loan.utils.BeanUtil;
-import com.zsy.loan.bean.constant.state.ManagerStatus;
+import com.zsy.loan.bean.enumeration.ManagerStatusEnum;
 import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.dao.system.UserRepository;
 import com.zsy.loan.utils.Convert;
@@ -231,7 +231,7 @@ public class UserMgrController extends BaseController {
     // 完善账号信息
     user.setSalt(ToolUtil.getRandomString(5));
     user.setPassword(MD5.md5(user.getPassword(), user.getSalt()));
-    user.setStatus(ManagerStatus.OK.getCode());
+    user.setStatus(ManagerStatusEnum.OK.getCode());
     user.setCreatetime(new Date());
 
     this.userRepository.save(UserFactory.createUser(user, new User()));
@@ -282,7 +282,7 @@ public class UserMgrController extends BaseController {
     }
     assertAuth(userId);
     User user = userRepository.findById(userId).get();
-    user.setStatus(ManagerStatus.DELETED.getCode());
+    user.setStatus(ManagerStatusEnum.DELETED.getCode());
     userRepository.save(user);
     return SUCCESS_TIP;
   }
@@ -336,7 +336,7 @@ public class UserMgrController extends BaseController {
     }
     assertAuth(userId);
     User user = userRepository.findById(userId).get();
-    user.setStatus(ManagerStatus.FREEZED.getCode());
+    user.setStatus(ManagerStatusEnum.FREEZED.getCode());
     userRepository.save(user);
     return SUCCESS_TIP;
   }
@@ -354,7 +354,7 @@ public class UserMgrController extends BaseController {
     }
     assertAuth(userId);
     User user = userRepository.findById(userId).get();
-    user.setStatus(ManagerStatus.OK.getCode());
+    user.setStatus(ManagerStatusEnum.OK.getCode());
     userRepository.save(user);
     return SUCCESS_TIP;
   }

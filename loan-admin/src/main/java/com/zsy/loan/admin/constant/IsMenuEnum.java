@@ -1,20 +1,20 @@
-package com.zsy.loan.admin.common.constant.state;
+package com.zsy.loan.admin.constant;
 
 /**
- * 菜单是否打开的状态
+ * 是否是菜单的枚举
  *
  * @author fengshuonan
- * @Date 2017年4月8日10:12:15
+ * @date 2017年6月1日22:50:11
  */
-public enum MenuOpenStatus {
+public enum IsMenuEnum {
 
-  OPEN(1, "打开"),
-  CLOSE(0, "关闭");
+  YES(1, "是"),
+  NO(0, "不是");//不是菜单的是按钮
 
   int code;
   String message;
 
-  MenuOpenStatus(int code, String message) {
+  IsMenuEnum(int code, String message) {
     this.code = code;
     this.message = message;
   }
@@ -39,7 +39,7 @@ public enum MenuOpenStatus {
     if (status == null) {
       return "";
     } else {
-      for (MenuOpenStatus s : MenuOpenStatus.values()) {
+      for (IsMenuEnum s : IsMenuEnum.values()) {
         if (s.getCode() == status) {
           return s.getMessage();
         }

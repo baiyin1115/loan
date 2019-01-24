@@ -1,4 +1,4 @@
-package com.zsy.loan.admin.common.constant;
+package com.zsy.loan.admin.constant;
 
 /**
  * 多数据源的枚举
@@ -6,7 +6,7 @@ package com.zsy.loan.admin.common.constant;
  * @author fengshuonan
  * @date 2017年3月5日 上午10:15:02
  */
-public interface DatasourceEnum {
+public interface DatasourceConstant {
 
   String DATA_SOURCE_loan = "dataSourceloan";      //loan数据源
 

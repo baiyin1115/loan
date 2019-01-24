@@ -1,4 +1,4 @@
-package com.zsy.loan.bean.constant.state;
+package com.zsy.loan.bean.enumeration;
 
 /**
  * 数据库排序
@@ -6,13 +6,13 @@ package com.zsy.loan.bean.constant.state;
  * @author fengshuonan
  * @Date 2017年5月31日20:48:41
  */
-public enum Order {
+public enum OrderEnum {
 
   ASC("asc"), DESC("desc");
 
   private String des;
 
-  Order(String des) {
+  OrderEnum(String des) {
     this.des = des;
   }
 

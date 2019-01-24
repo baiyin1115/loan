@@ -1,20 +1,20 @@
-package com.zsy.loan.bean.constant.state;
+package com.zsy.loan.admin.constant;
 
 /**
- * 菜单的状态
+ * 菜单是否打开的状态
  *
  * @author fengshuonan
- * @Date 2017年1月22日 下午12:14:59
+ * @Date 2017年4月8日10:12:15
  */
-public enum MenuStatus {
+public enum MenuOpenStatusEnum {
 
-  ENABLE(1, "启用"),
-  DISABLE(0, "禁用");
+  OPEN(1, "打开"),
+  CLOSE(0, "关闭");
 
   int code;
   String message;
 
-  MenuStatus(int code, String message) {
+  MenuOpenStatusEnum(int code, String message) {
     this.code = code;
     this.message = message;
   }
@@ -39,7 +39,7 @@ public enum MenuStatus {
     if (status == null) {
       return "";
     } else {
-      for (MenuStatus s : MenuStatus.values()) {
+      for (MenuOpenStatusEnum s : MenuOpenStatusEnum.values()) {
         if (s.getCode() == status) {
           return s.getMessage();
         }

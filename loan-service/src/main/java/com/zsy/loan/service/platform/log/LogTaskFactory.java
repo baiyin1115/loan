@@ -1,7 +1,7 @@
 package com.zsy.loan.service.platform.log;
 
-import com.zsy.loan.bean.constant.state.LogSucceed;
-import com.zsy.loan.bean.constant.state.LogType;
+import com.zsy.loan.bean.enumeration.LogSucceedEnum;
+import com.zsy.loan.bean.enumeration.LogTypeEnum;
 import com.zsy.loan.bean.entity.system.LoginLog;
 import com.zsy.loan.bean.entity.system.OperationLog;
 import com.zsy.loan.bean.vo.SpringContextHolder;
@@ -33,7 +33,7 @@ public class LogTaskFactory {
       public void run() {
         try {
           LoginLog loginLog = LogFactory
-              .createLoginLog(LogType.LOGIN, userId, null, ip);
+              .createLoginLog(LogTypeEnum.LOGIN, userId, null, ip);
           loginLogRepository.save(loginLog);
         } catch (Exception e) {
           logger.error("创建登录日志异常!", e);
@@ -47,7 +47,7 @@ public class LogTaskFactory {
       @Override
       public void run() {
         LoginLog loginLog = LogFactory.createLoginLog(
-            LogType.LOGIN_FAIL, null, "账号:" + username + "," + msg, ip);
+            LogTypeEnum.LOGIN_FAIL, null, "账号:" + username + "," + msg, ip);
         try {
           loginLogRepository.save(loginLog);
         } catch (Exception e) {
@@ -62,7 +62,7 @@ public class LogTaskFactory {
       @Override
       public void run() {
         LoginLog loginLog = LogFactory
-            .createLoginLog(LogType.EXIT, userId, null, ip);
+            .createLoginLog(LogTypeEnum.EXIT, userId, null, ip);
         try {
           loginLogRepository.save(loginLog);
         } catch (Exception e) {
@@ -78,8 +78,8 @@ public class LogTaskFactory {
       @Override
       public void run() {
         OperationLog operationLog = LogFactory.createOperationLog(
-            LogType.BUSSINESS, userId, bussinessName, clazzName, methodName, msg,
-            LogSucceed.SUCCESS);
+            LogTypeEnum.BUSSINESS, userId, bussinessName, clazzName, methodName, msg,
+            LogSucceedEnum.SUCCESS);
         try {
           operationLogRepository.save(operationLog);
         } catch (Exception e) {
@@ -95,7 +95,7 @@ public class LogTaskFactory {
       public void run() {
         String msg = ToolUtil.getExceptionMsg(exception);
         OperationLog operationLog = LogFactory.createOperationLog(
-            LogType.EXCEPTION, userId, "", null, null, msg, LogSucceed.FAIL);
+            LogTypeEnum.EXCEPTION, userId, "", null, null, msg, LogSucceedEnum.FAIL);
         try {
           operationLogRepository.save(operationLog);
         } catch (Exception e) {

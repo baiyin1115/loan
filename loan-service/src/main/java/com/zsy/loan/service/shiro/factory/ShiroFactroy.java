@@ -4,12 +4,11 @@ import com.google.common.collect.Lists;
 import com.zsy.loan.bean.constant.Const;
 import com.zsy.loan.bean.entity.system.Dept;
 import com.zsy.loan.bean.vo.SpringContextHolder;
-import com.zsy.loan.bean.constant.state.ManagerStatus;
+import com.zsy.loan.bean.enumeration.ManagerStatusEnum;
 import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.bean.entity.system.User;
 import com.zsy.loan.dao.system.MenuRepository;
 import com.zsy.loan.dao.system.UserRepository;
-import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.utils.Convert;
 import org.apache.shiro.authc.CredentialsException;
@@ -50,7 +49,7 @@ public class ShiroFactroy implements IShiro {
       throw new CredentialsException();
     }
     // 账号被冻结
-    if (user.getStatus() != ManagerStatus.OK.getCode()) {
+    if (user.getStatus() != ManagerStatusEnum.OK.getCode()) {
       throw new LockedAccountException();
     }
     return user;
