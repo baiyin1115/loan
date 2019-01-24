@@ -20,8 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 public interface StatusRepository extends PagingAndSortingRepository< TBizCustomerInfo, Long>
     , JpaRepository< TBizCustomerInfo, Long>, JpaSpecificationExecutor< TBizCustomerInfo> {
 
-  @Transactional(readOnly = true)
   @Query(nativeQuery = true, value="select t.acct_date from tb_sys_status t where t.id = 2019 ")
   Date getSysAcctDate();
+
+  @Query(nativeQuery = true, value="select nextval(?1) ")
+  long getNextVal(String key);
+
 
 }

@@ -9,9 +9,12 @@
             <input type="hidden" id="typeValue" value="${customer.type}">
             <input type="hidden" id="statusValue" value="${customer.status}">
 
+            <input type="hidden" id="type" value="${customer.type}">
+            <input type="hidden" id="status" value="${customer.status}">
+
             <div class="row">
                 <div class="col-sm-6 b-r">
-                    <#input id="certNo" name="证件号码" underline="true" value="${customer.certNo}"/>
+                    <#input id="certNo" name="证件号码" underline="false" value="${customer.certNo}"/>
 
                     <#select id="certType" name="证件类型" underline="false">
                         @for(dict in constant.getDicts('证件类型')){
@@ -19,7 +22,7 @@
                         @}
                     </#select>
 
-                    <#input id="name" name="客户姓名" underline="true" value="${customer.name}"/>
+                    <#input id="name" name="客户姓名" underline="false" value="${customer.name}"/>
 
                     <#select id="sex" name="性别" underline="false">
                         @for(dict in constant.getDicts('性别')){
@@ -27,30 +30,38 @@
                         @}
                     </#select>
 
-                    <#input id="mobile" name="手机号" underline="true" value="${customer.mobile}"/>
+                    <#input id="mobile" name="手机号" underline="false" value="${customer.mobile}"/>
 
 
                 </div>
                 <div class="col-sm-6">
 
-                    <#input id="phone" name="固定电话" underline="true" value="${customer.phone}"/>
+                    <#input id="phone" name="固定电话" underline="false" value="${customer.phone}"/>
 
-                    <#input id="email" name="电子邮箱" underline="true" value="${customer.email}"/>
+                    <#input id="email" name="电子邮箱" underline="false" value="${customer.email}"/>
 
+                    @/*
                     <#select id="type" name="客户类型" underline="false">
                         @for(dict in constant.getDicts('客户类型')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
 
-                    <#select id="status" name="客户状态" underline="false">
+                    <#select id="status" name="客户状态" underline="false" >
                         @for(dict in constant.getDicts('客户状态')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
+                    @*/
+                    <#input id="typeName" name="客户类型" readonly="true" value="${customer.typeName}" />
+                    <#input id="statusName" name="客户状态" readonly="true" value="${customer.statusName}" />
 
-                    <#textarea id="remark" name="备注" underline="true" rows="3"  cols="50" value="${customer.remark}"/>
+                </div>
+            </div>
 
+            <div class="row" >
+                <div class="col-sm-9">
+                    <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50" value="${customer.remark}"/>
                 </div>
             </div>
 

@@ -7,14 +7,14 @@
 
 			<div class="row">
 				<div class="col-sm-6 b-r">
-					<#input id="name" name="角色名称" underline="true" value="${role.name}"/>
-					<#input id="pName" name="上级名称" underline="true" hidden="pid" hiddenValue="${role.pid}" readonly="readonly" value="${pName}"
+					<#input id="name" name="角色名称" underline="false" value="${role.name}"/>
+					<#input id="pName" name="上级名称" underline="false" hidden="pid" hiddenValue="${role.pid}" readonly="readonly" value="${pName}"
 							clickFun="RolInfoDlg.showPNameSelectTree(); return false;"
 							style="background-color: #ffffff !important;"/>
 				</div>
 
 				<div class="col-sm-6">
-					<#input id="tips" name="别名" underline="true" value="${role.tips}"/>
+					<#input id="tips" name="别名" underline="false" value="${role.tips}"/>
 					<#input id="num" name="排序" value="${role.num}"/>
 				</div>
 			</div>

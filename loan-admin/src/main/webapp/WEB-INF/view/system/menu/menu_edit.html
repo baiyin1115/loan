@@ -8,9 +8,9 @@
 
             <div class="row">
                 <div class="col-sm-6 b-r">
-                    <#input id="name" name="名称" value="${menu.name}" underline="true" />
-                    <#input id="code" name="菜单编号" value="${menu.code}" underline="true" />
-                    <#input id="pcodeName" name="父级编号" value="${menu.pcodeName}" underline="true"
+                    <#input id="name" name="名称" value="${menu.name}" underline="false" />
+                    <#input id="code" name="菜单编号" value="${menu.code}" underline="false" />
+                    <#input id="pcodeName" name="父级编号" value="${menu.pcodeName}" underline="false"
                             hidden="pcode" readonly="readonly" hiddenValue="${menu.pcode}"
                             clickFun="MenuInfoDlg.showMenuSelectTree(); return false;"
                             style="background-color: #ffffff !important;"
@@ -23,8 +23,8 @@
 
                 </div>
                 <div class="col-sm-6">
-                    <#input id="url" name="请求地址" value="${menu.url}" underline="true" />
-                    <#input id="num" name="排序" value="${menu.num}" underline="true" />
+                    <#input id="url" name="请求地址" value="${menu.url}" underline="false" />
+                    <#input id="num" name="排序" value="${menu.num}" underline="false" />
                     <#input id="icon" name="图标" underline="false" value="${menu.icon}"/>
                 </div>
             </div>

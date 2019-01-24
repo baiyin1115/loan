@@ -10,12 +10,12 @@ import java.util.Locale;
  * Created by PengRong on 2017/12/22. <br/>
  *
  * @author PengRong <br/>
- * @Description ExactCompute ，java 原生的float ，double 只是适合用于科学计算，工程计算。不适合商业计算。 商业计算一般使用BigDecimanl 类进行
+ * @Description BigDecimalUtil ，java 原生的float ，double 只是适合用于科学计算，工程计算。不适合商业计算。 商业计算一般使用BigDecimanl 类进行
  * 精确 计算
- * @ClassName: ${ExactCompute}
+ * @ClassName: ${BigDecimalUtil}
  * @since 2017-12-22 16:43 <br/>
  */
-public class ExactCompute {
+public class BigDecimalUtil {
   /**
    *   ROUND_CEILING
    如果   BigDecimal   是正的，则做   ROUND_UP   操作；如果为负，则做   ROUND_DOWN   操作。
@@ -41,6 +41,10 @@ public class ExactCompute {
     BigDecimal bigDecimala = new BigDecimal(Double.toString(parama));
     BigDecimal bigDecimalb = new BigDecimal(Double.toString(paramb));
     return bigDecimala.add(bigDecimalb);
+  }
+
+  public static BigDecimal add(BigDecimal parama, BigDecimal paramb) {
+    return parama.add(paramb);
   }
 
   /**
@@ -107,6 +111,22 @@ public class ExactCompute {
   /**
    * 格式化 BigDecimal 为一个字符串序列；两个小数位，小数第二位 进行 四舍五入。
    */
+  public static String formatAmt(BigDecimal bigDecimal) {
+    DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.CHINA);
+    format.setDecimalSeparatorAlwaysShown(true);
+    /** 设置小数部分允许的最大位数  */
+    format.setMaximumFractionDigits(3);
+    /** 设置小数部分允许的最小位数  */
+    format.setMinimumFractionDigits(0);
+    format.applyPattern(",##0.00");
+    return format.format(bigDecimal);
+
+  }
+
+
+  /**
+   * 格式化 BigDecimal 为一个字符串序列；两个小数位，小数第二位 进行 四舍五入。
+   */
   public static String formatHundred(BigDecimal bigDecimal) {
     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.CHINA);
     format.setDecimalSeparatorAlwaysShown(true);
@@ -114,7 +134,7 @@ public class ExactCompute {
     format.setMaximumFractionDigits(3);
     /** 设置小数部分允许的最小位数  */
     format.setMinimumFractionDigits(0);
-    format.applyPattern(",###.00%");
+    format.applyPattern(",##0.00%");
     return format.format(bigDecimal);
 
   }
@@ -126,7 +146,7 @@ public class ExactCompute {
     format.setMaximumFractionDigits(3);
     /** 设置小数部分允许的最小位数  */
     format.setMinimumFractionDigits(0);
-    format.applyPattern(",###.00\u2030");
+    format.applyPattern(",##0.00\u2030");
     return format.format(bigDecimal);
   }
 

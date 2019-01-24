@@ -36,14 +36,30 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
   CANT_CHANGE_ADMIN(600, "不能修改超级管理员"),
 
   /**
-   * 账户问题
+   * 用户问题
    */
   USER_ALREADY_REG(401, "该用户已经注册"),
   NO_THIS_USER(400, "没有此用户"),
   USER_NOT_EXISTED(400, "没有此用户"),
-  ACCOUNT_FREEZED(401, "账号被冻结"),
   OLD_PWD_NOT_RIGHT(402, "原密码不正确"),
   TWO_PWD_NOT_MATCH(405, "两次输入密码不一致"),
+
+  /**
+   * 账户问题
+   */
+  NO_THIS_ACCOUNT(400, "没有此账户"),
+  ACCOUNT_FREEZED(401, "账号被冻结"),
+  ACCOUNT_CUSTOMER_FREEZED(401, "客户有效"),
+  ACCOUNT_BALANCE_NOT_ZERO(401, "账户有余额"),
+  ACCOUNT_NO_ADD(401, "账户不能开立"),
+  ACCOUNT_NO_OVERDRAW(401, "账户不能透支"),
+
+  /**
+   * 客户问题
+   */
+  NO_THIS_CUSTOMER(400, "没有此客户"),
+  CUSTOMER_ACCOUNT_INCONSISTENT(401, "客户状态和用户状态不一致"),
+  CUSTOMER_FREEZED(401, "客户被冻结"),
 
   /**
    * 错误的请求

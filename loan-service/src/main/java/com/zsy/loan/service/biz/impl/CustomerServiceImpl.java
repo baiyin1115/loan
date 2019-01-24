@@ -1,16 +1,27 @@
 package com.zsy.loan.service.biz.impl;
 
+import com.zsy.loan.bean.entity.biz.TBizAcct;
 import com.zsy.loan.bean.entity.biz.TBizCustomerInfo;
+import com.zsy.loan.bean.enumeration.BizExceptionEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctBalanceTypeEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctStatusEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerStatusEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerTypeEnum;
+import com.zsy.loan.bean.exception.LoanException;
+import com.zsy.loan.bean.request.AcctRequest;
 import com.zsy.loan.bean.request.CustomerInfoRequest;
+import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.dao.biz.CustomerInfoRepo;
+import com.zsy.loan.service.system.impl.SystemServiceImpl;
+import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.StringUtils;
 import com.zsy.loan.utils.factory.Page;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +31,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 客户服务
@@ -31,8 +44,16 @@ import org.springframework.stereotype.Service;
 public class CustomerServiceImpl {
 
   @Autowired
-  private CustomerInfoRepo customerInfoRepo;
+  private CustomerInfoRepo repository;
 
+  @Autowired
+  private AcctRepo acctRepository;
+
+  @Autowired
+  private SystemServiceImpl systemService;
+
+  @Autowired
+  private AcctServiceImpl acctService;
 
   /**
    * 通过客户名、手机号、身份证号码 模糊查询
@@ -48,7 +69,7 @@ public class CustomerServiceImpl {
       pageable = new PageRequest(page.getCurrent() - 1, page.getSize(), Sort.Direction.DESC, "id");
     }
 
-    org.springframework.data.domain.Page<TBizCustomerInfo> page1 = customerInfoRepo
+    org.springframework.data.domain.Page<TBizCustomerInfo> page1 = repository
         .findAll(new Specification<TBizCustomerInfo>() {
 
 
@@ -86,48 +107,145 @@ public class CustomerServiceImpl {
 
   }
 
-  public Object save(CustomerInfoRequest customer) {
+  @Transactional
+  public Object save(CustomerInfoRequest customer,boolean isUp) {
 
     TBizCustomerInfo info = TBizCustomerInfo.builder().build();
     BeanUtils.copyProperties(customer, info);
 
-    return customerInfoRepo.save(info);
+    if (ObjectUtils.isEmpty(info.getId())) {
+      info.setId(systemService.getNextCustomerNO(CustomerTypeEnum.getEnumByKey(info.getType())));
+    }
+
+    repository.save(info);
+
+    /**
+     * 创建账户信息
+     */
+    if(!isUp){
+      AcctRequest account = null;
+      if (info.getType().equals(CustomerTypeEnum.INVEST.getValue())) { //投资人
+        account = AcctRequest.builder().acctType(AcctTypeEnum.INVEST.getValue())
+            .availableBalance(BigDecimal.ZERO).balanceType(AcctBalanceTypeEnum.NO_OVERDRAW.getValue())
+            .freezeBalance(BigDecimal.ZERO).remark("系统自动建立").status(AcctStatusEnum.VALID.getValue())
+            .userNo(info.getId()).name(info.getName()).build();
+      } else { //借款人
+        account = AcctRequest.builder().acctType(AcctTypeEnum.LOAN.getValue())
+            .availableBalance(BigDecimal.ZERO).balanceType(AcctBalanceTypeEnum.NO_OVERDRAW.getValue())
+            .freezeBalance(BigDecimal.ZERO).remark("系统自动建立").status(AcctStatusEnum.VALID.getValue())
+            .userNo(info.getId()).name(info.getName()).build();
+      }
+      acctService.save(account,false);
+    }
+
+    return true;
   }
 
   /**
    * 逻辑上删除用户
-   * @param ids
-   * @return
    */
-  public Object logicDelete(List<Long> ids) {
+  @Transactional
+  public Boolean logicDelete(List<Long> ids) {
 
-    /**
-     * 校验账户是否有余额
-     */
-    //TODO
-    /**
-     * 校验是否有进行中的项目
-     */
-    //TODO
+    for (long id : ids) {
 
-    return customerInfoRepo.UpStatusByIds(ids, CustomerStatusEnum.DELETE.getValue());
+      /**
+       * 判断用户状态
+       */
+      TBizCustomerInfo customer = repository.findById(id).get();
+      if (customer.getStatus().equals(CustomerStatusEnum.DELETE.getValue())) { //已经删除
+        continue;
+      } else if (customer.getStatus().equals(CustomerStatusEnum.BLACKLIST.getValue())) { //账户处于黑名单
+        throw new LoanException(BizExceptionEnum.CUSTOMER_FREEZED, String.valueOf(id));
+      }
+
+      /**
+       * 校验账户是否有余额
+       */
+      TBizAcct bizAcct = acctRepository.findByUserNo(id).get();
+      BigDecimal balance = BigDecimalUtil
+          .add(bizAcct.getAvailableBalance(), bizAcct.getFreezeBalance());
+      if (balance.compareTo(BigDecimal.ZERO) > 0) {
+        throw new LoanException(BizExceptionEnum.ACCOUNT_BALANCE_NOT_ZERO, String.valueOf(id));
+      }
+
+      /**
+       * 校验是否有进行中的项目
+       */
+      //TODO
+
+      repository.UpStatusById(id, CustomerStatusEnum.DELETE.getValue());
+      /**
+       * 删除账户
+       */
+      acctRepository.UpStatusById(bizAcct.getId(), AcctStatusEnum.INVALID.getValue());
+
+    }
+
+    return true;
   }
 
   /**
    * 设置黑名单
-   * @param ids
-   * @return
    */
-  public Object setBlackList(List<Long> ids) {
-    return customerInfoRepo.UpStatusByIds(ids, CustomerStatusEnum.BLACKLIST.getValue());
+  @Transactional
+  public Boolean setBlackList(List<Long> ids) {
+
+    for (long id : ids) {
+      /**
+       * 判断用户状态
+       */
+      TBizCustomerInfo customer = repository.findById(id).get();
+      if (customer.getStatus().equals(CustomerStatusEnum.BLACKLIST.getValue())) { //已经处理
+        continue;
+      } else if (customer.getStatus().equals(CustomerStatusEnum.DELETE.getValue())) { //已经删除
+        throw new LoanException(BizExceptionEnum.NO_THIS_CUSTOMER, String.valueOf(id));
+      }
+
+      repository.UpStatusById(id, CustomerStatusEnum.BLACKLIST.getValue());
+      /**
+       * 冻结账户信息
+       */
+      TBizAcct bizAcct = acctRepository.findByUserNo(id).get();
+      if (bizAcct != null) {
+        acctRepository.UpStatusById(bizAcct.getId(), AcctStatusEnum.FREEZE.getValue());
+      }
+
+    }
+
+    return true;
   }
 
   /**
    * 取消黑名单
-   * @param ids
-   * @return
    */
-  public Object cancelBlackList(List<Long> ids) {
-    return customerInfoRepo.UpStatusByIds(ids, CustomerStatusEnum.NORMAL.getValue());
+  @Transactional
+  public Boolean cancelBlackList(List<Long> ids) {
+
+    for (long id : ids) {
+
+      /**
+       * 判断用户状态
+       */
+      TBizCustomerInfo customer = repository.findById(id).get();
+      if (customer.getStatus().equals(CustomerStatusEnum.NORMAL.getValue())) { //已经处理
+        continue;
+      } else if (customer.getStatus().equals(CustomerStatusEnum.DELETE.getValue())) { //已经删除
+        throw new LoanException(BizExceptionEnum.NO_THIS_CUSTOMER, String.valueOf(id));
+      }
+
+      repository.UpStatusById(id, CustomerStatusEnum.NORMAL.getValue());
+
+      /**
+       * 取消冻结账户信息
+       */
+      TBizAcct bizAcct = acctRepository.findByUserNo(id).get();
+      if (bizAcct != null) {
+        acctRepository.UpStatusById(bizAcct.getId(), AcctStatusEnum.VALID.getValue());
+      }
+
+    }
+
+    return true;
   }
 }

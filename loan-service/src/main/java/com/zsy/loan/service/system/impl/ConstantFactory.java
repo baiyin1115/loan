@@ -452,6 +452,21 @@ public class ConstantFactory implements IConstantFactory {
   }
 
   @Override
+  public String getAcctTypeName(Long acctType) {
+    return getDictsByName("账户类型", String.valueOf(acctType));
+  }
+
+  @Override
+  public String getBalanceTypeName(Long balanceType) {
+    return getDictsByName("余额性质", String.valueOf(balanceType));
+  }
+
+  @Override
+  public String getAcctStatusName(Long status) {
+    return getDictsByName("账户状态", String.valueOf(status));
+  }
+
+  @Override
   public String getServiceFeeTypeName(Long id) {
     return getDictsByName("服务费收取方式", String.valueOf(id));
   }

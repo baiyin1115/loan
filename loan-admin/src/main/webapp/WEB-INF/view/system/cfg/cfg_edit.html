@@ -5,11 +5,11 @@
             <input type="hidden" id="id" value="${item.id}">
             <div class="row">
                 <div class="col-sm-6 b-r">
-                            <#input id="id" name="自增主键" value="${item.id}" underline="true"  readonly="readonly"/>
+                            <#input id="id" name="自增主键" value="${item.id}" underline="false"  readonly="readonly"/>
                             <#input id="cfgName" name="参数名" value="${item.cfgName}" />
                 </div>
                 <div class="col-sm-6">
-                            <#input id="cfgValue" name="参数值" value="${item.cfgValue}" underline="true"/>
+                            <#input id="cfgValue" name="参数值" value="${item.cfgValue}" underline="false"/>
                             <#input id="cfgDesc" name="参数描述" value="${item.cfgDesc}" />
                 </div>
             </div>

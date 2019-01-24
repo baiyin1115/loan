@@ -7,14 +7,14 @@
 
             <div class="row">
                 <div class="col-sm-6 b-r">
-                    <#input id="simplename" name="公司名称" underline="true" value="${dept.simplename}"/>
+                    <#input id="simplename" name="公司名称" underline="false" value="${dept.simplename}"/>
 
-                    <#input id="fullname" name="公司全称" underline="true" value="${dept.fullname}"/>
+                    <#input id="fullname" name="公司全称" underline="false" value="${dept.fullname}"/>
 
-                    <#input id="tips" name="备注" underline="true" value="${dept.tips}"/>
+                    <#input id="tips" name="备注" underline="false" value="${dept.tips}"/>
                 </div>
                 <div class="col-sm-6">
-                    <#input id="num" name="排序" underline="true" value="${dept.num}"/>
+                    <#input id="num" name="排序" underline="false" value="${dept.num}"/>
 
                     <#input id="pName" name="上级公司" readonly="readonly" hidden="pid"
                             hiddenValue="${dept.pid}" value="${pName}"

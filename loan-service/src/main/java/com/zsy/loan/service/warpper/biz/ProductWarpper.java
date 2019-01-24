@@ -2,9 +2,7 @@ package com.zsy.loan.service.warpper.biz;
 
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.warpper.BaseControllerWarpper;
-import com.zsy.loan.utils.ExactCompute;
-import com.zsy.loan.utils.StringUtils;
-import com.zsy.loan.utils.ToolUtil;
+import com.zsy.loan.utils.BigDecimalUtil;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -30,9 +28,9 @@ public class ProductWarpper extends BaseControllerWarpper {
     map.put("repayTypeName", ConstantFactory.me().getRepayTypeName((Long) map.get("repayType")));
     map.put("loanTypeName", ConstantFactory.me().getLoanTypeName((Long) map.get("loanType")));
 
-    map.put("rateFormat", ExactCompute.formatHundred((BigDecimal) map.get("rate")));
-    map.put("serviceFeeScaleFormat", ExactCompute.formatHundred((BigDecimal) map.get("serviceFeeScale")));
-    map.put("penRateFormat", ExactCompute.formatHundred((BigDecimal) map.get("penRate")));
+    map.put("rateFormat", BigDecimalUtil.formatHundred((BigDecimal) map.get("rate")));
+    map.put("serviceFeeScaleFormat", BigDecimalUtil.formatHundred((BigDecimal) map.get("serviceFeeScale")));
+    map.put("penRateFormat", BigDecimalUtil.formatHundred((BigDecimal) map.get("penRate")));
     map.put("cycleIntervalFormat", map.get("cycleInterval")+"天");
 
 

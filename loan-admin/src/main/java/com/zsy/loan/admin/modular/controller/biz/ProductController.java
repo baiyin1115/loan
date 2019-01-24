@@ -72,6 +72,9 @@ public class ProductController extends BaseController {
   @RequestMapping("/product_update/{productId}")
   public String productUpdate(@PathVariable Long productId, Model model) {
     TBizProductInfo product = productInfoRepo.findById(productId).get();
+
+    product.setRemark(product.getRemark().trim());
+
     model.addAttribute("product", product);
     LogObjectHolder.me().set(product);
     return PREFIX + "product_edit.html";

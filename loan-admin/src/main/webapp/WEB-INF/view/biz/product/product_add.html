@@ -14,11 +14,11 @@
                         @}
                     </#select>
 
-                    <#input id="productName" name="产品名称" underline="true"/>
+                    <#input id="productName" name="产品名称" underline="false"/>
 
-                    <#input id="rate" name="产品利率" underline="true"/>
+                    <#input id="rate" name="产品利率" underline="false"/>
 
-                    <#input id="serviceFeeScale" name="服务费比例" underline="true"/>
+                    <#input id="serviceFeeScale" name="服务费比例" underline="false"/>
 
                     <#select id="serviceFeeType" name="服务费收取方式" underline="false">
                         @for(dict in constant.getDicts('服务费收取方式')){
@@ -26,7 +26,7 @@
                         @}
                     </#select>
 
-                    <#input id="penRate" name="罚息利率" underline="true"/>
+                    <#input id="penRate" name="罚息利率" underline="false"/>
 
 
                 </div>
@@ -55,7 +55,7 @@
                         @}
                     </#select>
 
-                    <#input id="cycleInterval" name="周期间隔" underline="true"/>
+                    <#input id="cycleInterval" name="周期间隔" underline="false"/>
 
                 </div>
             </div>

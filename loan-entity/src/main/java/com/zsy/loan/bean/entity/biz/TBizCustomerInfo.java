@@ -9,10 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections.functors.ConstantFactory;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -35,7 +37,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class TBizCustomerInfo {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+//  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private Long id;
 
@@ -103,6 +105,12 @@ public class TBizCustomerInfo {
 
   @Column(name = "remark")
   private String remark;
+
+  @Transient
+  private String typeName;
+
+  @Transient
+  private String statusName;
 
   @Override
   public boolean equals(Object o) {

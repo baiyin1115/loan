@@ -12,6 +12,7 @@ public class ProductDict extends AbstractDictMap {
 
   @Override
   public void init() {
+    put("id","产品编号");
     put("orgNo", "公司");
     put("productName", "产品名称");
     put("rate", "产品利率");
@@ -23,6 +24,7 @@ public class ProductDict extends AbstractDictMap {
     put("repayType", "还款方式");
     put("loanType", "贷款类型");
     put("cycleInterval", "周期间隔");
+    put("remark","备注");
 
   }
 

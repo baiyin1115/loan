@@ -9,24 +9,24 @@
 			
 			<div class="row">
 				<div class="col-sm-6 b-r">
-					<#input id="account" name="账户" underline="true" value="${user.account}"/>
+					<#input id="account" name="账户" underline="false" value="${user.account}"/>
 
-					<#select id="sex" name="性别" underline="true">
+					<#select id="sex" name="性别" underline="false">
 						@for(dict in constant.getDicts('性别')){
 						<option value="${dict.num}">${dict.name}</option>
 						@}
 					</#select>
 
-					<#input id="roleid" name="角色" underline="true" value="${roleName}" disabled="disabled"/>
+					<#input id="roleid" name="角色" underline="false" value="${roleName}" disabled="disabled"/>
 
 					<#input id="email" name="邮箱" type="email" value="${user.email}"/>
 
 				</div>
 				<div class="col-sm-6">
 					<div id="driverInfoContent">
-						<#input id="name" name="姓名" underline="true" value="${user.name}"/>
+						<#input id="name" name="姓名" underline="false" value="${user.name}"/>
 
-						<#input id="birthday" name="出生日期" underline="true" type="date"
+						<#input id="birthday" name="出生日期" underline="false" type="date"
 								value="${user.birthday}"
 								clickFun="laydate({istime: false, format: 'YYYY-MM-DD'})" />
 

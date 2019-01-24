@@ -13,6 +13,7 @@ import com.zsy.loan.bean.request.CustomerInfoRequest;
 import com.zsy.loan.dao.biz.CustomerInfoRepo;
 import com.zsy.loan.service.biz.impl.CustomerServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
+import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.warpper.biz.CustomerWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.factory.Page;
@@ -71,7 +72,13 @@ public class CustomerController extends BaseController {
   @Permission
   @RequestMapping("/customer_update/{customerId}")
   public String customerUpdate(@PathVariable Long customerId, Model model) {
+
     TBizCustomerInfo customer = customerInfoRepo.findById(customerId).get();
+
+    customer.setRemark(customer.getRemark().trim());
+    customer.setTypeName(ConstantFactory.me().getCustomerTypeName(customer.getType()));
+    customer.setStatusName(ConstantFactory.me().getCustomerStatusName(customer.getStatus()));
+
     model.addAttribute("customer", customer);
     LogObjectHolder.me().set(customer);
     return PREFIX + "customer_edit.html";
@@ -81,7 +88,7 @@ public class CustomerController extends BaseController {
   /**
    * 新增客户
    */
-  @BussinessLog(value = "添加客户", key = "customerName", dict = CustomerDict.class)
+  @BussinessLog(value = "添加客户", dict = CustomerDict.class)
   @RequestMapping(value = "/add")
   @Permission
   @ResponseBody
@@ -93,7 +100,7 @@ public class CustomerController extends BaseController {
      */
     exportErr(error);
 
-    return customerService.save(customer);
+    return customerService.save(customer, false);
   }
 
   /**
@@ -124,7 +131,13 @@ public class CustomerController extends BaseController {
   @ResponseBody
   @ApiOperation(value = "客户详情", notes = "客户详情")
   public Object detail(@PathVariable("customerId") Long customerId) {
-    return customerInfoRepo.findById(customerId).get();
+
+    TBizCustomerInfo info = customerInfoRepo.findById(customerId).get();
+
+    info.setTypeName(ConstantFactory.me().getCustomerTypeName(info.getType()));
+    info.setStatusName(ConstantFactory.me().getCustomerStatusName(info.getStatus()));
+
+    return info;
   }
 
   /**
@@ -146,7 +159,7 @@ public class CustomerController extends BaseController {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
-    customerService.save(customer);
+    customerService.save(customer, true);
     return SUCCESS_TIP;
   }
 

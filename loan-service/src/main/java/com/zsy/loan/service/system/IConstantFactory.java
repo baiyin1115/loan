@@ -198,4 +198,24 @@ public interface IConstantFactory {
    */
   String getCustomerStatusName(Long id);
 
+  /**
+   * 获取账户类型名称
+   * @param acctType
+   * @return
+   */
+  String getAcctTypeName(Long acctType);
+
+  /**
+   * 获取余额类型名称
+   * @param balanceType
+   * @return
+   */
+  String getBalanceTypeName(Long balanceType);
+
+  /**
+   * 获取账户状态名称
+   * @param status
+   * @return
+   */
+  String getAcctStatusName(Long status);
 }

@@ -12,7 +12,7 @@ public class CustomerDict extends AbstractDictMap {
 
   @Override
   public void init() {
-    put("id"," 客户编号");
+    put("id","客户编号");
     put("certNo","证件号码");
     put("certType","证件类型");
     put("name","客户姓名");

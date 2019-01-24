@@ -7,8 +7,8 @@
 
 			<div class="row">
 				<div class="col-sm-6 b-r">
-					<#input id="name" name="角色名称" underline="true"/>
-					<#input id="pName" name="上级名称" underline="true" hidden="pid" readonly="readonly"
+					<#input id="name" name="角色名称" underline="false"/>
+					<#input id="pName" name="上级名称" underline="false" hidden="pid" readonly="readonly"
 							clickFun="RolInfoDlg.showPNameSelectTree(); return false;"
 							style="background-color: #ffffff !important;"/>
 					<!--<input id="deptName" name="部门名称" hidden="deptid" readonly="readonly"-->
@@ -16,7 +16,7 @@
 							<!--style="background-color: #ffffff !important;"/>-->
 				</div>
 				<div class="col-sm-6">
-					<#input id="tips" name="别名" underline="true"/>
+					<#input id="tips" name="别名" underline="false"/>
 					<#input id="num" name="排序"/>
 				</div>
 			</div>
