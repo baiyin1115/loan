@@ -1,0 +1,60 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="accountInfoForm">
+
+            <input type="hidden" id="id" value="">
+            <input type="hidden" id="statusValue" value="">
+
+            <div class="row">
+                <div class="col-sm-6 b-r">
+
+                    <#input id="userNo" name="用户编号" readonly="true" underline="false" value="15000000001"/>
+
+                    <#input id="name" name="账户名称" underline="false"/>
+
+                    <#input id="availableBalance" readonly="true" name="可用余额" underline="false" value="0.00"/>
+
+                    <#input id="freezeBalance" readonly="true" name="冻结余额" underline="false" value="0.00"/>
+
+                </div>
+                <div class="col-sm-6">
+
+                    <#select id="balanceType" name="余额性质" underline="false">
+                        @for(dict in constant.getDicts('余额性质')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#select id="acctType" name="账户类型" underline="false">
+                        @for(dict in constant.getDicts('账户类型')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#select id="status" name="账户状态" underline="false">
+                        @for(dict in constant.getDicts('账户状态')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                </div>
+            </div>
+            <div class="row" >
+                <div class="col-sm-9">
+                <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50"/>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="AccountDlg.addSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="AccountDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/account/account_info.js"></script>
+@}
