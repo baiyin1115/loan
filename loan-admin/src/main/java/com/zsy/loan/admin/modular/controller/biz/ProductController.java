@@ -129,7 +129,7 @@ public class ProductController extends BaseController {
   /**
    * 修改产品
    */
-  @BussinessLog(value = "修改产品", dict = ProductDict.class)
+  @BussinessLog(value = "更新产品", dict = ProductDict.class)
   @RequestMapping(value = "/update")
   @Permission
   @ResponseBody

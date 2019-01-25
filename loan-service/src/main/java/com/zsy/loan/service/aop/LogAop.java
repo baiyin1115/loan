@@ -100,25 +100,25 @@ public class LogAop {
       sb.append(param);
       sb.append(" & ");
     }
-
-    //如果涉及到修改,比对变化
-    String msg = "";
-    if (bussinessName.indexOf("修改") != -1 || bussinessName.indexOf("编辑") != -1) {
-      //todo api模块无法使用该方法获取数据
-      Object obj1 = LogObjectHolder.me().get();
-      Map<String, String> obj2 = HttpKit.getRequestParameters();
-      try {
-        msg = Contrast.contrastObj(dictClass, key, obj1, obj2);
-      } catch (Exception e) {
-
-      }
-    } else {
-      Map<String, String> parameters = HttpKit.getRequestParameters();
-      AbstractDictMap dictMap = (AbstractDictMap) dictClass.newInstance();
-      msg = Contrast.parseMutiKey(dictMap, key, parameters);
-    }
+//
+//    //如果涉及到修改,比对变化
+//    String msg = "";
+//    if (bussinessName.indexOf("修改") != -1 || bussinessName.indexOf("编辑") != -1) {
+//      //todo api模块无法使用该方法获取数据
+//      Object obj1 = LogObjectHolder.me().get();
+//      Map<String, String> obj2 = HttpKit.getRequestParameters();
+//      try {
+//        msg = Contrast.contrastObj(dictClass, key, obj1, obj2);
+//      } catch (Exception e) {
+//
+//      }
+//    } else {
+//      Map<String, String> parameters = HttpKit.getRequestParameters();
+//      AbstractDictMap dictMap = (AbstractDictMap) dictClass.newInstance();
+//      msg = Contrast.parseMutiKey(dictMap, key, parameters);
+//    }
 
     LogManager.me()
-        .executeLog(LogTaskFactory.bussinessLog(idUser, bussinessName, className, methodName, msg));
+        .executeLog(LogTaskFactory.bussinessLog(idUser, bussinessName, className, methodName, sb.toString()));
   }
 }

@@ -143,7 +143,7 @@ public class CustomerController extends BaseController {
   /**
    * 修改客户
    */
-  @BussinessLog(value = "修改客户", dict = CustomerDict.class)
+  @BussinessLog(value = "更新客户", dict = CustomerDict.class)
   @RequestMapping(value = "/update")
   @Permission
   @ResponseBody

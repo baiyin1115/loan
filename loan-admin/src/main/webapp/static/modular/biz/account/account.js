@@ -67,7 +67,7 @@ Account.checkAll = function () {
 Account.openAddAccount = function () {
   var index = layer.open({
     type: 2,
-    title: '添加账户',
+    title: '开立系统账户账户',
     area: ['800px', '480px'], //宽高
     fix: false, //不固定
     maxmin: true,

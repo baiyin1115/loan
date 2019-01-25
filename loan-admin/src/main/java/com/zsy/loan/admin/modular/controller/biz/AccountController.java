@@ -155,7 +155,7 @@ public class AccountController extends BaseController {
   /**
    * 修改账户
    */
-  @BussinessLog(value = "修改账户", dict = AcctDict.class)
+  @BussinessLog(value = "更新账户", dict = AcctDict.class)
   @RequestMapping(value = "/update")
   @Permission
   @ResponseBody
