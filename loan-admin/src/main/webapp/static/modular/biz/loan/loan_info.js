@@ -1,8 +1,8 @@
 /**
  * 初始化账户详情对话框
  */
-var AccountDlg = {
-  accountInfoData: {},
+var LoanDlg = {
+  loanInfoData: {},
   // zTreeInstance: null,
   validateFields: {
     acctType: {validators: {notEmpty: {message: '账户类型'}}},
@@ -15,8 +15,8 @@ var AccountDlg = {
 /**
  * 清除数据
  */
-AccountDlg.clearData = function () {
-  this.accountInfoData = {};
+LoanDlg.clearData = function () {
+  this.loanInfoData = {};
 }
 
 /**
@@ -25,8 +25,8 @@ AccountDlg.clearData = function () {
  * @param key 数据的名称
  * @param val 数据的具体值
  */
-AccountDlg.set = function (key, val) {
-  this.accountInfoData[key] = (typeof value == "undefined") ? $("#" + key).val()
+LoanDlg.set = function (key, val) {
+  this.loanInfoData[key] = (typeof value == "undefined") ? $("#" + key).val()
       : value;
   //alert($("#" + key).val())
   return this;
@@ -38,21 +38,21 @@ AccountDlg.set = function (key, val) {
  * @param key 数据的名称
  * @param val 数据的具体值
  */
-AccountDlg.get = function (key) {
+LoanDlg.get = function (key) {
   return $("#" + key).val();
 }
 
 /**
  * 关闭此对话框
  */
-AccountDlg.close = function () {
-  parent.layer.close(window.parent.Account.layerIndex);
+LoanDlg.close = function () {
+  parent.layer.close(window.parent.Loan.layerIndex);
 }
 
 /**
  * 收集数据
  */
-AccountDlg.collectData = function () {
+LoanDlg.collectData = function () {
   this.set('id').set('userNo').set('name').set('availableBalance').set('freezeBalance').set('acctType').set('balanceType')
   .set('status').set('createBy').set('modifiedBy').set('createAt').set('updateAt').set('remark')   ;
 }
@@ -60,17 +60,17 @@ AccountDlg.collectData = function () {
 /**
  * 验证数据是否为空
  */
-AccountDlg.validate = function () {
+LoanDlg.validate = function () {
 
-  $('#accountInfoForm').data("bootstrapValidator").resetForm();
-  $('#accountInfoForm').bootstrapValidator('validate');
-  return $("#accountInfoForm").data('bootstrapValidator').isValid();
+  $('#loanInfoForm').data("bootstrapValidator").resetForm();
+  $('#loanInfoForm').bootstrapValidator('validate');
+  return $("#loanInfoForm").data('bootstrapValidator').isValid();
 }
 
 /**
  * 提交添加账户
  */
-AccountDlg.addSubmit = function () {
+LoanDlg.addSubmit = function () {
 
   this.clearData();
   this.collectData();
@@ -80,14 +80,14 @@ AccountDlg.addSubmit = function () {
   }
 
   //提交信息
-  var ajax = new $ax(Feng.ctxPath + "/account/add", function (data) {
+  var ajax = new $ax(Feng.ctxPath + "/loan/add", function (data) {
     Feng.success("添加成功!");
-    window.parent.Account.table.refresh();
-    AccountDlg.close();
+    window.parent.Loan.table.refresh();
+    LoanDlg.close();
   }, function (data) {
     Feng.error("添加失败!" + data.responseJSON.message + "!");
   });
-  ajax.set(this.accountInfoData);
+  ajax.set(this.loanInfoData);
   ajax.setContentType("application/json")
   ajax.start();
 }
@@ -95,7 +95,7 @@ AccountDlg.addSubmit = function () {
 /**
  * 提交修改
  */
-AccountDlg.editSubmit = function () {
+LoanDlg.editSubmit = function () {
 
   this.clearData();
   this.collectData();
@@ -105,20 +105,20 @@ AccountDlg.editSubmit = function () {
   }
 
   //提交信息
-  var ajax = new $ax(Feng.ctxPath + "/account/update", function (data) {
+  var ajax = new $ax(Feng.ctxPath + "/loan/update", function (data) {
     Feng.success("修改成功!");
-    window.parent.Account.table.refresh();
-    AccountDlg.close();
+    window.parent.Loan.table.refresh();
+    LoanDlg.close();
   }, function (data) {
     Feng.error("修改失败!" + data.responseJSON.message + "!");
   });
-  ajax.set(this.accountInfoData);
+  ajax.set(this.loanInfoData);
   ajax.setContentType("application/json")
   ajax.start();
 }
 
 $(function () {
-  Feng.initValidator("accountInfoForm", AccountDlg.validateFields);
+  Feng.initValidator("loanInfoForm", LoanDlg.validateFields);
 
   //初始化
   $("#acctType").val($("#acctTypeValue").val());

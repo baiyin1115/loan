@@ -4,19 +4,22 @@ import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
-import com.zsy.loan.bean.dictmap.biz.AcctDict;
-import com.zsy.loan.bean.entity.biz.TBizAcct;
+import com.zsy.loan.bean.dictmap.biz.LoanDict;
+import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
+import com.zsy.loan.bean.entity.biz.TBizLoanVoucherInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctBalanceTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
-import com.zsy.loan.bean.request.AcctRequest;
-import com.zsy.loan.dao.biz.AcctRepo;
-import com.zsy.loan.service.biz.impl.AcctServiceImpl;
+import com.zsy.loan.bean.request.LoanRequest;
+import com.zsy.loan.dao.biz.LoanInfoRepo;
+import com.zsy.loan.dao.biz.LoanVoucherInfoRepo;
+import com.zsy.loan.service.biz.impl.LoanServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.warpper.biz.AcctWarpper;
+import com.zsy.loan.service.warpper.biz.LoanWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.factory.Page;
 import io.swagger.annotations.ApiOperation;
@@ -34,214 +37,513 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * 账户控制器
+ * 贷款控制器
  *
  * @Author zhangxh
  * @Date 2019-01-18  14:38
  */
 @Slf4j
 @Controller
-@RequestMapping("/account")
-public class AccountController extends BaseController {
+@RequestMapping("/loan")
+public class LoanController extends BaseController {
 
-  private String PREFIX = "/biz/account/";
-
-  @Resource
-  AcctRepo acctRepo;
+  private String PREFIX = "/biz/loan/";
 
   @Resource
-  AcctServiceImpl acctService;
+  LoanInfoRepo loanInfoRepo;
+
+  @Resource
+  LoanServiceImpl loanService;
+
+  @Resource
+  LoanVoucherInfoRepo loanVoucherInfoRepo;
 
   /**
-   * 跳转到账户管理首页
+   * 跳转到贷款管理首页
    */
   @RequestMapping("")
   public String index() {
-    return PREFIX + "account.html";
+    return PREFIX + "loan.html";
   }
 
   /**
-   * 跳转到添加账户
-   */
-  @RequestMapping("/account_add")
-  public String accountAdd() {
-    return PREFIX + "account_add.html";
-  }
-
-  /**
-   * 跳转到修改账户
-   */
-  @Permission
-  @RequestMapping("/account_update/{accountId}")
-  public String accountUpdate(@PathVariable Long accountId, Model model) {
-    TBizAcct account = acctRepo.findById(accountId).get();
-
-    account.setRemark(account.getRemark().trim());
-    account.setAcctTypeName(ConstantFactory.me().getAcctTypeName(account.getAcctType()));
-    account.setStatusName(ConstantFactory.me().getAcctStatusName(account.getStatus()));
-
-    model.addAttribute("account", account);
-    LogObjectHolder.me().set(account);
-    return PREFIX + "account_edit.html";
-
-  }
-
-  /**
-   * 新增账户
-   */
-  @BussinessLog(value = "添加账户", dict = AcctDict.class)
-  @RequestMapping(value = "/add")
-  @Permission
-  @ResponseBody
-  @ApiOperation(value = "新增账户", notes = "新增账户")
-  public Object add(@Valid @RequestBody AcctRequest account, BindingResult error) {
-
-    /**
-     * 处理error
-     */
-    exportErr(error);
-
-    /**
-     * 校验
-     */
-    //不能开立投资人、借款人账户
-    if (account.getAcctType().equals(AcctTypeEnum.INVEST.getValue()) || account.getAcctType()
-        .equals(AcctTypeEnum.LOAN.getValue())) {
-      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_ADD, String.valueOf(account.getUserNo()));
-    }
-
-    //公司、代偿账户不能透支
-    if (!(account.getAcctType().equals(AcctTypeEnum.INTERIM_IN.getValue())
-        || account.getAcctType().equals(AcctTypeEnum.INTERIM_OUT.getValue())) && account
-        .getBalanceType().equals(AcctBalanceTypeEnum.OVERDRAW.getValue())) {
-      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW,
-          String.valueOf(account.getUserNo()));
-    }
-
-    return acctService.save(account, false);
-  }
-
-  /**
-   * 获取所有账户列表
-   * 通过账户名、手机号、身份证号码 模糊查询
+   * 获取所有借据列表
+   *
    */
   @RequestMapping(value = "/list")
   @Permission
   @ResponseBody
   @OpLog
-  @ApiOperation(value = "获取所有账户列表", notes = "获取所有账户列表")
-  public Object list(TBizAcct condition) {
+  @ApiOperation(value = "获取所有借据列表", notes = "获取所有借据列表")
+  public Object list(TBizLoanInfo condition) {
 
-    Page<TBizAcct> page = new PageFactory<TBizAcct>().defaultPage();
+    Page<TBizLoanInfo> page = new PageFactory<TBizLoanInfo>().defaultPage();
 
-    page = acctService.getTBizAccounts(page, condition);
+    page = loanService.getTBLoanInfos(page, condition);
     page.setRecords(
-        (List<TBizAcct>) new AcctWarpper(BeanUtil.objectsToMaps(page.getRecords()))
+        (List<TBizLoanInfo>) new LoanWarpper(BeanUtil.objectsToMaps(page.getRecords()))
             .warp());
     return super.packForBT(page);
   }
 
   /**
-   * 账户详情
+   * 获取还款计划列表
+   *
    */
-  @RequestMapping(value = "/detail/{accountId}")
-  @Permission
-  @ResponseBody
-  @ApiOperation(value = "账户详情", notes = "账户详情")
-  public Object detail(@PathVariable("accountId") Long accountId) {
-    return acctRepo.findById(accountId).get();
-  }
-
-  /**
-   * 修改账户
-   */
-  @BussinessLog(value = "更新账户", dict = AcctDict.class)
-  @RequestMapping(value = "/update")
+  @RequestMapping(value = "/loan_repay_plan_list")
   @Permission
   @ResponseBody
   @OpLog
-  @ApiOperation(value = "修改账户", notes = "修改账户")
-  public Object update(@Valid @RequestBody AcctRequest account, BindingResult error) {
+  @ApiOperation(value = "获取还款计划列表", notes = "获取还款计划列表")
+  public Object repayPlanList(TBizLoanInfo condition) {
+
+    Page<TBizLoanInfo> page = new PageFactory<TBizLoanInfo>().defaultPage();
+
+    page = loanService.getPlanList(page, condition);
+    page.setRecords(
+        (List<TBizLoanInfo>) new LoanWarpper(BeanUtil.objectsToMaps(page.getRecords()))
+            .warp());
+    return super.packForBT(page);
+  }
+
+  /**
+   * 借据详情
+   */
+  @RequestMapping(value = "/detail/{loanId}")
+  @Permission
+  @ResponseBody
+  @ApiOperation(value = "借据详情", notes = "借据详情")
+  public Object detail(@PathVariable("loanId") Long loanId) {
+    return loanInfoRepo.findById(loanId).get();
+  }
+
+  /**
+   * 跳转到添加借据
+   */
+  @RequestMapping("/loan_add")
+  public String loanAdd() {
+    return PREFIX + "loan_add.html";
+  }
+
+  /**
+   * 登记借据
+   */
+  @BussinessLog(value = "登记借据", dict = LoanDict.class)
+  @RequestMapping(value = "/add")
+  @Permission
+  @ResponseBody
+  @ApiOperation(value = "登记借据", notes = "登记借据")
+  public Object add(@Valid @RequestBody LoanRequest loan, BindingResult error) {
+
     /**
      * 处理error
      */
     exportErr(error);
 
-    if (account.getId() == null) {
+//    /**
+//     * 校验
+//     */
+//    //不能开立投资人、借款人贷款
+//    if (loan.getAcctType().equals(AcctTypeEnum.INVEST.getValue()) || loan.getAcctType()
+//        .equals(AcctTypeEnum.LOAN.getValue())) {
+//      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_ADD, String.valueOf(loan.getUserNo()));
+//    }
+//
+//    //公司、代偿贷款不能透支
+//    if (!(loan.getAcctType().equals(AcctTypeEnum.INTERIM_IN.getValue())
+//        || loan.getAcctType().equals(AcctTypeEnum.INTERIM_OUT.getValue())) && loan
+//        .getBalanceType().equals(AcctBalanceTypeEnum.OVERDRAW.getValue())) {
+//      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW,
+//          String.valueOf(loan.getUserNo()));
+//    }
+
+    return loanService.save(loan, false);
+  }
+
+  /**
+   * 跳转到修改借据
+   */
+  @Permission
+  @RequestMapping("/to_loan_update/{loanId}")
+  public String loanUpdate(@PathVariable Long loanId, Model model) {
+    TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
+
+    loan.setRemark(loan.getRemark().trim());
+//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
+//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+
+    model.addAttribute("loan", loan);
+    LogObjectHolder.me().set(loan);
+    return PREFIX + "loan_edit.html";
+
+  }
+
+  /**
+   * 修改借据
+   */
+  @BussinessLog(value = "更新借据", dict = LoanDict.class)
+  @RequestMapping(value = "/update")
+  @Permission
+  @ResponseBody
+  @OpLog
+  @ApiOperation(value = "修改借据", notes = "修改借据")
+  public Object update(@Valid @RequestBody LoanRequest loan, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    if (loan.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+//    /**
+//     * 修改校验
+//     */
+//    //公司、代偿贷款不能透支
+//    if (!(loan.getAcctType().equals(AcctTypeEnum.INTERIM_IN.getValue())
+//        || loan.getAcctType().equals(AcctTypeEnum.INTERIM_OUT.getValue()))
+//        && loan.getBalanceType()
+//        .equals(AcctBalanceTypeEnum.OVERDRAW.getValue())) {
+//      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW,
+//          String.valueOf(loan.getUserNo()));
+//    }
+
+    loanService.save(loan, true);
+    return SUCCESS_TIP;
+  }
+
+  /**
+   * 删除借据
+   */
+  @BussinessLog(value = "删除借据", dict = LoanDict.class)
+  @RequestMapping(value = "/delete", method = RequestMethod.POST)
+  @Permission
+  @ResponseBody
+  @OpLog
+  @ApiOperation(value = "删除借据", notes = "删除借据")
+  public Object logicDelete(@RequestBody List<Long> loanIds) {
+
+    if (loanIds == null || loanIds.size() == 0) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    loanService.delete(loanIds);
+    return SUCCESS_TIP;
+  }
+
+
+  /**
+   * 跳转到放款
+   */
+  @Permission
+  @RequestMapping("/to_loan_put/{loanId}")
+  public String loanPut(@PathVariable Long loanId, Model model) {
+    TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
+
+//    loan.setRemark(loan.getRemark().trim());
+//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
+//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+
+    model.addAttribute("loan", loan);
+    LogObjectHolder.me().set(loan);
+    return PREFIX + "loan_put.html";
+
+  }
+
+  /**
+   * 放款
+   */
+  @BussinessLog(value = "放款", dict = LoanDict.class)
+  @RequestMapping(value = "/put")
+  @Permission
+  @ResponseBody
+  @OpLog
+  @ApiOperation(value = "放款", notes = "放款")
+  public Object put(@Valid @RequestBody LoanRequest loan, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    if (loan.getId() == null) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
     /**
      * 修改校验
      */
-    //公司、代偿账户不能透支
-    if (!(account.getAcctType().equals(AcctTypeEnum.INTERIM_IN.getValue())
-        || account.getAcctType().equals(AcctTypeEnum.INTERIM_OUT.getValue()))
-        && account.getBalanceType()
-        .equals(AcctBalanceTypeEnum.OVERDRAW.getValue())) {
-      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW,
-          String.valueOf(account.getUserNo()));
-    }
 
-    acctService.save(account, true);
+    loanService.put(loan, true);
     return SUCCESS_TIP;
   }
 
   /**
-   * 删除账户
+   * 跳转到展期
    */
-  @BussinessLog(value = "逻辑删除账户", dict = AcctDict.class)
-  @RequestMapping(value = "/logic_delete", method = RequestMethod.POST)
+  @Permission
+  @RequestMapping("/to_loan_delay/{loanId}")
+  public String loanDelay(@PathVariable Long loanId, Model model) {
+    TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
+
+//    loan.setRemark(loan.getRemark().trim());
+//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
+//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+
+    model.addAttribute("loan", loan);
+    LogObjectHolder.me().set(loan);
+    return PREFIX + "loan_delay.html";
+
+  }
+
+  /**
+   * 展期
+   */
+  @BussinessLog(value = "展期", dict = LoanDict.class)
+  @RequestMapping(value = "/delay")
   @Permission
   @ResponseBody
   @OpLog
-  @ApiOperation(value = "逻辑删除账户", notes = "逻辑删除账户")
-  public Object logicDelete(@RequestBody List<Long> accountIds) {
+  @ApiOperation(value = "展期", notes = "展期")
+  public Object delay(@Valid @RequestBody LoanRequest loan, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
 
-    if (accountIds == null || accountIds.size() == 0) {
+    if (loan.getId() == null) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
-    acctService.logicDelete(accountIds);
+    /**
+     * 修改校验
+     */
+
+    loanService.delay(loan, true);
     return SUCCESS_TIP;
   }
 
   /**
-   * 冻结账户
+   * 跳转到违约还款
    */
-  @BussinessLog(value = "冻结账户", dict = AcctDict.class)
-  @RequestMapping(value = "/freeze", method = RequestMethod.POST)
+  @Permission
+  @RequestMapping("/to_loan_breach/{loanId}")
+  public String loanBreach(@PathVariable Long loanId, Model model) {
+    TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
+
+//    loan.setRemark(loan.getRemark().trim());
+//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
+//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+
+    model.addAttribute("loan", loan);
+    LogObjectHolder.me().set(loan);
+    return PREFIX + "loan_breach.html";
+
+  }
+
+  /**
+   * 违约还款
+   */
+  @BussinessLog(value = "违约还款", dict = LoanDict.class)
+  @RequestMapping(value = "/breach")
   @Permission
   @ResponseBody
   @OpLog
-  @ApiOperation(value = "冻结账户", notes = "冻结账户")
-  public Object freeze(@RequestBody List<Long> accountIds) {
+  @ApiOperation(value = "违约还款", notes = "违约还款")
+  public Object breach(@Valid @RequestBody LoanRequest loan, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
 
-    if (accountIds == null || accountIds.size() == 0) {
+    if (loan.getId() == null) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
-    acctService.freeze(accountIds);
+    /**
+     * 修改校验
+     */
+
+    loanService.breach(loan, true);
     return SUCCESS_TIP;
   }
 
   /**
-   * 取消黑名单用户
+   * 跳转到提前还款
    */
-  @BussinessLog(value = "解除冻结账户", dict = AcctDict.class)
-  @RequestMapping(value = "/unfreeze", method = RequestMethod.POST)
+  @Permission
+  @RequestMapping("/to_loan_prepay/{loanId}")
+  public String loanPrepay(@PathVariable Long loanId, Model model) {
+    TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
+
+//    loan.setRemark(loan.getRemark().trim());
+//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
+//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+
+    model.addAttribute("loan", loan);
+    LogObjectHolder.me().set(loan);
+    return PREFIX + "loan_prepay.html";
+
+  }
+
+  /**
+   * 提前还款
+   */
+  @BussinessLog(value = "提前还款", dict = LoanDict.class)
+  @RequestMapping(value = "/prepay")
   @Permission
   @ResponseBody
   @OpLog
-  @ApiOperation(value = "解除冻结账户", notes = "解除冻结账户")
-  public Object unfreeze(@RequestBody List<Long> accountIds) {
+  @ApiOperation(value = "提前还款", notes = "提前还款")
+  public Object prepay(@Valid @RequestBody LoanRequest loan, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
 
-    if (accountIds == null || accountIds.size() == 0) {
+    if (loan.getId() == null) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
-    acctService.unfreeze(accountIds);
+    /**
+     * 修改校验
+     */
+
+    loanService.breach(loan, true);
     return SUCCESS_TIP;
   }
+
+  /**
+   * 跳转到原始凭证管理
+   */
+  @Permission
+  @RequestMapping("/to_loan_update_voucher/{loanId}")
+  public String toUpdateVoucher(@PathVariable Long loanId, Model model) {
+    List<TBizLoanVoucherInfo> vouchers = loanVoucherInfoRepo.findByLoanNo(loanId).get();
+
+//    loan.setRemark(loan.getRemark().trim());
+//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
+//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+
+    model.addAttribute("vouchers", vouchers);
+    return PREFIX + "loan_update_voucher.html";
+
+  }
+
+  /**
+   * 原始凭证管理
+   */
+  @BussinessLog(value = "原始凭证管理", dict = LoanDict.class)
+  @RequestMapping(value = "/loan_update_voucher")
+  @Permission
+  @ResponseBody
+  @OpLog
+  @ApiOperation(value = "原始凭证管理", notes = "原始凭证管理")
+  public Object UpdateVoucher(@Valid @RequestBody LoanRequest loan, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    if (loan.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    /**
+     * 修改校验
+     */
+
+    loanService.updateVoucher(loan, true);
+    return SUCCESS_TIP;
+  }
+
+  /**
+   * 跳转到还款
+   */
+  @Permission
+  @RequestMapping("/to_loan_repay/{loanId}")
+  public String toLoanRepay(@PathVariable Long loanId, Model model) {
+    List<TBizLoanVoucherInfo> vouchers = loanVoucherInfoRepo.findByLoanNo(loanId).get();
+
+//    loan.setRemark(loan.getRemark().trim());
+//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
+//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+
+    model.addAttribute("vouchers", vouchers);
+    return PREFIX + "loan_repay.html";
+
+  }
+
+  /**
+   * 还款
+   */
+  @BussinessLog(value = "还款", dict = LoanDict.class)
+  @RequestMapping(value = "/repay")
+  @Permission
+  @ResponseBody
+  @OpLog
+  @ApiOperation(value = "还款", notes = "还款")
+  public Object repay(@Valid @RequestBody LoanRequest loan, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    if (loan.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    /**
+     * 修改校验
+     */
+
+    loanService.repay(loan, true);
+    return SUCCESS_TIP;
+  }
+
+  /**
+   * 跳转到打印
+   */
+  @Permission
+  @RequestMapping("/to_loan_print/{loanId}")
+  public String toLoanPrint(@PathVariable Long loanId, Model model) {
+    List<TBizLoanVoucherInfo> vouchers = loanVoucherInfoRepo.findByLoanNo(loanId).get();
+
+//    loan.setRemark(loan.getRemark().trim());
+//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
+//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+
+    model.addAttribute("vouchers", vouchers);
+    return PREFIX + "loan_repay.html";
+
+  }
+
+  /**
+   * 打印
+   */
+  @BussinessLog(value = "打印", dict = LoanDict.class)
+  @RequestMapping(value = "/print")
+  @Permission
+  @ResponseBody
+  @OpLog
+  @ApiOperation(value = "打印", notes = "打印")
+  public Object print(@Valid @RequestBody LoanRequest loan, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    if (loan.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    /**
+     * 修改校验
+     */
+
+    loanService.repay(loan, true);
+    return SUCCESS_TIP;
+  }
+
 
 }

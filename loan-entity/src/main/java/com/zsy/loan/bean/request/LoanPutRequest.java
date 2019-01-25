@@ -1,16 +1,14 @@
 package com.zsy.loan.bean.request;
 
 import io.swagger.annotations.ApiModelProperty;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 借据请求
+ * 放款请求
  *
  * @Author zhangxh
  * @Date 2019-01-18  12:30
@@ -19,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanRequest {
+public class LoanPutRequest {
 
   private Long id;
 

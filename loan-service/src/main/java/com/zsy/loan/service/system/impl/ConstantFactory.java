@@ -1,14 +1,14 @@
 package com.zsy.loan.service.system.impl;
 
 import com.zsy.loan.bean.constant.cache.CacheConstantKey;
-import com.zsy.loan.bean.enumeration.ManagerStatusEnum;
-import com.zsy.loan.bean.enumeration.MenuStatusEnum;
 import com.zsy.loan.bean.entity.system.Dept;
 import com.zsy.loan.bean.entity.system.Dict;
 import com.zsy.loan.bean.entity.system.Menu;
 import com.zsy.loan.bean.entity.system.Notice;
 import com.zsy.loan.bean.entity.system.Role;
 import com.zsy.loan.bean.entity.system.User;
+import com.zsy.loan.bean.enumeration.ManagerStatusEnum;
+import com.zsy.loan.bean.enumeration.MenuStatusEnum;
 import com.zsy.loan.bean.vo.DictVo;
 import com.zsy.loan.bean.vo.SpringContextHolder;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
@@ -64,6 +64,7 @@ public class ConstantFactory implements IConstantFactory {
   public String get(String key) {
     return configCache.get(key) == null ? null : (String) configCache.get(key);
   }
+
   public void set(String key, String val) {
     configCache.set(key, val);
   }
@@ -71,6 +72,7 @@ public class ConstantFactory implements IConstantFactory {
   public String getDict(String key) {
     return dictCache.get(key) == null ? null : (String) dictCache.get(key);
   }
+
   public void setDict(String key, String val) {
     dictCache.set(key, val);
   }
@@ -326,29 +328,6 @@ public class ConstantFactory implements IConstantFactory {
   }
 
   /**
-   * 获取性别名称
-   */
-  @Override
-  public String getSexName(Integer sex) {
-    return getDictsByName("性别", String.valueOf(sex));
-  }
-
-  @Override
-  public String getCardTypeName(String cardType) {
-    return getDictsByName("银行卡类型", cardType);
-  }
-
-  @Override
-  public String getIdCardTypeName(String cardType) {
-    return getDictsByName("证件类型", cardType);
-  }
-
-  @Override
-  public String getRelationName(String relation) {
-    return getDictsByName("联系人关系", relation);
-  }
-
-  /**
    * 获取用户登录状态
    */
   @Override
@@ -441,6 +420,30 @@ public class ConstantFactory implements IConstantFactory {
     return getDeptName(id);
   }
 
+
+  /**
+   * 获取性别名称
+   */
+  @Override
+  public String getSexName(Integer sex) {
+    return getDictsByName("性别", String.valueOf(sex));
+  }
+
+  @Override
+  public String getCardTypeName(String cardType) {
+    return getDictsByName("银行卡类型", cardType);
+  }
+
+  @Override
+  public String getIdCardTypeName(String cardType) {
+    return getDictsByName("证件类型", cardType);
+  }
+
+  @Override
+  public String getRelationName(String relation) {
+    return getDictsByName("联系人关系", relation);
+  }
+
   @Override
   public String getCustomerTypeName(Long id) {
     return getDictsByName("客户类型", String.valueOf(id));
@@ -464,6 +467,56 @@ public class ConstantFactory implements IConstantFactory {
   @Override
   public String getAcctStatusName(Long status) {
     return getDictsByName("账户状态", String.valueOf(status));
+  }
+
+  @Override
+  public String getLoanStatusName(Long status) {
+    return getDictsByName("借据状态", String.valueOf(status));
+  }
+
+  @Override
+  public String getLoanVoucherTypeName(Long status) {
+    return getDictsByName("借据凭证类型", String.valueOf(status));
+  }
+
+  @Override
+  public String getRepayStatusName(Long status) {
+    return getDictsByName("还款状态", String.valueOf(status));
+  }
+
+  @Override
+  public String getAmtTypeName(Long status) {
+    return getDictsByName("资金类型", String.valueOf(status));
+  }
+
+  @Override
+  public String getLoanBizTypeName(Long status) {
+    return getDictsByName("业务类型", String.valueOf(status));
+  }
+
+  @Override
+  public String getInvestStatusName(Long status) {
+    return getDictsByName("融资状态", String.valueOf(status));
+  }
+
+  @Override
+  public String getInvestPlanStatusName(Long status) {
+    return getDictsByName("回款状态", String.valueOf(status));
+  }
+
+  @Override
+  public String getProcessStatusName(Long status) {
+    return getDictsByName("处理状态", String.valueOf(status));
+  }
+
+  @Override
+  public String getInOutTypeName(Long status) {
+    return getDictsByName("收支用途", String.valueOf(status));
+  }
+
+  @Override
+  public String getTransferTypeName(Long status) {
+    return getDictsByName("转账用途", String.valueOf(status));
   }
 
   @Override

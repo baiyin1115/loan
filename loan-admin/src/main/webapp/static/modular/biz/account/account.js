@@ -67,8 +67,8 @@ Account.checkAll = function () {
 Account.openAddAccount = function () {
   var index = layer.open({
     type: 2,
-    title: '开立系统账户账户',
-    area: ['800px', '480px'], //宽高
+    title: '添加账户',
+    area: ['600px', '400px'], //宽高
     fix: false, //不固定
     maxmin: true,
     content: Feng.ctxPath + '/account/account_add'
@@ -84,7 +84,7 @@ Account.openAccountDetail = function () {
     var index = layer.open({
       type: 2,
       title: '账户详情',
-      area: ['800px', '480px'], //宽高
+      area: ['800px', '400px'], //宽高
       fix: false, //不固定
       maxmin: true,
       content: Feng.ctxPath + '/account/account_update/' + Account.seItem.id

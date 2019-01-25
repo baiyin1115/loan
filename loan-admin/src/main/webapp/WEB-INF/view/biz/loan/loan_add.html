@@ -1,7 +1,7 @@
 @layout("/common/_container.html"){
 <div class="ibox float-e-margins">
     <div class="ibox-content">
-        <div class="form-horizontal" id="accountInfoForm">
+        <div class="form-horizontal" id="loanInfoForm">
 
             <input type="hidden" id="id" value="">
             <input type="hidden" id="statusValue" value="">
@@ -48,13 +48,13 @@
 
             <div class="row btn-group-m-t">
                 <div class="col-sm-10">
-                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="AccountDlg.addSubmit()"/>
-                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="AccountDlg.close()"/>
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="LoanDlg.addSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="LoanDlg.close()"/>
                 </div>
             </div>
         </div>
 
     </div>
 </div>
-<script src="${ctxPath}/static/modular/biz/account/account_info.js"></script>
+<script src="${ctxPath}/static/modular/biz/loan/loan_info.js"></script>
 @}

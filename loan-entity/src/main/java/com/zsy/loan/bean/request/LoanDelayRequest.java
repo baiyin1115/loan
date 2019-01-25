@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 放款请求
+ * 展期请求
  *
  * @Author zhangxh
  * @Date 2019-01-18  12:30
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanPutRequest {
+public class LoanDelayRequest {
 
   private Long id;
 

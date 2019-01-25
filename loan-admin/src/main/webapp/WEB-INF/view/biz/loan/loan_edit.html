@@ -1,26 +1,26 @@
 @layout("/common/_container.html"){
 <div class="ibox float-e-margins">
     <div class="ibox-content">
-        <div class="form-horizontal" id="accountInfoForm">
+        <div class="form-horizontal" id="loanInfoForm">
 
-            <input type="hidden" id="id" value="${account.id}">
-            <input type="hidden" id="acctTypeValue" value="${account.acctType}">
-            <input type="hidden" id="balanceTypeValue" value="${account.balanceType}">
-            <input type="hidden" id="statusValue" value="${account.status}">
+            <input type="hidden" id="id" value="${loan.id}">
+            <input type="hidden" id="acctTypeValue" value="${loan.acctType}">
+            <input type="hidden" id="balanceTypeValue" value="${loan.balanceType}">
+            <input type="hidden" id="statusValue" value="${loan.status}">
 
-            <input type="hidden" id="acctType" value="${account.acctType}">
-            <input type="hidden" id="status" value="${account.status}">
+            <input type="hidden" id="acctType" value="${loan.acctType}">
+            <input type="hidden" id="status" value="${loan.status}">
 
             <div class="row">
                 <div class="col-sm-6 b-r">
 
-                    <#input id="userNo" name="用户编号" readonly="true" underline="false" value="${account.userNo}" />
+                    <#input id="userNo" name="用户编号" readonly="true" underline="false" value="${loan.userNo}" />
 
-                    <#input id="name" name="账户名称" underline="false" value="${account.name}" />
+                    <#input id="name" name="账户名称" underline="false" value="${loan.name}" />
 
-                    <#input id="availableBalance" readonly="true" name="可用余额" underline="false" value="${account.availableBalance}" />
+                    <#input id="availableBalance" readonly="true" name="可用余额" underline="false" value="${loan.availableBalance}" />
 
-                    <#input id="freezeBalance" readonly="true" name="冻结余额" underline="false" value="${account.freezeBalance}" />
+                    <#input id="freezeBalance" readonly="true" name="冻结余额" underline="false" value="${loan.freezeBalance}" />
 
 
                 </div>
@@ -45,27 +45,27 @@
                     </#select>
                     @*/
 
-                    <#input id="acctTypeName" name="账户类型" readonly="true" underline="false" value="${account.acctTypeName}" />
-                    <#input id="statusName" name="账户状态" readonly="true" underline="false" value="${account.statusName}" />
+                    <#input id="acctTypeName" name="账户类型" readonly="true" underline="false" value="${loan.acctTypeName}" />
+                    <#input id="statusName" name="账户状态" readonly="true" underline="false" value="${loan.statusName}" />
 
                 </div>
             </div>
 
             <div class="row" >
                 <div class="col-sm-9">
-                    <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50" value="${account.remark}"/>
+                    <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50" value="${loan.remark}"/>
                 </div>
             </div>
 
             <div class="row btn-group-m-t">
                 <div class="col-sm-10">
-                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="AccountDlg.editSubmit()"/>
-                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="AccountDlg.close()"/>
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="LoanDlg.editSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="LoanDlg.close()"/>
                 </div>
             </div>
         </div>
 
     </div>
 </div>
-<script src="${ctxPath}/static/modular/biz/account/account_info.js"></script>
+<script src="${ctxPath}/static/modular/biz/loan/loan_info.js"></script>
 @}

@@ -1,8 +1,8 @@
 /**
  * 账户管理初始化
  */
-var Account = {
-  id: "AccountTable",	//表格id
+var Loan = {
+  id: "LoanTable",	//表格id
   seItem: null,		//选中的条目
   seItems: null, //批量删除的数组
   table: null,
@@ -12,7 +12,7 @@ var Account = {
 /**
  * 初始化表格的列
  */
-Account.initColumn = function () {
+Loan.initColumn = function () {
   return [
     {field: 'selectItem', radio: false},
     {title:'账户',field:'id',align:'center',valign:'middle',sortable:true},
@@ -34,27 +34,27 @@ Account.initColumn = function () {
 /**
  * 检查是否选中
  */
-Account.check = function () {
+Loan.check = function () {
   var selected = $('#' + this.id).bootstrapTable('getSelections');
   if (selected.length != 1) {
     Feng.info("请先选中表格中的某一记录！");
     return false;
   } else {
-    Account.seItem = selected[0];
+    Loan.seItem = selected[0];
     return true;
   }
 };
 
-Account.checkAll = function () {
+Loan.checkAll = function () {
   var selected = $('#' + this.id).bootstrapTable('getSelections');
   if (selected.length == 0) {
     Feng.info("请先选中表格中的记录！");
     return false;
   } else {
 
-    Account.seItems = new Array();
+    Loan.seItems = new Array();
     for (var i = 0; i < selected.length; i++) {
-      Account.seItems.push(selected[i].id);
+      Loan.seItems.push(selected[i].id);
     }
 
     return true;
@@ -64,14 +64,14 @@ Account.checkAll = function () {
 /**
  * 点击添加账户
  */
-Account.openAddAccount = function () {
+Loan.openAddLoan = function () {
   var index = layer.open({
     type: 2,
     title: '开立系统账户账户',
     area: ['800px', '480px'], //宽高
     fix: false, //不固定
     maxmin: true,
-    content: Feng.ctxPath + '/account/account_add'
+    content: Feng.ctxPath + '/loan/loan_add'
   });
   this.layerIndex = index;
 };
@@ -79,7 +79,7 @@ Account.openAddAccount = function () {
 /**
  * 打开查看账户详情
  */
-Account.openAccountDetail = function () {
+Loan.openLoanDetail = function () {
   if (this.check()) {
     var index = layer.open({
       type: 2,
@@ -87,7 +87,7 @@ Account.openAccountDetail = function () {
       area: ['800px', '480px'], //宽高
       fix: false, //不固定
       maxmin: true,
-      content: Feng.ctxPath + '/account/account_update/' + Account.seItem.id
+      content: Feng.ctxPath + '/loan/loan_update/' + Loan.seItem.id
     });
     this.layerIndex = index;
   }
@@ -96,17 +96,17 @@ Account.openAccountDetail = function () {
 /**
  * 删除账户
  */
-Account.delete = function () {
+Loan.delete = function () {
   if (this.checkAll()) {
 
     var operation = function () {
-      var ajax = new $ax(Feng.ctxPath + "/account/logic_delete", function () {
+      var ajax = new $ax(Feng.ctxPath + "/loan/logic_delete", function () {
         Feng.success("删除成功!");
-        Account.table.refresh();
+        Loan.table.refresh();
       }, function (data) {
         Feng.error("删除失败!" + data.responseJSON.message + "!");
       });
-      ajax.setData(Account.seItems);
+      ajax.setData(Loan.seItems);
       ajax.setContentType("application/json")
       ajax.start();
     };
@@ -118,17 +118,17 @@ Account.delete = function () {
 /**
  * 锁定
  */
-Account.freeze = function () {
+Loan.freeze = function () {
   if (this.checkAll()) {
 
     var operation = function () {
-      var ajax = new $ax(Feng.ctxPath + "/account/freeze", function () {
+      var ajax = new $ax(Feng.ctxPath + "/loan/freeze", function () {
         Feng.success("设置成功!");
-        Account.table.refresh();
+        Loan.table.refresh();
       }, function (data) {
         Feng.error("设置失败!" + data.responseJSON.message + "!");
       });
-      ajax.setData(Account.seItems);
+      ajax.setData(Loan.seItems);
       ajax.setContentType("application/json")
       ajax.start();
     };
@@ -140,17 +140,17 @@ Account.freeze = function () {
 /**
  * 解锁
  */
-Account.unfreeze = function () {
+Loan.unfreeze = function () {
   if (this.checkAll()) {
 
     var operation = function () {
-      var ajax = new $ax(Feng.ctxPath + "/account/unfreeze", function () {
+      var ajax = new $ax(Feng.ctxPath + "/loan/unfreeze", function () {
         Feng.success("解锁成功!");
-        Account.table.refresh();
+        Loan.table.refresh();
       }, function (data) {
         Feng.error("解锁失败!" + data.responseJSON.message + "!");
       });
-      ajax.setData(Account.seItems);
+      ajax.setData(Loan.seItems);
       ajax.setContentType("application/json")
       ajax.start();
     };
@@ -163,7 +163,7 @@ Account.unfreeze = function () {
  * 查询表单提交参数对象
  * @returns {{}}
  */
-Account.formParams = function () {
+Loan.formParams = function () {
   var queryData = {};
   queryData['acctType'] = $("#acctType").val();
   queryData['name'] = $("#name").val();
@@ -174,26 +174,26 @@ Account.formParams = function () {
 /**
  * 查询账户列表
  */
-Account.search = function () {
-  Account.table.refresh({query: Account.formParams()});
+Loan.search = function () {
+  Loan.table.refresh({query: Loan.formParams()});
 };
 
 /**
  *  重置账户列表
  */
-Account.resetSearch = function () {
+Loan.resetSearch = function () {
   $("#acctType").val("");
   $("#name").val("");
   $("#userNo").val("");
 
-  Account.search();
+  Loan.search();
 }
 
 $(function () {
-  var defaultColunms = Account.initColumn();
-  var table = new BSTable(Account.id, "/account/list", defaultColunms);
+  var defaultColunms = Loan.initColumn();
+  var table = new BSTable(Loan.id, "/loan/list", defaultColunms);
   table.setPaginationType("server");
-  table.setQueryParams(Account.formParams());
+  table.setQueryParams(Loan.formParams());
   table.init();
-  Account.table = table;
+  Loan.table = table;
 });

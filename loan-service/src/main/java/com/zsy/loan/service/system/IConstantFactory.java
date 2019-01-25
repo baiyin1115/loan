@@ -218,4 +218,75 @@ public interface IConstantFactory {
    * @return
    */
   String getAcctStatusName(Long status);
+
+  /**
+   * 获取借据状态名称
+   * @param status
+   * @return
+   */
+  String getLoanStatusName(Long status);
+
+
+  /**
+   * 获取借据凭证类型名称
+   * @param status
+   * @return
+   */
+  String getLoanVoucherTypeName(Long status);
+
+  /**
+   * 获取还款状态名称
+   * @param status
+   * @return
+   */
+  String getRepayStatusName(Long status);
+
+  /**
+   * 获取资金类型名称
+   * @param status
+   * @return
+   */
+  String getAmtTypeName(Long status);
+
+  /**
+   * 获取业务类型名称
+   * @param status
+   * @return
+   */
+  String getLoanBizTypeName(Long status);
+
+  /**
+   * 获取融资状态名称
+   * @param status
+   * @return
+   */
+  String getInvestStatusName(Long status);
+
+  /**
+   * 获取回款状态名称
+   * @param status
+   * @return
+   */
+  String getInvestPlanStatusName(Long status);
+
+  /**
+   * 获取处理状态名称
+   * @param status
+   * @return
+   */
+  String getProcessStatusName(Long status);
+
+  /**
+   * 获取收支用途名称
+   * @param status
+   * @return
+   */
+  String getInOutTypeName(Long status);
+
+  /**
+   * 获取转账用途名称
+   * @param status
+   * @return
+   */
+  String getTransferTypeName(Long status);
 }
