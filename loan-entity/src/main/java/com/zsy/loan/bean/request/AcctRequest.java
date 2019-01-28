@@ -24,45 +24,45 @@ public class AcctRequest {
 
   private Long id;
 
-  @ApiModelProperty(required = true, value = "用户编号")
+  @ApiModelProperty( value = "用户编号")
   @NotNull(message = "[用户编号]不能为空！")
   private Long userNo;
 
-  @ApiModelProperty(required = true, value = "账户名称")
+  @ApiModelProperty( value = "账户名称")
   @NotNull(message = "[账户名称]不能为空！")
   private String name;
 
-  @ApiModelProperty(required = true, value = "可用余额")
+  @ApiModelProperty( value = "可用余额")
   private BigDecimal availableBalance;
 
-  @ApiModelProperty(required = true, value = "冻结余额")
+  @ApiModelProperty( value = "冻结余额")
   private BigDecimal freezeBalance;
 
-  @ApiModelProperty(required = true, value = "账户类型")
+  @ApiModelProperty( value = "账户类型")
   @NotNull(message = "[账户类型]不能为空！")
   private Long acctType;
 
-  @ApiModelProperty(required = true, value = "余额性质")
+  @ApiModelProperty( value = "余额性质")
   @NotNull(message = "[余额性质]不能为空！")
   private Long balanceType;
 
-  @ApiModelProperty(required = true, value = "账户状态")
+  @ApiModelProperty( value = "账户状态")
   @NotNull(message = "[账户状态]不能为空！")
   private Long status;
 
-  @ApiModelProperty(required = true, value = "创建人")
+  @ApiModelProperty( value = "创建人")
   private Long createBy;
 
-  @ApiModelProperty(required = true, value = "修改人")
+  @ApiModelProperty( value = "修改人")
   private Long modifiedBy;
 
-  @ApiModelProperty(required = true, value = "创建时间")
+  @ApiModelProperty( value = "创建时间")
   private Timestamp createAt;
 
-  @ApiModelProperty(required = true, value = "修改时间")
+  @ApiModelProperty( value = "修改时间")
   private Timestamp updateAt;
 
-  @ApiModelProperty(required = true, value = "备注")
+  @ApiModelProperty( value = "备注")
   private String remark;
 
 }

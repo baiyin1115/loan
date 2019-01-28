@@ -19,4 +19,6 @@ public interface IUserOwnFactory {
 
   public List<Dict> getOrgsByToken(String token);
 
+  public List<Dict> getOrgList();
+
 }

@@ -39,23 +39,23 @@ public class TBizRepayPlan {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
 
   @Column(name = "loan_no")
-  private long loanNo;
+  private Long loanNo;
 
 
   @Column(name = "org_no")
-  private long orgNo;
+  private Long orgNo;
 
 
   @Column(name = "product_no")
-  private long productNo;
+  private Long productNo;
 
 
   @Column(name = "cust_no")
-  private long custNo;
+  private Long custNo;
 
 
   @Column(name = "acct_date")
@@ -63,7 +63,7 @@ public class TBizRepayPlan {
 
 
   @Column(name = "term_no")
-  private long termNo;
+  private Long termNo;
 
 
   @Column(name = "rate")
@@ -79,7 +79,7 @@ public class TBizRepayPlan {
 
 
   @Column(name = "dd_num")
-  private long ddNum;
+  private Long ddNum;
 
 
   @Column(name = "dd_date")
@@ -91,7 +91,7 @@ public class TBizRepayPlan {
 
 
   @Column(name = "in_acct_no")
-  private long inAcctNo;
+  private Long inAcctNo;
 
 
   @Column(name = "ctd_prin")
@@ -131,7 +131,7 @@ public class TBizRepayPlan {
 
 
   @Column(name = "status")
-  private long status;
+  private Long status;
 
   /**
    * 创建人

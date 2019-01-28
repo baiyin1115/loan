@@ -156,9 +156,9 @@ public class BizTypeEnum {
    */
   public enum LoanStatusEnum {
     /**
-     * 1:登记,2:已放款,3:还款中,4:已逾期,5:已展期,6:已结清,7:已代偿,8:已终止
+     * 9:登记,8:已放款,12:还款中,11:已逾期,10:已展期,3:已结清,2:已代偿,1:已终止
      */
-    CHECK_IN(1), PUT(2), REPAY_IND(3), OVERDUE(4), DELAY(5),SETTLE(6),COMPENSATION(7),END(8);
+    CHECK_IN(9), PUT(8), REPAY_IND(12), OVERDUE(11), DELAY(10),SETTLE(3),COMPENSATION(2),END(1);
 
     private long value;
 
@@ -230,9 +230,9 @@ public class BizTypeEnum {
    */
   public enum RepayStatusEnum {
     /**
-     * 1:待还,2:已还,3:已逾期,4:已代偿,5:已终止
+     * 5:待还,3:已还,4:已逾期,2:已代偿,1:已终止
      */
-    NOT_REPAY(1), REPAID(2), OVERDUE(3), COMPENSATION(4), END(5);
+    NOT_REPAY(5), REPAID(3), OVERDUE(4), COMPENSATION(2), END(1);
 
     private long value;
 
@@ -343,9 +343,9 @@ public class BizTypeEnum {
    */
   public enum InvestStatusEnum {
     /**
-     * 1:登记,2:计息中,3:已延期,4:已撤资,5:已结转
+     * 5:登记,3:计息中,4:已延期,1:已撤资,2:已结转
      */
-    CHECK_IN(1), INTEREST_ING(2), DELAY(3), DIVESTMENT(4), SETTLEMENT(5);
+    CHECK_IN(5), INTEREST_ING(3), DELAY(4), DIVESTMENT(1), SETTLEMENT(2);
 
     private long value;
 
@@ -380,9 +380,9 @@ public class BizTypeEnum {
    */
   public enum InvestPlanStatusEnum {
     /**
-     * 1:未计息,2:已计息,3:已结息,4:已终止
+     * 4:未计息,3:已计息,2:已结息,1:已终止
      */
-    UN_INTEREST(1), INTERESTED(2), RECEIVING(3), END(4);
+    UN_INTEREST(4), INTERESTED(3), RECEIVING(2), END(1);
 
     private long value;
 

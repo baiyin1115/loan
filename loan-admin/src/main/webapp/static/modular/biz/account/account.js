@@ -68,7 +68,7 @@ Account.openAddAccount = function () {
   var index = layer.open({
     type: 2,
     title: '添加账户',
-    area: ['600px', '400px'], //宽高
+    area: ['800px', '450px'], //宽高
     fix: false, //不固定
     maxmin: true,
     content: Feng.ctxPath + '/account/account_add'
@@ -84,7 +84,7 @@ Account.openAccountDetail = function () {
     var index = layer.open({
       type: 2,
       title: '账户详情',
-      area: ['800px', '400px'], //宽高
+      area: ['800px', '450px'], //宽高
       fix: false, //不固定
       maxmin: true,
       content: Feng.ctxPath + '/account/account_update/' + Account.seItem.id
@@ -191,7 +191,7 @@ Account.resetSearch = function () {
 
 $(function () {
   var defaultColunms = Account.initColumn();
-  var table = new BSTable(Account.id, "/account/list", defaultColunms);
+  var table = new BSTable(Account.id, "/account/list", defaultColunms,800);
   table.setPaginationType("server");
   table.setQueryParams(Account.formParams());
   table.init();

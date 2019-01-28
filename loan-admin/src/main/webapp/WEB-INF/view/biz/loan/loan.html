@@ -3,7 +3,7 @@
     <div class="col-sm-12">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <h5>贷款管理</h5>
+                <h5>借据管理</h5>
             </div>
             <div class="ibox-content">
                 <div class="row row-lg">
@@ -25,7 +25,7 @@
                         </div>
                         <div class="hidden-xs" id="LoanTableToolbar" role="group">
                             @if(shiro.hasPermission("/loan/add")){
-                                <#button name="开立" icon="fa-plus" clickFun="Loan.openAddLoan()"/>
+                                <#button name="登记" icon="fa-plus" clickFun="Loan.openAddLoan()"/>
                             @}
                             @if(shiro.hasPermission("/loan/update")){
                                 <#button name="修改" icon="fa-edit" clickFun="Loan.openLoanDetail()" space="true"/>
@@ -33,8 +33,43 @@
                             @if(shiro.hasPermission("/loan/delete")){
                                 <#button name="删除" icon="fa-remove" clickFun="Loan.delete()" space="true"/>
                             @}
+                            @if(shiro.hasPermission("/loan/put")){
+                                <#button name="放款" icon="fa-forward" clickFun="Loan.openPutLoan()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/loan/delay")){
+                                <#button name="展期" icon="fa-expand" clickFun="Loan.openDelayLoan()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/loan/breach")){
+                                <#button name="违约还款" icon="fa-recycle" clickFun="Loan.openBreachLoan()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/loan/prepay")){
+                                <#button name="提前还款" icon="fa-recycle" clickFun="Loan.openPrepayLoan()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/loan/loan_update_voucher")){
+                                <#button name="原始凭证" icon="fa-cube" clickFun="Loan.openUpdateVoucherLoan()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/loan/print")){
+                                <#button name="打印" icon="fa-print" clickFun="Loan.openPrintLoan()" space="true"/>
+                            @}
                         </div>
                         <#table id="LoanTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>还款计划管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="hidden-xs" id="LoanPlanTableToolbar" role="group">
+                            @if(shiro.hasPermission("/loan/repay")){
+                            <#button name="还款" icon="fa-recycle" clickFun="LoanPlan.openRepayLoan()"/>
+                            @}
+                        </div>
+                        <#table id="LoanPlanTable"/>
                     </div>
                 </div>
             </div>

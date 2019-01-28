@@ -3,7 +3,7 @@
  */
 var LoanDlg = {
   loanInfoData: {},
-  // zTreeInstance: null,
+  productTreeInstance: null,
   validateFields: {
     acctType: {validators: {notEmpty: {message: '账户类型'}}},
     balanceType: {validators: {notEmpty: {message: '余额性质'}}},
@@ -129,4 +129,27 @@ $(function () {
   else{
     $("#status").val($("#statusValue").val());
   }
+
+  //产品树
+  var tree = new $ZTree("productTree", "/menu/selectMenuTreeList");
+  tree.bindOnClick(LoanDlg.onClickProduct);
+  tree.init();
+  LoanDlg.productTreeInstance = tree;
+
 });
+
+/**
+ * 点击父级编号input框时
+ */
+LoanDlg.onClickProduct = function (e, treeId, treeNode) {
+  $("#productName").attr("value", LoanDlg.productTreeInstance.getSelectedVal());
+  $("#product").attr("value", treeNode.id);
+};
+
+
+/**
+ * 显示父级菜单选择的树
+ */
+LoanDlg.showMenuSelectTree = function () {
+  Feng.showInputTree("productName", "productTreeDiv", 15, 34);
+};

@@ -39,19 +39,19 @@ public class TBizLoanInfo {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
 
   @Column(name = "org_no")
-  private long orgNo;
+  private Long orgNo;
 
 
   @Column(name = "product_no")
-  private long productNo;
+  private Long productNo;
 
 
   @Column(name = "cust_no")
-  private long custNo;
+  private Long custNo;
 
 
   @Column(name = "contr_no")
@@ -59,7 +59,7 @@ public class TBizLoanInfo {
 
 
   @Column(name = "loan_type")
-  private long loanType;
+  private Long loanType;
 
 
   @Column(name = "acct_date")
@@ -87,7 +87,7 @@ public class TBizLoanInfo {
 
 
   @Column(name = "repay_type")
-  private long repayType;
+  private Long repayType;
 
 
   @Column(name = "term_no")
@@ -103,7 +103,7 @@ public class TBizLoanInfo {
 
 
   @Column(name = "lending_acct")
-  private long lendingAcct;
+  private Long lendingAcct;
 
 
   @Column(name = "external_acct")
@@ -179,7 +179,7 @@ public class TBizLoanInfo {
 
 
   @Column(name = "status")
-  private long status;
+  private Long status;
 
   /**
    * 创建人

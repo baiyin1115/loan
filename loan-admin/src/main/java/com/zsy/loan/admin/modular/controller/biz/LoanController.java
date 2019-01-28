@@ -7,9 +7,8 @@ import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.dictmap.biz.LoanDict;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizLoanVoucherInfo;
+import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
-import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctBalanceTypeEnum;
-import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
 import com.zsy.loan.bean.request.LoanRequest;
@@ -17,8 +16,6 @@ import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.LoanVoucherInfoRepo;
 import com.zsy.loan.service.biz.impl.LoanServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
-import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.biz.AcctWarpper;
 import com.zsy.loan.service.warpper.biz.LoanWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.factory.Page;
@@ -79,7 +76,7 @@ public class LoanController extends BaseController {
 
     Page<TBizLoanInfo> page = new PageFactory<TBizLoanInfo>().defaultPage();
 
-    page = loanService.getTBLoanInfos(page, condition);
+    page = loanService.getTBLoanPages(page, condition);
     page.setRecords(
         (List<TBizLoanInfo>) new LoanWarpper(BeanUtil.objectsToMaps(page.getRecords()))
             .warp());
@@ -95,13 +92,13 @@ public class LoanController extends BaseController {
   @ResponseBody
   @OpLog
   @ApiOperation(value = "获取还款计划列表", notes = "获取还款计划列表")
-  public Object repayPlanList(TBizLoanInfo condition) {
+  public Object repayPlanList(TBizRepayPlan condition) {
 
-    Page<TBizLoanInfo> page = new PageFactory<TBizLoanInfo>().defaultPage();
+    Page<TBizRepayPlan> page = new PageFactory<TBizRepayPlan>().defaultPage();
 
-    page = loanService.getPlanList(page, condition);
+    page = loanService.getPlanPages(page, condition);
     page.setRecords(
-        (List<TBizLoanInfo>) new LoanWarpper(BeanUtil.objectsToMaps(page.getRecords()))
+        (List<TBizRepayPlan>) new LoanWarpper(BeanUtil.objectsToMaps(page.getRecords()))
             .warp());
     return super.packForBT(page);
   }

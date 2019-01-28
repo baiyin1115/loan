@@ -7,41 +7,110 @@
             <input type="hidden" id="statusValue" value="">
 
             <div class="row">
-                <div class="col-sm-6 b-r">
+                <div class="col-sm-4">
 
-                    <#input id="userNo" name="用户编号" readonly="true" underline="false" value="15000000001"/>
+                    <#select id="orgNo" name="公司" underline="false">
+                        <option value=""></option>
+                        @for(dict in userown.getOrgList()){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
 
-                    <#input id="name" name="账户名称" underline="false"/>
+                    <#select id="productNo" name="产品" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('公司')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
 
-                    <#input id="availableBalance" readonly="true" name="可用余额" underline="false" value="0.00"/>
+                    <#input id="productName" name="产品" underline="false"
+                        hidden="productNo" readonly="readonly"
+                        clickFun="LoanDlg.showMenuSelectTree(); return false;"
+                        style="background-color: #ffffff !important;"
+                        selectFlag="true" selectId="productTreeDiv" selectTreeId="productTree" selectStyle="width:244px !important;"/>
 
-                    <#input id="freezeBalance" readonly="true" name="冻结余额" underline="false" value="0.00"/>
+                    <#input id="contrNo" name="合同编号" underline="false"/>
+
+                    <#select id="custNo" name="客户" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('公司')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#input id="acctDate" name="业务日期" underline="false"/>
+
+                    <#input id="beginDate" name="借款开始日期" underline="false"/>
+
+                    <#input id="endDate" name="借款结束日期" underline="false"/>
+
+                    <#input id="lendingAcct" name="放款账户" underline="false"/>
 
                 </div>
-                <div class="col-sm-6">
-
-                    <#select id="balanceType" name="余额性质" underline="false">
-                        @for(dict in constant.getDicts('余额性质')){
+                <div class="col-sm-4">
+                    <#select id="loanType" name="贷款类型" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('贷款类型')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
 
-                    <#select id="acctType" name="账户类型" underline="false">
-                        @for(dict in constant.getDicts('账户类型')){
+                    <#input id="rate" name="利率" underline="false"/>
+
+                    <#input id="serviceFeeScale" name="服务费比例" underline="false"/>
+
+                    <#select id="serviceFeeType" name="服务费收取方式" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('服务费收取方式')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
 
-                    <#select id="status" name="账户状态" underline="false">
-                        @for(dict in constant.getDicts('账户状态')){
+                    <#select id="repayType" name="还款方式" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('还款方式')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
+
+                    <#select id="isPen" name="是否罚息" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('是否')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#input id="penRate" name="罚息利率" underline="false"/>
+
+                    <#select id="penNumber" name="罚息基数" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('罚息基数')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+                </div>
+                <div class="col-sm-4">
+
+                    <#input id="externalAcct" name="收款账户" underline="false"/>
+
+                    <#input id="ddDate" name="约定还款日" underline="false"/>
+
+                    <#input id="prin" name="本金" underline="false"/>
+
+                    <#input id="serviceFee" name="服务费" underline="false"/>
+
+                    <#input id="receiveBigint" name="应收利息" underline="false"/>
+
+                    <#input id="termNo" name="期数" underline="false"/>
+
+                    <#input id="lendingDate" name="放款日期" underline="false"/>
+
+                    <#input id="lendingAmt" name="放款金额" underline="false"/>
 
                 </div>
             </div>
             <div class="row" >
-                <div class="col-sm-9">
+                <div class="col-sm-11">
                 <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50"/>
                 </div>
             </div>

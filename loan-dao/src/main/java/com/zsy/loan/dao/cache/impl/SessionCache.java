@@ -1,10 +1,12 @@
 package com.zsy.loan.dao.cache.impl;
 
+import com.zsy.loan.bean.constant.cache.CacheConstantKey;
 import com.zsy.loan.bean.constant.cache.CacheName;
 import com.zsy.loan.bean.core.ShiroUser;
 import com.zsy.loan.dao.cache.CacheDao;
 import java.io.Serializable;
 import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
  * 用户登录时 记录其他信息
  */
 @Service("sessionCache")
+@Slf4j
 public class SessionCache implements CacheDao {
   
   @Autowired
@@ -45,6 +48,8 @@ public class SessionCache implements CacheDao {
 
   @Override
   public void hset(Serializable key, Serializable k, Object val) {
+
+    log.info("加载缓存：" + key + ":" + k + ":" + val);
     ehcacheDao.hset(key,k,val);
   }
 
@@ -62,6 +67,8 @@ public class SessionCache implements CacheDao {
   public void
   set(Serializable key, Object val) {
     Cache cache = cacheManager.getCache(CacheName.SESSION);
+
+    log.info("加载缓存：" + CacheName.SESSION + ":" + key + ":" + val);
     cache.put(key, val);
 
   }
