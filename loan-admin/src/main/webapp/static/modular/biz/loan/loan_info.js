@@ -7,26 +7,26 @@ var LoanDlg = {
   lendingAcctTreeInstance: null,
   custLayerIndex: null,
   validateFields: {
-    orgNo :{validators:{notEmpty:{message:'公司编号'}}},
-    productNo:{validators:{notEmpty:{message:'产品编号'}}},
-    custNo:{validators:{notEmpty:{message:'客户编号'}}},
+    orgNo: {validators: {notEmpty: {message: '公司编号'}}},
+    productNo: {validators: {notEmpty: {message: '产品编号'}}},
+    custNo: {validators: {notEmpty: {message: '客户编号'}}},
     // contrNo:{validators:{notEmpty:{message:'原始合同编号'}}},
-    acctDate:{validators:{notEmpty:{message:'业务日期'}}},
-    beginDate:{validators:{notEmpty:{message:'借款开始日期'}}},
-    endDate:{validators:{notEmpty:{message:'借款结束日期'}}},
-    prin:{validators:{notEmpty:{message:'本金'}}},
+    acctDate: {validators: {notEmpty: {message: '业务日期'}}},
+    beginDate: {validators: {notEmpty: {message: '借款开始日期'}}},
+    endDate: {validators: {notEmpty: {message: '借款结束日期'}}},
+    prin: {validators: {notEmpty: {message: '本金'}}},
     // serviceFee:{validators:{notEmpty:{message:'服务费'}}},
     // receiveBigint:{validators:{notEmpty:{message:'应收利息'}}},
     // termNo:{validators:{notEmpty:{message:'期数'}}},
     // lendingDate:{validators:{notEmpty:{message:'放款日期'}}},
     // lendingAmt:{validators:{notEmpty:{message:'放款金额'}}},
-    lendingAcct:{validators:{notEmpty:{message:'放款账户'}}},
+    lendingAcct: {validators: {notEmpty: {message: '放款账户'}}},
     // externalAcct:{validators:{notEmpty:{message:'收款账户'}}},
-    loanType:{validators:{notEmpty:{message:'贷款类型'}}},
-    rate:{validators:{notEmpty:{message:'利率'}}},
-    serviceFeeScale:{validators:{notEmpty:{message:'服务费比例'}}},
-    serviceFeeType:{validators:{notEmpty:{message:'服务费收取方式'}}},
-    repayType:{validators:{notEmpty:{message:'还款方式'}}}
+    loanType: {validators: {notEmpty: {message: '贷款类型'}}},
+    rate: {validators: {notEmpty: {message: '利率'}}},
+    serviceFeeScale: {validators: {notEmpty: {message: '服务费比例'}}},
+    serviceFeeType: {validators: {notEmpty: {message: '服务费收取方式'}}},
+    repayType: {validators: {notEmpty: {message: '还款方式'}}}
     //isPen:{validators:{notEmpty:{message:'是否罚息'}}},
     //penRate:{validators:{notEmpty:{message:'罚息利率'}}},
     //penNumber:{validators:{notEmpty:{message:'罚息基数'}}}
@@ -51,8 +51,17 @@ LoanDlg.clearData = function () {
  * @param val 数据的具体值
  */
 LoanDlg.set = function (key, val) {
-  this.loanInfoData[key] = (typeof value == "undefined") ? $("#" + key).val()
-      : value;
+
+  if ($("#" + key).attr("id") == "prin" ||
+      $("#" + key).attr("id") == "serviceFee" ||
+      $("#" + key).attr("id") == "receiveInterest" ||
+      $("#" + key).attr("id") == "lendingAmt"
+  ) {
+    this.loanInfoData[key] = (typeof value == "undefined") ? Feng.parseMoney($("#" + key).val()) : value;
+  } else {
+    this.loanInfoData[key] = (typeof value == "undefined") ? $("#" + key).val() : value;
+  }
+
   //alert($("#" + key).val())
   return this;
 };
@@ -78,12 +87,19 @@ LoanDlg.close = function () {
  * 收集数据
  */
 LoanDlg.collectData = function () {
-  this.set('id').set('orgNo').set('productNo').set('custNo').set('contrNo').set('acctDate').set('beginDate').set('endDate')
-  .set('prin').set('serviceFee').set('receiveInterest').set('termNo').set('lendingDate').set('lendingAmt').set('lendingAcct')
-  .set('externalAcct').set('loanType').set('rate').set('serviceFeeScale').set('serviceFeeType').set('repayType').set('isPen')
-  .set('penRate').set('penNumber').set('ddDate').set('extensionNo').set('extensionRate').set('schdPrin').set('schdInterest')
-  .set('schdServFee').set('schdPen').set('totPaidPrin').set('totPaidInterest').set('totPaidServFee').set('totPaidPen').set('totWavAmt')
-  .set('status').set('createBy').set('modifiedBy').set('createAt').set('updateAt').set('remark');
+  this.set('id').set('orgNo').set('productNo').set('custNo').set('contrNo').set(
+      'acctDate').set('beginDate').set('endDate')
+  .set('prin').set('serviceFee').set('receiveInterest').set('termNo').set(
+      'lendingDate').set('lendingAmt').set('lendingAcct')
+  .set('externalAcct').set('loanType').set('rate').set('serviceFeeScale').set(
+      'serviceFeeType').set('repayType').set('isPen')
+  .set('penRate').set('penNumber').set('ddDate').set('extensionNo').set(
+      'extensionRate').set('schdPrin').set('schdInterest')
+  .set('schdServFee').set('schdPen').set('totPaidPrin').set(
+      'totPaidInterest').set('totPaidServFee').set('totPaidPen').set(
+      'totWavAmt')
+  .set('status').set('createBy').set('modifiedBy').set('createAt').set(
+      'updateAt').set('remark');
 };
 
 /**
@@ -152,10 +168,10 @@ $(function () {
   //初始化
   $("#acctType").val($("#acctTypeValue").val());
   $("#balanceType").val($("#balanceTypeValue").val());
-  if($("#statusValue") == null || $("#statusValue").val() == ""){
+  if ($("#statusValue") == null || $("#statusValue").val() == "") {
     $("#status").val(1); //正常
   }
-  else{
+  else {
     $("#status").val($("#statusValue").val());
   }
 
@@ -166,10 +182,19 @@ $(function () {
   LoanDlg.productTreeInstance = tree;
 
   //放款账户树
-  var tree = new $ZTree("lendingAcctTree", "/account/selectLendingAcctTreeList");
+  var tree = new $ZTree("lendingAcctTree",
+      "/account/selectLendingAcctTreeList");
   tree.bindOnClick(LoanDlg.onClickLendingAcct);
   tree.init();
   LoanDlg.lendingAcctTreeInstance = tree;
+
+  //绑定格式化事件
+  $('#prin').bind('blur', function () {Feng.formatAmt($('#prin'));});
+  $('#serviceFee').bind('blur', function () {Feng.formatAmt($('#serviceFee'));});
+  $('#receiveInterest').bind('blur', function () {Feng.formatAmt($('#receiveInterest'));});
+  $('#lendingAmt').bind('blur', function () {Feng.formatAmt($('#lendingAmt'));});
+
+  //alert(Feng.formatMoney(0.00,2));
 
 });
 
@@ -190,15 +215,16 @@ LoanDlg.calculate = function () {
     Feng.success("试算成功!");
 
     //设置数据信息
-    $("#serviceFee").val(data.serviceFee);
-    $("#receiveInterest").val(data.receiveInterest);
+    $("#serviceFee").val(Feng.formatMoney(data.serviceFee,2));
+    $("#receiveInterest").val(Feng.formatMoney(data.receiveInterest,2));
     $("#termNo").val(data.termNo);
-    $("#lendingAmt").val(data.lendingAmt);
+    $("#lendingAmt").val(Feng.formatMoney(data.lendingAmt,2));
 
   }, function (data) {
     Feng.error("试算失败!" + data.responseJSON.message + "!");
   });
   ajax.set(this.loanInfoData);
+  //alert(JSON.stringify(this.loanInfoData));
   ajax.setContentType("application/json")
   ajax.start();
 };
@@ -215,7 +241,8 @@ LoanDlg.showLendingAcctSelectTree = function () {
  * 点击父级编号input框时
  */
 LoanDlg.onClickLendingAcct = function (e, treeId, treeNode) {
-  $("#lendingAcctName").attr("value", LoanDlg.lendingAcctTreeInstance.getSelectedVal());
+  $("#lendingAcctName").attr("value",
+      LoanDlg.lendingAcctTreeInstance.getSelectedVal());
   $("#lendingAcct").attr("value", treeNode.id);
 };
 
@@ -230,7 +257,6 @@ LoanDlg.onClickProduct = function (e, treeId, treeNode) {
   LoanDlg.changeProduct(treeNode.id); //触发刷新
 };
 
-
 /**
  * 显示父级菜单选择的树
  */
@@ -244,7 +270,7 @@ LoanDlg.showProductSelectTree = function () {
 LoanDlg.changeProduct = function (id) {
 
   //提交信息
-  var ajax = new $ax(Feng.ctxPath + "/product/detail/"+id, function (data) {
+  var ajax = new $ax(Feng.ctxPath + "/product/detail/" + id, function (data) {
 
     $("#loanType").val(data.loanType);
     $("#rate").val(data.rate);
@@ -267,13 +293,13 @@ LoanDlg.changeProduct = function (id) {
  * 打开查看客户
  */
 LoanDlg.openCustList = function () {
-    var index = layer.open({
-      type: 2,
-      title: '选择客户',
-      area: ['900px', '600px'], //宽高
-      fix: false, //不固定
-      maxmin: true,
-      content: Feng.ctxPath + '/loan/loan_cust_list'
-    });
-    this.custLayerIndex = index;
+  var index = layer.open({
+    type: 2,
+    title: '选择客户',
+    area: ['900px', '600px'], //宽高
+    fix: false, //不固定
+    maxmin: true,
+    content: Feng.ctxPath + '/loan/loan_cust_list'
+  });
+  this.custLayerIndex = index;
 };

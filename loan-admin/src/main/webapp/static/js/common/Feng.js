@@ -148,5 +148,65 @@ var Feng = {
     }
     var result = strArr.join('');
     return result.charAt(0).toUpperCase() + result.substring(1);
+  },
+
+  /**
+   * 将数值四舍五入(保留2位小数)后格式化成金额形式
+   *
+   * @param num 数值(Number或者String)
+   * @return 金额格式的字符串,如'1,234,567.45'
+   * @type String
+   */
+  formatMoney: function (money, digit){
+
+    if(money == 0.00 || money == 0){
+      return '0.00';
+    }
+
+    if(money == null || money == ""){
+      return "";
+    }
+
+    var tpMoney = '0.00';
+    if(undefined != money){
+      tpMoney = money;
+    }
+    tpMoney = new Number(tpMoney);
+    if(isNaN(tpMoney)){
+      return '0.00';
+    }
+    tpMoney = tpMoney.toFixed(digit) + '';
+    var re = /^(-?\d+)(\d{3})(\.?\d*)/;
+    while(re.test(tpMoney)){
+      tpMoney = tpMoney.replace(re, "$1,$2$3")
+    }
+
+    return tpMoney;
+  },
+
+  /**
+   * 格式化
+   */
+  formatAmt: function (ob) {
+    var val = Feng.formatMoney(ob[0].value,2);
+    ob.val(val);
+  },
+
+  //反格式化
+  parseMoney: function (s, n) {
+
+    if(s == null || s == ""){
+      return "";
+    }
+
+    n = n > 0 && n <= 20 ? n : 2;
+    s = parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";
+    return s;
+  },
+
+  parseAmt: function (ob) {
+    var val = Feng.parseMoney(ob[0].value,2);
+    ob.val(val);
   }
+
 };

@@ -42,6 +42,25 @@
 
                 </div>
                 <div class="col-sm-4">
+
+                    <#input id="prin" name="本金" underline="false"/>
+
+                    <#input id="externalAcct" name="收款账户" underline="false"/>
+
+                    <#input id="ddDate" name="约定还款日" underline="false"/>
+
+                    <#TimeInput id="lendingDate" name="放款日期" isTime="false" pattern="YYYY-MM-DD" />
+
+                    <#input id="serviceFee" name="服务费" underline="false"/>
+
+                    <#input id="receiveInterest" name="应收利息" underline="false" readOnly="true" />
+
+                    <#input id="lendingAmt" name="放款金额" underline="false"/>
+
+                    <#input id="termNo" name="期数" underline="false"/>
+
+                </div>
+                <div class="col-sm-4">
                     <#select id="loanType" name="贷款类型" underline="false">
                         <option value=""></option>
                         @for(dict in constant.getDicts('贷款类型')){
@@ -82,25 +101,6 @@
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
-                </div>
-                <div class="col-sm-4">
-
-                    <#input id="externalAcct" name="收款账户" underline="false"/>
-
-                    <#input id="ddDate" name="约定还款日" underline="false"/>
-
-                    <#input id="prin" name="本金" underline="false"/>
-
-                    <#input id="serviceFee" name="服务费" underline="false"/>
-
-                    <#input id="receiveInterest" name="应收利息" underline="false" readOnly="true" />
-
-                    <#input id="lendingAmt" name="放款金额" underline="false"/>
-
-                    <#input id="termNo" name="期数" underline="false"/>
-
-                    <#TimeInput id="lendingDate" name="放款日期" isTime="false" pattern="YYYY-MM-DD" />
-
                 </div>
             </div>
             <div class="row" >

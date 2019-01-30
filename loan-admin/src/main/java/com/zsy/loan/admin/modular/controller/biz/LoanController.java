@@ -139,22 +139,13 @@ public class LoanController extends BaseController {
      */
     exportErr(error);
 
-//    /**
-//     * 校验
-//     */
-//    //不能开立投资人、借款人贷款
-//    if (loan.getAcctType().equals(AcctTypeEnum.INVEST.getValue()) || loan.getAcctType()
-//        .equals(AcctTypeEnum.LOAN.getValue())) {
-//      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_ADD, String.valueOf(loan.getUserNo()));
-//    }
-//
-//    //公司、代偿贷款不能透支
-//    if (!(loan.getAcctType().equals(AcctTypeEnum.INTERIM_IN.getValue())
-//        || loan.getAcctType().equals(AcctTypeEnum.INTERIM_OUT.getValue())) && loan
-//        .getBalanceType().equals(AcctBalanceTypeEnum.OVERDRAW.getValue())) {
-//      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW,
-//          String.valueOf(loan.getUserNo()));
-//    }
+    /**
+     * 校验
+     */
+    //借款结束日期必须在开始日期之前
+    if (!DateUtil.compareDate(loan.getBeginDate(),loan.getEndDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
+    }
 
     return loanService.save(loan, false);
   }

@@ -105,16 +105,12 @@ public class LoanCalculateRequest {
   @ApiModelProperty(value = "约定还款日")
   private Long ddDate;
 
-  @NotNull(message = "[是否罚息]不能为空！")
   @ApiModelProperty(value = "是否罚息")
   private Long isPen;
 
   @ApiModelProperty( value = "罚息利率")
-  @NotNull(message = "[罚息利率]不能为空！")
-  @DecimalMax(value = "1.00", message = "[罚息利率]不能超过1.00")
   private BigDecimal penRate;
 
-  @NotNull(message = "[罚息基数]不能为空！")
   @ApiModelProperty(value = "罚息基数")
   private Long penNumber;
 

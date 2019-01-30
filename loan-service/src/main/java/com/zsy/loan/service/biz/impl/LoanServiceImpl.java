@@ -2,7 +2,10 @@ package com.zsy.loan.service.biz.impl;
 
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
+import com.zsy.loan.bean.enumeration.BizExceptionEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayTypeEnum;
+import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.request.LoanCalculateRequest;
 import com.zsy.loan.bean.request.LoanRequest;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
@@ -10,6 +13,7 @@ import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.biz.RepayPlanRepo;
 import com.zsy.loan.service.factory.TrialCalculateFactory;
 import com.zsy.loan.service.shiro.ShiroKit;
+import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.StringUtils;
@@ -22,7 +26,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -92,23 +96,48 @@ public class LoanServiceImpl {
     return page;
   }
 
-  public Object save(@Valid LoanRequest loan, boolean b) {
-    return null;
+  public Object save(LoanRequest loan, boolean b) {
+
+    /**
+     * 试算
+     */
+    LoanCalculateRequest calculateRequest = LoanCalculateRequest.builder().build();
+    BeanKit.copyProperties(loan, calculateRequest);
+    LoanCalculateRequest result = calculate(calculateRequest); //试算结果
+
+    /**
+     * 比较试算结果是否与传入的一致
+     */
+    if (!loan.getTermNo().equals(result.getTermNo())) {
+      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "期数不一致");
+    }
+    if (loan.getReceiveInterest().compareTo(result.getReceiveInterest()) != 0) {
+      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
+    }
+    if (loan.getServiceFee().compareTo(result.getServiceFee()) != 0) {
+      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "服务费不一致");
+    }
+
+    TBizLoanInfo info = TBizLoanInfo.builder().build();
+    BeanKit.copyProperties(loan, info);
+    info.setStatus(LoanStatusEnum.CHECK_IN.getValue()); //登记
+
+    return repository.save(info);
   }
 
   public void delete(List<Long> loanIds) {
   }
 
-  public void put(@Valid LoanRequest loan, boolean b) {
+  public void put(LoanRequest loan, boolean b) {
   }
 
-  public void delay(@Valid LoanRequest loan, boolean b) {
+  public void delay(LoanRequest loan, boolean b) {
   }
 
-  public void breach(@Valid LoanRequest loan, boolean b) {
+  public void breach(LoanRequest loan, boolean b) {
   }
 
-  public void updateVoucher(@Valid LoanRequest loan, boolean b) {
+  public void updateVoucher(LoanRequest loan, boolean b) {
   }
 
   public Page<TBizRepayPlan> getPlanPages(Page<TBizRepayPlan> page, TBizRepayPlan condition) {
@@ -149,7 +178,7 @@ public class LoanServiceImpl {
     return page;
   }
 
-  public void repay(@Valid LoanRequest loan, boolean b) {
+  public void repay(LoanRequest loan, boolean b) {
   }
 
   private void setOrgList(Long orgNo, Path path, CriteriaBuilder criteriaBuilder,
@@ -183,7 +212,7 @@ public class LoanServiceImpl {
     loan.setMonthRate(BigDecimalUtil
         .div(loan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_UP)); //月利息
     loan.setDay(DateUtil.daysBetween(loan.getBeginDate(), loan.getEndDate())); //相差天数
-    loan.setMonth(DateUtil.getMonthFloor(loan.getBeginDate(),loan.getEndDate())); //相差月数
+    loan.setMonth(DateUtil.getMonthFloor(loan.getBeginDate(), loan.getEndDate())); //相差月数
     loan.setProduct(productRepo.findById(loan.getProductNo()).get()); //产品信息
 
     LoanCalculateRequest result = TrialCalculateFactory.maps
