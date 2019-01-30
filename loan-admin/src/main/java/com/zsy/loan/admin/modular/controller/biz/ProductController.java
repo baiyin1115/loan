@@ -10,6 +10,7 @@ import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
 import com.zsy.loan.bean.request.ProductInfoRequest;
+import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.service.biz.impl.ProductServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
@@ -73,7 +74,7 @@ public class ProductController extends BaseController {
   public String productUpdate(@PathVariable Long productId, Model model) {
     TBizProductInfo product = productInfoRepo.findById(productId).get();
 
-    product.setRemark(product.getRemark().trim());
+    product.setRemark(product.getRemark()==null?"":product.getRemark().trim());
 
     model.addAttribute("product", product);
     LogObjectHolder.me().set(product);
@@ -161,6 +162,18 @@ public class ProductController extends BaseController {
     LogObjectHolder.me().set(productService.getProductNames(productIds));
     productInfoRepo.deleteByIds(productIds);
     return SUCCESS_TIP;
+
+  }
+
+  /**
+   * 获取产品列表
+   */
+  @RequestMapping(value = "/selectProductTreeList")
+  @ResponseBody
+  public List<ZTreeNode> selectProductTreeList() {
+    List<ZTreeNode> treeList = productService.getTreeList();
+//    roleTreeList.add(ZTreeNode.createParent());
+    return treeList;
 
   }
 

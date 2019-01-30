@@ -75,7 +75,7 @@ public class CustomerController extends BaseController {
 
     TBizCustomerInfo customer = customerInfoRepo.findById(customerId).get();
 
-    customer.setRemark(customer.getRemark().trim());
+    customer.setRemark(customer.getRemark()==null?"":customer.getRemark().trim());
     customer.setTypeName(ConstantFactory.me().getCustomerTypeName(customer.getType()));
     customer.setStatusName(ConstantFactory.me().getCustomerStatusName(customer.getStatus()));
 

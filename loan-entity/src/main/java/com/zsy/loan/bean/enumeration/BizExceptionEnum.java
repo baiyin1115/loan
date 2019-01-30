@@ -55,6 +55,11 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
   ACCOUNT_NO_OVERDRAW(401, "账户不能透支"),
 
   /**
+   * 贷款问题
+   */
+  LOAN_DATE(401, "结束日期必须在开始日期之前"),
+
+  /**
    * 客户问题
    */
   NO_THIS_CUSTOMER(400, "没有此客户"),

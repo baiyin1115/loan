@@ -25,4 +25,7 @@ public interface ProductInfoRepo extends PagingAndSortingRepository< TBizProduct
   @Transactional
   @Query(nativeQuery = true, value="delete t from t_biz_product_info t where t.id in (?1) ")
   int deleteByIds(List<Long> ids);
+
+  @Query(nativeQuery = true, value = "SELECT m1.id AS id,'0' AS pId,m1.product_name AS NAME,'false' AS isOpen FROM t_biz_product_info as m1 where org_no in (?1) order by id ASC")
+  List getTreeList(List<Integer> orgNos);
 }

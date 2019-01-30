@@ -7,6 +7,7 @@
     readonly : readonly属性
     clickFun : 点击事件的方法名
     style : 附加的css属性
+    changeFun : 修改实践方法名
 @*/
 <div class="form-group">
     <label class="col-sm-3 control-label">${name}</label>
@@ -31,6 +32,9 @@
                @}
                @if(isNotEmpty(disabled)){
                     disabled="${disabled}"
+               @}
+               @if(isNotEmpty(changeFun)){
+                    onchange="${changeFun}"
                @}
 
         >

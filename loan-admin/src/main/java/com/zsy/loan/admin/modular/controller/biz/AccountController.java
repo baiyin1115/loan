@@ -12,6 +12,7 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
 import com.zsy.loan.bean.request.AcctRequest;
+import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.service.biz.impl.AcctServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
@@ -76,7 +77,7 @@ public class AccountController extends BaseController {
   public String accountUpdate(@PathVariable Long accountId, Model model) {
     TBizAcct account = acctRepo.findById(accountId).get();
 
-    account.setRemark(account.getRemark().trim());
+    account.setRemark(account.getRemark()==null?"":account.getRemark().trim());
     account.setAcctTypeName(ConstantFactory.me().getAcctTypeName(account.getAcctType()));
     account.setStatusName(ConstantFactory.me().getAcctStatusName(account.getStatus()));
 
@@ -242,6 +243,18 @@ public class AccountController extends BaseController {
 
     acctService.unfreeze(accountIds);
     return SUCCESS_TIP;
+  }
+
+  /**
+   * 获取产品列表
+   */
+  @RequestMapping(value = "/selectLendingAcctTreeList")
+  @ResponseBody
+  public List<ZTreeNode> selectLendingAcctTreeList() {
+    List<ZTreeNode> treeList = acctService.getLendingAcctTreeList();
+//    roleTreeList.add(ZTreeNode.createParent());
+    return treeList;
+
   }
 
 }

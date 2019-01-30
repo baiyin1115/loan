@@ -82,8 +82,8 @@ public class TBizLoanInfo {
   private BigDecimal rate;
 
 
-  @Column(name = "receive_bigint")
-  private BigDecimal receiveBigint;
+  @Column(name = "receive_interest")
+  private BigDecimal receiveInterest;
 
 
   @Column(name = "repay_type")
@@ -146,8 +146,8 @@ public class TBizLoanInfo {
   private BigDecimal schdPrin;
 
 
-  @Column(name = "schd_bigint")
-  private BigDecimal schdBigint;
+  @Column(name = "schd_interest")
+  private BigDecimal schdInterest;
 
 
   @Column(name = "schd_serv_fee")
@@ -162,8 +162,8 @@ public class TBizLoanInfo {
   private BigDecimal totPaidPrin;
 
 
-  @Column(name = "tot_paid_bigint")
-  private BigDecimal totPaidBigint;
+  @Column(name = "tot_paid_interest")
+  private BigDecimal totPaidInterest;
 
 
   @Column(name = "tot_paid_serv_fee")
@@ -265,8 +265,8 @@ public class TBizLoanInfo {
     if (rate != null ? !rate.equals(that.rate) : that.rate != null) {
       return false;
     }
-    if (receiveBigint != null ? !receiveBigint.equals(that.receiveBigint)
-        : that.receiveBigint != null) {
+    if (receiveInterest != null ? !receiveInterest.equals(that.receiveInterest)
+        : that.receiveInterest != null) {
       return false;
     }
     if (termNo != null ? !termNo.equals(that.termNo) : that.termNo != null) {
@@ -311,7 +311,7 @@ public class TBizLoanInfo {
     if (schdPrin != null ? !schdPrin.equals(that.schdPrin) : that.schdPrin != null) {
       return false;
     }
-    if (schdBigint != null ? !schdBigint.equals(that.schdBigint) : that.schdBigint != null) {
+    if (schdInterest != null ? !schdInterest.equals(that.schdInterest) : that.schdInterest != null) {
       return false;
     }
     if (schdServFee != null ? !schdServFee.equals(that.schdServFee) : that.schdServFee != null) {
@@ -323,8 +323,8 @@ public class TBizLoanInfo {
     if (totPaidPrin != null ? !totPaidPrin.equals(that.totPaidPrin) : that.totPaidPrin != null) {
       return false;
     }
-    if (totPaidBigint != null ? !totPaidBigint.equals(that.totPaidBigint)
-        : that.totPaidBigint != null) {
+    if (totPaidInterest != null ? !totPaidInterest.equals(that.totPaidInterest)
+        : that.totPaidInterest != null) {
       return false;
     }
     if (totPaidServFee != null ? !totPaidServFee.equals(that.totPaidServFee)
@@ -360,7 +360,7 @@ public class TBizLoanInfo {
     result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
     result = 31 * result + (prin != null ? prin.hashCode() : 0);
     result = 31 * result + (rate != null ? rate.hashCode() : 0);
-    result = 31 * result + (receiveBigint != null ? receiveBigint.hashCode() : 0);
+    result = 31 * result + (receiveInterest != null ? receiveInterest.hashCode() : 0);
     result = 31 * result + (int) (repayType ^ (repayType >>> 32));
     result = 31 * result + (termNo != null ? termNo.hashCode() : 0);
     result = 31 * result + (lendingDate != null ? lendingDate.hashCode() : 0);
@@ -376,11 +376,11 @@ public class TBizLoanInfo {
     result = 31 * result + (extensionNo != null ? extensionNo.hashCode() : 0);
     result = 31 * result + (extensionRate != null ? extensionRate.hashCode() : 0);
     result = 31 * result + (schdPrin != null ? schdPrin.hashCode() : 0);
-    result = 31 * result + (schdBigint != null ? schdBigint.hashCode() : 0);
+    result = 31 * result + (schdInterest != null ? schdInterest.hashCode() : 0);
     result = 31 * result + (schdServFee != null ? schdServFee.hashCode() : 0);
     result = 31 * result + (schdPen != null ? schdPen.hashCode() : 0);
     result = 31 * result + (totPaidPrin != null ? totPaidPrin.hashCode() : 0);
-    result = 31 * result + (totPaidBigint != null ? totPaidBigint.hashCode() : 0);
+    result = 31 * result + (totPaidInterest != null ? totPaidInterest.hashCode() : 0);
     result = 31 * result + (totPaidServFee != null ? totPaidServFee.hashCode() : 0);
     result = 31 * result + (totPaidPen != null ? totPaidPen.hashCode() : 0);
     result = 31 * result + (totWavAmt != null ? totWavAmt.hashCode() : 0);

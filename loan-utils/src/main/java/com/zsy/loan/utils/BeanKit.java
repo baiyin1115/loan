@@ -1,7 +1,5 @@
 package com.zsy.loan.utils;
 
-import com.zsy.loan.admin.core.support.ObjectKit;
-
 import com.zsy.loan.utils.exception.ToolBoxException;
 import java.beans.*;
 import java.lang.reflect.Method;

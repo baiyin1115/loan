@@ -1,4 +1,4 @@
-package com.zsy.loan.admin.core.support;
+package com.zsy.loan.utils;
 
 /**
  * 一些通用的函数

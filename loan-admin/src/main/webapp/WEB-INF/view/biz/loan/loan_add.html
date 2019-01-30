@@ -16,35 +16,29 @@
                         @}
                     </#select>
 
-                    <#select id="productNo" name="产品" underline="false">
-                        <option value=""></option>
-                        @for(dict in constant.getDicts('公司')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
-
                     <#input id="productName" name="产品" underline="false"
                         hidden="productNo" readonly="readonly"
-                        clickFun="LoanDlg.showMenuSelectTree(); return false;"
+                        clickFun="LoanDlg.showProductSelectTree(); return false;"
                         style="background-color: #ffffff !important;"
                         selectFlag="true" selectId="productTreeDiv" selectTreeId="productTree" selectStyle="width:244px !important;"/>
 
                     <#input id="contrNo" name="合同编号" underline="false"/>
 
-                    <#select id="custNo" name="客户" underline="false">
-                        <option value=""></option>
-                        @for(dict in constant.getDicts('公司')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
+                    <#input id="custName" name="客户" underline="false" readonly="readonly" hidden="custNo"
+                        clickFun="LoanDlg.openCustList(); return false;"
+                    />
 
-                    <#input id="acctDate" name="业务日期" underline="false"/>
+                    <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${system.getSysAcctDate()}" />
 
-                    <#input id="beginDate" name="借款开始日期" underline="false"/>
+                    <#TimeInput id="beginDate" name="借款开始日期" isTime="false" pattern="YYYY-MM-DD" value="${system.getSysAcctDate()}" />
 
-                    <#input id="endDate" name="借款结束日期" underline="false"/>
+                    <#TimeInput id="endDate" name="借款结束日期" isTime="false" pattern="YYYY-MM-DD" />
 
-                    <#input id="lendingAcct" name="放款账户" underline="false"/>
+                    <#input id="lendingAcctName" name="放款账户" underline="false"
+                        hidden="lendingAcct" readonly="readonly"
+                        clickFun="LoanDlg.showLendingAcctSelectTree(); return false;"
+                        style="background-color: #ffffff !important;"
+                        selectFlag="true" selectId="lendingAcctTreeDiv" selectTreeId="lendingAcctTree" selectStyle="width:244px !important;"/>
 
                 </div>
                 <div class="col-sm-4">
@@ -99,13 +93,13 @@
 
                     <#input id="serviceFee" name="服务费" underline="false"/>
 
-                    <#input id="receiveBigint" name="应收利息" underline="false"/>
+                    <#input id="receiveInterest" name="应收利息" underline="false" readOnly="true" />
+
+                    <#input id="lendingAmt" name="放款金额" underline="false"/>
 
                     <#input id="termNo" name="期数" underline="false"/>
 
-                    <#input id="lendingDate" name="放款日期" underline="false"/>
-
-                    <#input id="lendingAmt" name="放款金额" underline="false"/>
+                    <#TimeInput id="lendingDate" name="放款日期" isTime="false" pattern="YYYY-MM-DD" />
 
                 </div>
             </div>
@@ -117,6 +111,7 @@
 
             <div class="row btn-group-m-t">
                 <div class="col-sm-10">
+                    <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="LoanDlg.calculate()"/>
                     <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="LoanDlg.addSubmit()"/>
                     <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="LoanDlg.close()"/>
                 </div>

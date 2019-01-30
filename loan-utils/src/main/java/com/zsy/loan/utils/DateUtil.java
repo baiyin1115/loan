@@ -16,8 +16,6 @@
 package com.zsy.loan.utils;
 
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -26,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 public class DateUtil {
 
@@ -36,8 +35,6 @@ public class DateUtil {
 
   /**
    * 获取YYYY格式
-   *
-   * @return
    */
   public static String getYear() {
     return formatDate(new Date(), "yyyy");
@@ -45,8 +42,6 @@ public class DateUtil {
 
   /**
    * 获取YYYY格式
-   *
-   * @return
    */
   public static String getYear(Date date) {
     return formatDate(date, "yyyy");
@@ -54,8 +49,6 @@ public class DateUtil {
 
   /**
    * 获取YYYY-MM-DD格式
-   *
-   * @return
    */
   public static String getDay() {
     return formatDate(new Date(), "yyyy-MM-dd");
@@ -63,8 +56,6 @@ public class DateUtil {
 
   /**
    * 获取YYYY-MM-DD格式
-   *
-   * @return
    */
   public static String getDay(Date date) {
     return formatDate(date, "yyyy-MM-dd");
@@ -72,8 +63,6 @@ public class DateUtil {
 
   /**
    * 获取YYYYMMDD格式
-   *
-   * @return
    */
   public static String getDays() {
     return formatDate(new Date(), "yyyyMMdd");
@@ -81,8 +70,6 @@ public class DateUtil {
 
   /**
    * 获取YYYYMMDD格式
-   *
-   * @return
    */
   public static String getDays(Date date) {
     return formatDate(date, "yyyyMMdd");
@@ -90,8 +77,6 @@ public class DateUtil {
 
   /**
    * 获取YYYY-MM-DD HH:mm:ss格式
-   *
-   * @return
    */
   public static String getTime() {
     return formatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -99,8 +84,6 @@ public class DateUtil {
 
   /**
    * 获取YYYY-MM-DD HH:mm:ss.SSS格式
-   *
-   * @return
    */
   public static String getMsTime() {
     return formatDate(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
@@ -108,8 +91,6 @@ public class DateUtil {
 
   /**
    * 获取YYYYMMDDHHmmss格式
-   *
-   * @return
    */
   public static String getAllTime() {
     return formatDate(new Date(), "yyyyMMddHHmmss");
@@ -117,8 +98,6 @@ public class DateUtil {
 
   /**
    * 获取YYYY-MM-DD HH:mm:ss格式
-   *
-   * @return
    */
   public static String getTime(Date date) {
     return formatDate(date, "yyyy-MM-dd HH:mm:ss");
@@ -135,25 +114,24 @@ public class DateUtil {
   }
 
   /**
-   * @Title: compareDate
-   * @Description:(日期比较，如果s>=e 返回true 否则返回false)
-   * @param s
-   * @param e
    * @return boolean
-   * @throws
+   * @Title: compareDate
+   * @Description:(日期比较，如果e>s 返回true 否则返回false)
    * @author luguosui
    */
-  public static boolean compareDate(String s, String e) {
-    if (parseDate(s) == null || parseDate(e) == null) {
+  public static boolean compareDate(String start, String end) {
+    if (parseDate(end) == null || parseDate(start) == null) {
       return false;
     }
-    return parseDate(s).getTime() >= parseDate(e).getTime();
+    return parseDate(end).getTime() > parseDate(start).getTime();
+  }
+
+  public static boolean compareDate(Date start, Date end) {
+    return end.getTime() > start.getTime();
   }
 
   /**
    * 格式化日期
-   *
-   * @return
    */
   public static Date parseDate(String date) {
     return parse(date, "yyyy-MM-dd");
@@ -161,8 +139,6 @@ public class DateUtil {
 
   /**
    * 格式化日期
-   *
-   * @return
    */
   public static Date parseTime(String date) {
     return parse(date, "yyyy-MM-dd HH:mm:ss");
@@ -170,8 +146,6 @@ public class DateUtil {
 
   /**
    * 格式化日期
-   *
-   * @return
    */
   public static Date parse(String date, String pattern) {
     if (date != null) {
@@ -210,8 +184,6 @@ public class DateUtil {
 
   /**
    * 格式化日期
-   *
-   * @return
    */
   public static String format(Date date, String pattern) {
     return DateFormatUtils.format(date, pattern);
@@ -219,9 +191,6 @@ public class DateUtil {
 
   /**
    * 把日期转换为Timestamp
-   *
-   * @param date
-   * @return
    */
   public static Timestamp format(Date date) {
     return new Timestamp(date.getTime());
@@ -233,8 +202,6 @@ public class DateUtil {
 
   /**
    * 校验日期是否合法
-   *
-   * @return
    */
   public static boolean isValidDate(String s) {
     return parse(s, "yyyy-MM-dd HH:mm:ss") != null;
@@ -242,8 +209,6 @@ public class DateUtil {
 
   /**
    * 校验日期是否合法
-   *
-   * @return
    */
   public static boolean isValidDate(String s, String pattern) {
     return parse(s, pattern) != null;
@@ -264,8 +229,6 @@ public class DateUtil {
   /**
    * <li>功能描述：时间相减得到天数
    *
-   * @param beginDateStr
-   * @param endDateStr
    * @return long
    * @author Administrator
    */
@@ -288,11 +251,151 @@ public class DateUtil {
     return day;
   }
 
+  public static long getDaySub(Date beginDate, Date endDate) {
+    long day = 0;
+    day = (endDate.getTime() - beginDate.getTime()) / (24 * 60 * 60 * 1000);
+    return day;
+  }
+
+  /**
+   * 获取两个日期相差的月数
+   *
+   * @param end 较大的日期
+   * @param begin 较小的日期
+   * @return 如果d1>d2返回 月数差 否则返回0
+   */
+  public static int getMonthDiff(Date end, Date begin) {
+    Calendar c1 = Calendar.getInstance();
+    Calendar c2 = Calendar.getInstance();
+    c1.setTime(end);
+    c2.setTime(begin);
+    if (c1.getTimeInMillis() < c2.getTimeInMillis()) {
+      return 0;
+    }
+    int year1 = c1.get(Calendar.YEAR);
+    int year2 = c2.get(Calendar.YEAR);
+    int month1 = c1.get(Calendar.MONTH);
+    int month2 = c2.get(Calendar.MONTH);
+    int day1 = c1.get(Calendar.DAY_OF_MONTH);
+    int day2 = c2.get(Calendar.DAY_OF_MONTH);
+    // 获取年的差值 假设 d1 = 2015-8-16  d2 = 2011-9-30
+    int yearInterval = year1 - year2;
+    // 如果 d1的 月-日 小于 d2的 月-日 那么 yearInterval-- 这样就得到了相差的年数
+    if (month1 < month2 || month1 == month2 && day1 < day2) {
+      yearInterval--;
+    }
+    // 获取月数差值
+    int monthInterval = (month1 + 12) - month2;
+    if (day1 < day2) {
+      monthInterval--;
+    }
+    monthInterval %= 12;
+    return yearInterval * 12 + monthInterval;
+  }
+
+  /**
+   * 计算两个日期之间相差的月数 2019-01-23/2019-04-17 == 2 个月 or 2019-01-23/2019-04-30 == 3 个月
+   */
+  public static int getMonth(Date date1, Date date2) {
+    int iMonth = 0;
+    int flag = 0;
+    try {
+      Calendar cal1 = Calendar.getInstance();
+      cal1.setTime(date1);
+
+      Calendar cal2 = Calendar.getInstance();
+      cal2.setTime(date2);
+
+      if (cal2.equals(cal1)) {
+        return 0;
+      }
+      if (cal1.after(cal2)) {
+        Calendar temp = cal1;
+        cal1 = cal2;
+        cal2 = temp;
+      }
+      if (cal2.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH)) {
+        flag = 1;
+      }
+
+      if (cal2.get(Calendar.YEAR) > cal1.get(Calendar.YEAR)) {
+        iMonth =
+            ((cal2.get(Calendar.YEAR) - cal1.get(Calendar.YEAR)) * 12 + cal2.get(Calendar.MONTH)
+                - flag)
+                - cal1.get(Calendar.MONTH);
+      } else {
+        iMonth = cal2.get(Calendar.MONTH) - cal1.get(Calendar.MONTH) - flag;
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return iMonth;
+  }
+
+  /**
+   * 计算两个日期之间相差的月数 2019-01-23/2019-04-17 == 3 个月 or 2019-01-23/2019-04-30 == 4 个月
+   */
+  public static int getMonthFloor(Date date1, Date date2) {
+    int iMonth = 0;
+    int flag = 0;
+    try {
+      Calendar cal1 = Calendar.getInstance();
+      cal1.setTime(date1);
+
+      Calendar cal2 = Calendar.getInstance();
+      cal2.setTime(date2);
+
+      if (cal2.equals(cal1)) {
+        return 0;
+      }
+      if (cal1.after(cal2)) {
+        Calendar temp = cal1;
+        cal1 = cal2;
+        cal2 = temp;
+      }
+      if (cal2.get(Calendar.DAY_OF_MONTH) > cal1.get(Calendar.DAY_OF_MONTH)) {
+        flag = 1;
+      }
+
+      if (cal2.get(Calendar.YEAR) > cal1.get(Calendar.YEAR)) {
+        iMonth =
+            ((cal2.get(Calendar.YEAR) - cal1.get(Calendar.YEAR)) * 12 + cal2.get(Calendar.MONTH)
+                - flag)
+                - cal1.get(Calendar.MONTH);
+      } else {
+        iMonth = cal2.get(Calendar.MONTH) - cal1.get(Calendar.MONTH) + flag;
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return iMonth;
+  }
+
+
+  public static final int daysBetween(Date early, Date late) {
+
+    java.util.Calendar calst = java.util.Calendar.getInstance();
+    java.util.Calendar caled = java.util.Calendar.getInstance();
+    calst.setTime(early);
+    caled.setTime(late);
+    //设置时间为0时
+    calst.set(java.util.Calendar.HOUR_OF_DAY, 0);
+    calst.set(java.util.Calendar.MINUTE, 0);
+    calst.set(java.util.Calendar.SECOND, 0);
+    caled.set(java.util.Calendar.HOUR_OF_DAY, 0);
+    caled.set(java.util.Calendar.MINUTE, 0);
+    caled.set(java.util.Calendar.SECOND, 0);
+    //得到两个日期相差的天数
+    int days = ((int) (caled.getTime().getTime() / 1000) - (int) (calst
+        .getTime().getTime() / 1000)) / 3600 / 24;
+
+    return days;
+  }
+
   /**
    * 得到n天之后的日期
-   *
-   * @param days
-   * @return
    */
   public static String getAfterDayDate(String days) {
     int daysInt = Integer.parseInt(days);
@@ -309,9 +412,6 @@ public class DateUtil {
 
   /**
    * 得到n天之后是周几
-   *
-   * @param days
-   * @return
    */
   public static String getAfterDayWeek(String days) {
     int daysInt = Integer.parseInt(days);

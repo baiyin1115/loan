@@ -11,6 +11,7 @@ import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
+import com.zsy.loan.bean.request.LoanCalculateRequest;
 import com.zsy.loan.bean.request.LoanRequest;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.LoanVoucherInfoRepo;
@@ -18,6 +19,7 @@ import com.zsy.loan.service.biz.impl.LoanServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.warpper.biz.LoanWarpper;
 import com.zsy.loan.utils.BeanUtil;
+import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.factory.Page;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -541,6 +543,42 @@ public class LoanController extends BaseController {
     loanService.repay(loan, true);
     return SUCCESS_TIP;
   }
+
+  /**
+   * 跳转到客户管理首页
+   */
+  @RequestMapping("/loan_cust_list")
+  public String loanCustList() {
+    return PREFIX + "loan_customer.html";
+  }
+
+
+  /**
+   * 试算
+   */
+  @BussinessLog(value = "试算", dict = LoanDict.class)
+  @RequestMapping(value = "/calculate")
+  @Permission
+  @ResponseBody
+  @ApiOperation(value = "试算", notes = "试算")
+  public LoanCalculateRequest calculate(@Valid @RequestBody LoanCalculateRequest loan, BindingResult error) {
+
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    /**
+     * 校验
+     */
+    //借款结束日期必须在开始日期之前
+    if (!DateUtil.compareDate(loan.getBeginDate(),loan.getEndDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
+    }
+
+    return loanService.calculate(loan);
+  }
+
 
 
 }

@@ -8,8 +8,10 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerStatusEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.request.AcctRequest;
+import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.dao.biz.CustomerInfoRepo;
+import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.system.impl.SystemServiceImpl;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.factory.Page;
@@ -190,5 +192,26 @@ public class AcctServiceImpl {
     }
 
     return true;
+  }
+
+  public List<ZTreeNode> getLendingAcctTreeList() {
+
+    List para  =  new ArrayList(1);
+    para.add(AcctTypeEnum.COMPANY.getValue());
+
+    List list = repository.getTreeList(para);
+
+    List<ZTreeNode> nodes = new ArrayList<>();
+    for (int i = 0; i < list.size(); i++) {
+      Object[] source = (Object[]) list.get(i);
+      ZTreeNode node = new ZTreeNode();
+      node.setId(Long.valueOf(source[0].toString()));
+      node.setpId(Long.valueOf(source[1].toString()));
+      node.setName(source[2].toString());
+      node.setIsOpen(Boolean.valueOf(source[3].toString()));
+      nodes.add(node);
+    }
+    return nodes;
+
   }
 }

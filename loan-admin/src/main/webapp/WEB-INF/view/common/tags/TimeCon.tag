@@ -13,5 +13,11 @@
         </button>
     </div>
     <input type="text" class="form-control layer-date"
-           onclick="laydate({istime: ${isTime}, format: '${pattern}'})" id="${id}"/>
+           onclick="laydate({istime: ${isTime}, format: '${pattern}'})" id="${id}"
+
+           @if(isNotEmpty(value)){
+           value="${tool.dateType(value)}"
+           @}
+
+    />
 </div>

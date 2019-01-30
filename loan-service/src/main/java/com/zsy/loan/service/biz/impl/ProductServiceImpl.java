@@ -3,8 +3,10 @@ package com.zsy.loan.service.biz.impl;
 import com.google.common.base.Strings;
 import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.request.ProductInfoRequest;
+import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.system.UserRepository;
+import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.utils.StringUtils;
 import com.zsy.loan.utils.factory.Page;
 import java.util.ArrayList;
@@ -105,5 +107,25 @@ public class ProductServiceImpl {
     } else {
       return infos;
     }
+  }
+
+  public List<ZTreeNode> getTreeList() {
+
+    // 只能查当前登录用户拥有查询权限的
+    List<Integer> orgList = ShiroKit.getDeptDataScope();
+
+    List list = productRepo.getTreeList(orgList);
+
+    List<ZTreeNode> nodes = new ArrayList<>();
+    for (int i = 0; i < list.size(); i++) {
+      Object[] source = (Object[]) list.get(i);
+      ZTreeNode node = new ZTreeNode();
+      node.setId(Long.valueOf(source[0].toString()));
+      node.setpId(Long.valueOf(source[1].toString()));
+      node.setName(source[2].toString());
+      node.setIsOpen(Boolean.valueOf(source[3].toString()));
+      nodes.add(node);
+    }
+    return nodes;
   }
 }

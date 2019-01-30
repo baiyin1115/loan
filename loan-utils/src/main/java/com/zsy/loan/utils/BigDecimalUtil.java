@@ -10,8 +10,8 @@ import java.util.Locale;
  * Created by PengRong on 2017/12/22. <br/>
  *
  * @author PengRong <br/>
- * @Description BigDecimalUtil ，java 原生的float ，double 只是适合用于科学计算，工程计算。不适合商业计算。 商业计算一般使用BigDecimanl 类进行
- * 精确 计算
+ * @Description BigDecimalUtil ，java 原生的float ，double 只是适合用于科学计算，工程计算。不适合商业计算。 商业计算一般使用BigDecimanl
+ * 类进行 精确 计算
  * @ClassName: ${BigDecimalUtil}
  * @since 2017-12-22 16:43 <br/>
  */
@@ -56,6 +56,20 @@ public class BigDecimalUtil {
     return bigDecimala.subtract(bigDecimalb);
   }
 
+  public static BigDecimal sub(BigDecimal... para) {
+    BigDecimal result = BigDecimal.ZERO;
+
+    for (int i = 0; i < para.length; i++) {
+      if (i == 0) {
+        result = para[i];
+      } else {
+        result = result.subtract(para[i]);
+      }
+    }
+
+    return result;
+  }
+
   /**
    * double 精确相乘
    */
@@ -63,6 +77,16 @@ public class BigDecimalUtil {
     BigDecimal bigDecimala = new BigDecimal(Double.toString(parama));
     BigDecimal bigDecimalb = new BigDecimal(Double.toString(paramb));
     return bigDecimala.multiply(bigDecimalb);
+  }
+
+  public static BigDecimal mul(BigDecimal... para) {
+
+    BigDecimal result = BigDecimal.ONE;
+
+    for (BigDecimal dec : para) {
+      result = result.multiply(dec);
+    }
+    return result;
   }
 
   /**
@@ -86,8 +110,20 @@ public class BigDecimalUtil {
     BigDecimal b1 = new BigDecimal(Double.toString(value1));
     BigDecimal b2 = new BigDecimal(Double.toString(value2));
     BigDecimal result = b1.divide(b2, scale, routingMode);
-    // System.out.println(result.toBigInteger());
-    // System.out.println(result.toString());
+    return result;
+  }
+
+  public static BigDecimal div(BigDecimal value1, BigDecimal value2, int scale, int routingMode) {
+    //如果精确范围小于0，抛出异常信息
+    if (scale < 0) {
+      return BigDecimal.valueOf(-1);
+    }
+    if (routingMode <= 0) {
+      routingMode = BigDecimal.ROUND_HALF_UP;
+    }
+    BigDecimal b1 = value1;
+    BigDecimal b2 = value2;
+    BigDecimal result = b1.divide(b2, scale, routingMode);
     return result;
   }
 
@@ -100,7 +136,7 @@ public class BigDecimalUtil {
   public static double round(double value, int scale) {
     double result = 0.00;
     if (scale < 0) {
-      throw new IllegalArgumentException("The scale must be a positive integer or zero");
+      return -1;
     }
     BigDecimal valueBig = new BigDecimal(Double.toString(value));
     BigDecimal one = new BigDecimal(Double.toString(1));
@@ -139,7 +175,7 @@ public class BigDecimalUtil {
 
   }
 
-  public static String formatThousand(BigDecimal bigDecimal){
+  public static String formatThousand(BigDecimal bigDecimal) {
     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.CHINA);
     format.setDecimalSeparatorAlwaysShown(true);
     /** 设置小数部分允许的最大位数  */

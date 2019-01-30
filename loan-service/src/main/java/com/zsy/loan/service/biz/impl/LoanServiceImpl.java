@@ -2,12 +2,19 @@ package com.zsy.loan.service.biz.impl;
 
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayTypeEnum;
+import com.zsy.loan.bean.request.LoanCalculateRequest;
 import com.zsy.loan.bean.request.LoanRequest;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
+import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.biz.RepayPlanRepo;
+import com.zsy.loan.service.factory.TrialCalculateFactory;
 import com.zsy.loan.service.shiro.ShiroKit;
+import com.zsy.loan.utils.BigDecimalUtil;
+import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.StringUtils;
 import com.zsy.loan.utils.factory.Page;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -38,6 +45,9 @@ public class LoanServiceImpl {
 
   @Autowired
   private RepayPlanRepo repayPlanRepo;
+
+  @Autowired
+  private ProductInfoRepo productRepo;
 
 
   public Page<TBizLoanInfo> getTBLoanPages(Page<TBizLoanInfo> page, TBizLoanInfo condition) {
@@ -157,5 +167,29 @@ public class LoanServiceImpl {
         list.add(in);
       }
     }
+  }
+
+  /**
+   * 试算
+   */
+  public LoanCalculateRequest calculate(LoanCalculateRequest loan) {
+
+    /**
+     * 根据还款方式、本金、利率、服务费收取方式、服务费比例、开始结束日期计算
+     * 利息、服务费、放款金额、期数、应还本金、应还利息、应收服务费
+     */
+    loan.setDayRate(BigDecimalUtil
+        .div(loan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_UP)); //日利息
+    loan.setMonthRate(BigDecimalUtil
+        .div(loan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_UP)); //月利息
+    loan.setDay(DateUtil.daysBetween(loan.getBeginDate(), loan.getEndDate())); //相差天数
+    loan.setMonth(DateUtil.getMonthFloor(loan.getBeginDate(),loan.getEndDate())); //相差月数
+    loan.setProduct(productRepo.findById(loan.getProductNo()).get()); //产品信息
+
+    LoanCalculateRequest result = TrialCalculateFactory.maps
+        .get(RepayTypeEnum.getEnumByKey(loan.getRepayType())).apply(loan);
+
+    return result;
+
   }
 }

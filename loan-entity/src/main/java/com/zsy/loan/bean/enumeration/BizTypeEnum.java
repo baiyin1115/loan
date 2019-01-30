@@ -115,6 +115,67 @@ public class BizTypeEnum {
   }
 
   /**
+   * 服务费收取方式
+   */
+  public enum ServiceFeeTypeEnum {
+    /**
+     * 首期:1,按期:2
+     */
+    FIRST(1), EACH(2);
+
+    private long value;
+
+    private ServiceFeeTypeEnum(long value) {
+      this.value = value;
+    }
+
+    public long getValue() {
+      return value;
+    }
+
+    public void setValue(long value) {
+      this.value = value;
+    }
+  }
+
+  /**
+   * 还款方式
+   */
+  public enum RepayTypeEnum {
+    /**
+     * 1:等额本息,2:等额本金,3:先息后本,4:先息后本[上交息],5:一次性还本付息
+     */
+    EQUAL_LOAN(1), EQUAL_PRINCIPAL(2), B_INTEREST_A_PRINCIPAL(3), B_INTEREST_A_PRINCIPAL_2(4), A_DEBT_SERVICE_DUE(5);
+
+    private long value;
+
+    private RepayTypeEnum(long value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public long getValue() {
+      return value;
+    }
+
+    public void setValue(long value) {
+      this.value = value;
+    }
+
+    @JsonCreator
+    public static RepayTypeEnum getEnumByKey(long key) {
+      RepayTypeEnum[] array = RepayTypeEnum.values();
+      for (RepayTypeEnum item : array) {
+        if (item.getValue() == key) {
+          return item;
+        }
+      }
+      return null;
+    }
+
+  }
+
+  /**
    * 账户类型
    */
   public enum AcctTypeEnum {
