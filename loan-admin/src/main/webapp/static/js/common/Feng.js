@@ -159,12 +159,15 @@ var Feng = {
    */
   formatMoney: function (money, digit){
 
-    if(money == 0.00 || money == 0){
-      return '0.00';
+    money = String(money);
+    //alert(money+money.length );
+
+    if(money == null || money == '' || money.length == 0){
+      return '';
     }
 
-    if(money == null || money == ""){
-      return "";
+    if(money == 0.00 || money == 0){
+      return '0.00';
     }
 
     var tpMoney = '0.00';
@@ -188,7 +191,7 @@ var Feng = {
    * 格式化
    */
   formatAmt: function (ob) {
-    var val = Feng.formatMoney(ob[0].value,2);
+    var val = Feng.formatMoney(Feng.parseMoney(ob[0].value,2),2);
     ob.val(val);
   },
 
@@ -201,6 +204,7 @@ var Feng = {
 
     n = n > 0 && n <= 20 ? n : 2;
     s = parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";
+    //alert(s);
     return s;
   },
 

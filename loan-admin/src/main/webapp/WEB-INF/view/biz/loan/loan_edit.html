@@ -4,50 +4,109 @@
         <div class="form-horizontal" id="loanInfoForm">
 
             <input type="hidden" id="id" value="${loan.id}">
-            <input type="hidden" id="acctTypeValue" value="${loan.acctType}">
-            <input type="hidden" id="balanceTypeValue" value="${loan.balanceType}">
-            <input type="hidden" id="statusValue" value="${loan.status}">
-
-            <input type="hidden" id="acctType" value="${loan.acctType}">
-            <input type="hidden" id="status" value="${loan.status}">
+            <input type="hidden" id="orgNoValue" value="${loan.orgNo}">
+            <input type="hidden" id="serviceFeeTypeValue" value="${loan.serviceFeeType}">
+            <input type="hidden" id="isPenValue" value="${loan.isPen}">
+            <input type="hidden" id="penNumberValue" value="${loan.penNumber}">
+            <input type="hidden" id="repayTypeValue" value="${loan.repayType}">
+            <input type="hidden" id="loanTypeValue" value="${loan.loanType}">
 
             <div class="row">
-                <div class="col-sm-6 b-r">
+                <div class="col-sm-4">
 
-                    <#input id="userNo" name="用户编号" readonly="true" underline="false" value="${loan.userNo}" />
+                    <#select id="orgNo" name="公司" underline="false">
+                        <option value=""></option>
+                        @for(dict in userown.getOrgList()){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
 
-                    <#input id="name" name="账户名称" underline="false" value="${loan.name}" />
+                    <#input id="productName" name="产品" underline="false" value="${loan.productName}" hiddenValue="${loan.productNo}"
+                        hidden="productNo" readonly="readonly"
+                        clickFun="LoanDlg.showProductSelectTree(); return false;"
+                        style="background-color: #ffffff !important;"
+                        selectFlag="true" selectId="productTreeDiv" selectTreeId="productTree" selectStyle="width:244px !important;"/>
 
-                    <#input id="availableBalance" readonly="true" name="可用余额" underline="false" value="${loan.availableBalance}" />
+                    <#input id="contrNo" name="合同编号" underline="false" value="${loan.contrNo}"/>
 
-                    <#input id="freezeBalance" readonly="true" name="冻结余额" underline="false" value="${loan.freezeBalance}" />
+                    <#input id="custName" name="客户" underline="false" value="${loan.custName}" hiddenValue="${loan.custNo}"
+                        hidden="custNo" readonly="readonly"
+                        clickFun="LoanDlg.openCustList(); return false;"
+                    />
 
+                    <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.acctDate}" />
+
+                    <#TimeInput id="beginDate" name="借款开始日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.beginDate}" />
+
+                    <#TimeInput id="endDate" name="借款结束日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.endDate}" />
+
+                    <#input id="lendingAcctName" name="放款账户" underline="false" value="${loan.lendingAcctName}" hiddenValue="${loan.lendingAcct}"
+                        hidden="lendingAcct" readonly="readonly"
+                        clickFun="LoanDlg.showLendingAcctSelectTree(); return false;"
+                        style="background-color: #ffffff !important;"
+                        selectFlag="true" selectId="lendingAcctTreeDiv" selectTreeId="lendingAcctTree" selectStyle="width:244px !important;"/>
 
                 </div>
-                <div class="col-sm-6">
-                    <#select id="balanceType" name="余额性质" underline="false" >
-                        @for(dict in constant.getDicts('余额性质')){
+                <div class="col-sm-4">
+
+                    <#input id="prin" name="本金" underline="false" value="${loan.prin}"/>
+
+                    <#input id="externalAcct" name="收款账户" underline="false" value="${loan.externalAcct}"/>
+
+                    <#input id="ddDate" name="约定还款日" underline="false" value="${loan.ddDate}" />
+
+                    <#TimeInput id="lendingDate" name="放款日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.lendingDate}" />
+
+                    <#input id="serviceFee" name="服务费" underline="false" value="${loan.serviceFee}" />
+
+                    <#input id="receiveInterest" name="应收利息" underline="false" readOnly="true" value="${loan.receiveInterest}" />
+
+                    <#input id="lendingAmt" name="放款金额" underline="false" value="${loan.lendingAmt}"/>
+
+                    <#input id="termNo" name="期数" underline="false" value="${loan.termNo}"/>
+
+                </div>
+                <div class="col-sm-4">
+                    <#select id="loanType" name="贷款类型" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('贷款类型')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
 
-                    @/*
-                    <#select id="acctType" name="账户类型" underline="false" >
-                        @for(dict in constant.getDicts('账户类型')){
+                    <#input id="rate" name="利率" underline="false" value="${loan.rate}" />
+
+                    <#input id="serviceFeeScale" name="服务费比例" underline="false" value="${loan.serviceFeeScale}" />
+
+                    <#select id="serviceFeeType" name="服务费收取方式" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('服务费收取方式')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
 
-                    <#select id="status" name="账户状态" underline="false" >
-                        @for(dict in constant.getDicts('账户状态')){
+                    <#select id="repayType" name="还款方式" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('还款方式')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
-                    @*/
 
-                    <#input id="acctTypeName" name="账户类型" readonly="true" underline="false" value="${loan.acctTypeName}" />
-                    <#input id="statusName" name="账户状态" readonly="true" underline="false" value="${loan.statusName}" />
+                    <#select id="isPen" name="是否罚息" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('是否')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
 
+                    <#input id="penRate" name="罚息利率" underline="false" value="${loan.penRate}" />
+
+                    <#select id="penNumber" name="罚息基数" underline="false">
+                        <option value=""></option>
+                        @for(dict in constant.getDicts('罚息基数')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
                 </div>
             </div>
 
@@ -59,6 +118,7 @@
 
             <div class="row btn-group-m-t">
                 <div class="col-sm-10">
+                    <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="LoanDlg.calculate()"/>
                     <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="LoanDlg.editSubmit()"/>
                     <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="LoanDlg.close()"/>
                 </div>

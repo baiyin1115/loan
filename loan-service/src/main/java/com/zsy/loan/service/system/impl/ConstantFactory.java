@@ -1,6 +1,9 @@
 package com.zsy.loan.service.system.impl;
 
 import com.zsy.loan.bean.constant.cache.CacheConstantKey;
+import com.zsy.loan.bean.entity.biz.TBizAcct;
+import com.zsy.loan.bean.entity.biz.TBizCustomerInfo;
+import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.entity.system.Dept;
 import com.zsy.loan.bean.entity.system.Dict;
 import com.zsy.loan.bean.entity.system.Menu;
@@ -11,6 +14,8 @@ import com.zsy.loan.bean.enumeration.ManagerStatusEnum;
 import com.zsy.loan.bean.enumeration.MenuStatusEnum;
 import com.zsy.loan.bean.vo.DictVo;
 import com.zsy.loan.bean.vo.SpringContextHolder;
+import com.zsy.loan.dao.biz.AcctRepo;
+import com.zsy.loan.dao.biz.CustomerInfoRepo;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.cache.ConfigCache;
 import com.zsy.loan.dao.cache.DictCache;
@@ -53,6 +58,8 @@ public class ConstantFactory implements IConstantFactory {
   private SysNoticeRepository sysNoticeRepository = SpringContextHolder
       .getBean(SysNoticeRepository.class);
   private ProductInfoRepo productInfoRepo = SpringContextHolder.getBean(ProductInfoRepo.class);
+  private CustomerInfoRepo customerInfoRepo = SpringContextHolder.getBean(CustomerInfoRepo.class);
+  private AcctRepo acctRepo = SpringContextHolder.getBean(AcctRepo.class);
 
   private ConfigCache configCache = SpringContextHolder.getBean(ConfigCache.class);
   private DictCache dictCache = SpringContextHolder.getBean(DictCache.class);
@@ -544,5 +551,59 @@ public class ConstantFactory implements IConstantFactory {
     return getDictsByName("贷款类型", String.valueOf(id));
   }
 
+  /**
+   * 获取产品名称
+   */
+  @Override
+  public String getProductName(Long id) {
+    String val = get(CacheConstantKey.PRODUCT_NAME + id);
+    if (StringUtils.isNotEmpty(val)) {
+      return val;
+    }
+    TBizProductInfo info = productInfoRepo.getOne(id);
+    if (StringUtils.isNotNullOrEmpty(info) && StringUtils.isNotEmpty(info.getProductName())) {
+      val = info.getProductName();
+      set(CacheConstantKey.PRODUCT_NAME + id, val);
+      return val;
+    }
+    return "";
+  }
+
+  /**
+   * 获取用户名称
+   */
+  @Override
+  public String getCustomerName(Long id) {
+    String val = get(CacheConstantKey.CUSTOMER_NAME + id);
+    if (StringUtils.isNotEmpty(val)) {
+      return val;
+    }
+    TBizCustomerInfo info = customerInfoRepo.getOne(id);
+    if (StringUtils.isNotNullOrEmpty(info) && StringUtils.isNotEmpty(info.getName())) {
+      val = info.getName();
+      set(CacheConstantKey.CUSTOMER_NAME + id, val);
+      return val;
+    }
+    return "";
+  }
+
+  /**
+   * 获取账户名称 --账号_户名
+   * @param id
+   * @return
+   */
+  public String getAcctName(Long id){
+    String val = get(CacheConstantKey.ACCT_NO_NAME + id);
+    if (StringUtils.isNotEmpty(val)) {
+      return val;
+    }
+    TBizAcct info = acctRepo.getOne(id);
+    if (StringUtils.isNotNullOrEmpty(info) && StringUtils.isNotEmpty(info.getName())) {
+      val = id+"_"+info.getName();
+      set(CacheConstantKey.ACCT_NO_NAME + id, val);
+      return val;
+    }
+    return "";
+  }
 
 }

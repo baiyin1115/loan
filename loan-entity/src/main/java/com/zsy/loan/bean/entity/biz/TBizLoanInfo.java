@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -117,6 +118,9 @@ public class TBizLoanInfo {
   @Column(name = "service_fee_type")
   private Long serviceFeeType;
 
+  @Column(name = "service_fee_scale")
+  private BigDecimal serviceFeeScale;
+
 
   @Column(name = "dd_date")
   private Long ddDate;
@@ -211,6 +215,15 @@ public class TBizLoanInfo {
 
   @Column(name = "remark")
   private String remark;
+
+  @Transient
+  private String productName;
+
+  @Transient
+  private String custName;
+
+  @Transient
+  private String lendingAcctName;
 
   @Override
   public boolean equals(Object o) {

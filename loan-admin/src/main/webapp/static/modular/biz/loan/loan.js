@@ -17,49 +17,51 @@ var Loan = {
  * 初始化表格的列
  */
 Loan.initColumn = function () {
+  var sign = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
   return [
     {field: 'selectItem', radio: false},
     {title:'借据编号 ',field:'id',align:'center',valign:'middle',sortable:true},
-    {title:'公司',field:'orgNo',align:'center',valign:'middle',sortable:true},
-    {title:'产品',field:'productNo',align:'center',valign:'middle',sortable:true},
-    {title:'客户',field:'custNo',align:'center',valign:'middle',sortable:true},
+    {title:sign+'公司'+sign,field:'orgName',align:'center',valign:'middle',sortable:true},
+    {title:sign+'产品'+sign,field:'productName',align:'center',valign:'middle',sortable:true},
+    {title:'客户',field:'custName',align:'center',valign:'middle',sortable:true},
     {title:'原始合同编号',field:'contrNo',align:'center',valign:'middle',sortable:true},
-    {title:'贷款类型',field:'loanType',align:'center',valign:'middle',sortable:true},
-    {title:'业务日期',field:'acctDate',align:'center',valign:'middle',sortable:true},
-    {title:'借款开始日期',field:'beginDate',align:'center',valign:'middle',sortable:true},
-    {title:'借款结束日期',field:'endDate',align:'center',valign:'middle',sortable:true},
-    {title:'本金',field:'prin',align:'center',valign:'middle',sortable:true},
-    {title:'利率',field:'rate',align:'center',valign:'middle',sortable:true},
-    {title:'应收利息',field:'receiveInterest',align:'center',valign:'middle',sortable:true},
-    {title:'产品还款方式',field:'repayType',align:'center',valign:'middle',sortable:true},
+    {title:'贷款类型',field:'loanTypeName',align:'center',valign:'middle',sortable:true},
+    {title:'业务日期',field:'acctDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'借款开始日期',field:'beginDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'借款结束日期',field:'endDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'本金',field:'prinFormat',align:'center',valign:'middle',sortable:true},
+    {title:'利率',field:'rateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'应收利息',field:'receiveInterestFormat',align:'center',valign:'middle',sortable:true},
     {title:'期数',field:'termNo',align:'center',valign:'middle',sortable:true},
-    {title:'放款日期',field:'lendingDate',align:'center',valign:'middle',sortable:true},
-    {title:'放款金额',field:'lendingAmt',align:'center',valign:'middle',sortable:true},
-    {title:'放款账户',field:'lendingAcct',align:'center',valign:'middle',sortable:true},
-    {title:'收款账户',field:'externalAcct',align:'center',valign:'middle',sortable:true},
-    {title:'服务费',field:'serviceFee',align:'center',valign:'middle',sortable:true},
-    {title:'服务费收取方式',field:'serviceFeeType',align:'center',valign:'middle',sortable:true},
+    {title:'放款日期',field:'lendingDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'放款金额',field:'lendingAmtFormat',align:'center',valign:'middle',sortable:true},
+    {title:sign+'放款账户'+sign,field:'lendingAcctName',align:'center',valign:'middle',sortable:true},
+    {title:sign+'收款账户'+sign,field:'externalAcct',align:'center',valign:'middle',sortable:true},
+    {title:'服务费',field:'serviceFeeFormat',align:'center',valign:'middle',sortable:true},
+    {title:'产品还款方式',field:'repayTypeName',align:'center',valign:'middle',sortable:true},
+    {title:'服务费比例',field:'serviceFeeScaleFormat',align:'center',valign:'middle',sortable:true},
+    {title:'服务费收取方式',field:'serviceFeeTypeName',align:'center',valign:'middle',sortable:true},
     {title:'约定还款日',field:'ddDate',align:'center',valign:'middle',sortable:true},
-    {title:'是否罚息',field:'isPen',align:'center',valign:'middle',sortable:true},
-    {title:'罚息利率',field:'penRate',align:'center',valign:'middle',sortable:true},
-    {title:'罚息基数',field:'penNumber',align:'center',valign:'middle',sortable:true},
+    {title:'是否罚息',field:'isPenName',align:'center',valign:'middle',sortable:true},
+    {title:'罚息利率',field:'penRateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'罚息基数',field:'penNumberName',align:'center',valign:'middle',sortable:true},
     {title:'展期期数',field:'extensionNo',align:'center',valign:'middle',sortable:true},
-    {title:'展期利息',field:'extensionRate',align:'center',valign:'middle',sortable:true},
-    {title:'应还本金',field:'schdPrin',align:'center',valign:'middle',sortable:true},
-    {title:'应还利息',field:'schdInterest',align:'center',valign:'middle',sortable:true},
-    {title:'应收服务费',field:'schdServFee',align:'center',valign:'middle',sortable:true},
-    {title:'逾期罚息累计',field:'schdPen',align:'center',valign:'middle',sortable:true},
-    {title:'已还本金累计',field:'totPaidPrin',align:'center',valign:'middle',sortable:true},
-    {title:'已还利息累计',field:'totPaidInterest',align:'center',valign:'middle',sortable:true},
-    {title:'已收服务费累计',field:'totPaidServFee',align:'center',valign:'middle',sortable:true},
-    {title:'已还罚息累计',field:'totPaidPen',align:'center',valign:'middle',sortable:true},
-    {title:'减免金额累计',field:'totWavAmt',align:'center',valign:'middle',sortable:true},
-    {title:'借据状态',field:'status',align:'center',valign:'middle',sortable:true},
-    {title:'操作员',field:'createBy',align:'center',valign:'middle',sortable:true},
-    {title:'修改操作员',field:'modifiedBy',align:'center',valign:'middle',sortable:true},
-    {title:'创建时间',field:'createAt',align:'center',valign:'middle',sortable:true},
-    {title:'更新时间',field:'updateAt',align:'center',valign:'middle',sortable:true},
-    {title:'备注',field:'remark',align:'center',valign:'middle',sortable:true},
+    {title:'展期利息',field:'extensionRateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'应还本金',field:'schdPrinFormat',align:'center',valign:'middle',sortable:true},
+    {title:'应还利息',field:'schdInterestFormat',align:'center',valign:'middle',sortable:true},
+    {title:'应收服务费',field:'schdServFeeFormat',align:'center',valign:'middle',sortable:true},
+    {title:'逾期罚息累计',field:'schdPenFormat',align:'center',valign:'middle',sortable:true},
+    {title:'已还本金累计',field:'totPaidPrinFormat',align:'center',valign:'middle',sortable:true},
+    {title:'已还利息累计',field:'totPaidInterestFormat',align:'center',valign:'middle',sortable:true},
+    {title:'已收服务费累计',field:'totPaidServFeeFormat',align:'center',valign:'middle',sortable:true},
+    {title:'已还罚息累计',field:'totPaidPenFormat',align:'center',valign:'middle',sortable:true},
+    {title:'减免金额累计',field:'totWavAmtFormat',align:'center',valign:'middle',sortable:true},
+    {title:'借据状态',field:'statusName',align:'center',valign:'middle',sortable:true},
+    {title:'操作员',field:'createByName',align:'center',valign:'middle',sortable:true},
+    {title:'修改操作员',field:'modifiedByName',align:'center',valign:'middle',sortable:true},
+    {title:sign+'创建时间'+sign,field:'createAt',align:'center',valign:'middle',sortable:true},
+    {title:sign+'更新时间'+sign,field:'updateAt',align:'center',valign:'middle',sortable:true},
+    {title:sign+'备注'+sign,field:'remark',align:'center',valign:'middle',sortable:true}
   ];
 };
 
@@ -116,10 +118,10 @@ Loan.openLoanDetail = function () {
     var index = layer.open({
       type: 2,
       title: '借据详情',
-      area: ['800px', '600px'], //宽高
+      area: ['1100px', '700px'], //宽高
       fix: false, //不固定
       maxmin: true,
-      content: Feng.ctxPath + '/loan/loan_update/' + Loan.seItem.id
+      content: Feng.ctxPath + '/loan/to_loan_update/' + Loan.seItem.id
     });
     this.layerIndex = index;
   }

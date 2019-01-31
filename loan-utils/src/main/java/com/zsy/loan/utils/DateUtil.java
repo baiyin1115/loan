@@ -58,6 +58,9 @@ public class DateUtil {
    * 获取YYYY-MM-DD格式
    */
   public static String getDay(Date date) {
+    if(date == null){
+      return "";
+    }
     return formatDate(date, "yyyy-MM-dd");
   }
 

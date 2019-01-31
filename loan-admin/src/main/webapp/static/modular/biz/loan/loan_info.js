@@ -166,14 +166,17 @@ $(function () {
   Feng.initValidator("loanInfoForm", LoanDlg.validateFields);
 
   //初始化
-  $("#acctType").val($("#acctTypeValue").val());
-  $("#balanceType").val($("#balanceTypeValue").val());
-  if ($("#statusValue") == null || $("#statusValue").val() == "") {
-    $("#status").val(1); //正常
-  }
-  else {
-    $("#status").val($("#statusValue").val());
-  }
+  $("#orgNo").val($("#orgNoValue").val());
+  $("#serviceFeeType").val($("#serviceFeeTypeValue").val());
+  $("#isPen").val($("#isPenValue").val());
+  $("#penNumber").val($("#penNumberValue").val());
+  $("#repayType").val($("#repayTypeValue").val());
+  $("#loanType").val($("#loanTypeValue").val());
+
+  $("#prin").val(Feng.formatMoney($("#prin").val(),2));
+  $("#receiveInterest").val(Feng.formatMoney($("#receiveInterest").val(),2));
+  $("#serviceFee").val(Feng.formatMoney($("#serviceFee").val(),2));
+  $("#lendingAmt").val(Feng.formatMoney($("#lendingAmt").val(),2));
 
   //产品树
   var tree = new $ZTree("productTree", "/product/selectProductTreeList");

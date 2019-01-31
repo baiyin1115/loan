@@ -80,13 +80,21 @@ public class BigDecimalUtil {
   }
 
   public static BigDecimal mul(BigDecimal... para) {
+    return mul(BigDecimal.ROUND_HALF_UP,2,para);
+  }
+
+  public static BigDecimal mul(int routingMode,int scale,BigDecimal... para) {
 
     BigDecimal result = BigDecimal.ONE;
+
+    if (routingMode <= 0) {
+      routingMode = BigDecimal.ROUND_HALF_UP;
+    }
 
     for (BigDecimal dec : para) {
       result = result.multiply(dec);
     }
-    return result;
+    return result.setScale(scale,routingMode);
   }
 
   /**
@@ -148,6 +156,9 @@ public class BigDecimalUtil {
    * 格式化 BigDecimal 为一个字符串序列；两个小数位，小数第二位 进行 四舍五入。
    */
   public static String formatAmt(BigDecimal bigDecimal) {
+    if (bigDecimal == null) {
+      return "";
+    }
     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.CHINA);
     format.setDecimalSeparatorAlwaysShown(true);
     /** 设置小数部分允许的最大位数  */
@@ -164,6 +175,9 @@ public class BigDecimalUtil {
    * 格式化 BigDecimal 为一个字符串序列；两个小数位，小数第二位 进行 四舍五入。
    */
   public static String formatHundred(BigDecimal bigDecimal) {
+    if (bigDecimal == null) {
+      return "";
+    }
     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.CHINA);
     format.setDecimalSeparatorAlwaysShown(true);
     /** 设置小数部分允许的最大位数  */
@@ -176,6 +190,9 @@ public class BigDecimalUtil {
   }
 
   public static String formatThousand(BigDecimal bigDecimal) {
+    if (bigDecimal == null) {
+      return "";
+    }
     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.CHINA);
     format.setDecimalSeparatorAlwaysShown(true);
     /** 设置小数部分允许的最大位数  */

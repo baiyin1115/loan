@@ -1,5 +1,7 @@
 package com.zsy.loan.service.biz.impl;
 
+import com.zsy.loan.bean.entity.biz.TBizAcct;
+import com.zsy.loan.bean.entity.biz.TBizCustomerInfo;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
@@ -33,6 +35,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -96,7 +99,7 @@ public class LoanServiceImpl {
     return page;
   }
 
-  public Object save(LoanRequest loan, boolean b) {
+  public Boolean save(LoanRequest loan, boolean b) {
 
     /**
      * 试算
@@ -118,14 +121,47 @@ public class LoanServiceImpl {
       throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "服务费不一致");
     }
 
+
     TBizLoanInfo info = TBizLoanInfo.builder().build();
     BeanKit.copyProperties(loan, info);
-    info.setStatus(LoanStatusEnum.CHECK_IN.getValue()); //登记
 
-    return repository.save(info);
+    /**
+     * 赋值
+     */
+    info.setStatus(LoanStatusEnum.CHECK_IN.getValue()); //登记
+    info.setSchdPrin(result.getPrin()); // 应还本金
+    info.setSchdInterest(result.getReceiveInterest()); // 应还利息
+    info.setSchdServFee(result.getServiceFee()); // 应收服务费
+
+    info.setSchdPen(BigDecimal.valueOf(0.00)); // 逾期罚息累计
+    info.setTotPaidPrin(BigDecimal.valueOf(0.00)); // 已还本金累计
+    info.setTotPaidInterest(BigDecimal.valueOf(0.00)); // 已还利息累计
+    info.setTotPaidServFee(BigDecimal.valueOf(0.00)); // 已收服务费累计
+    info.setTotPaidPen(BigDecimal.valueOf(0.00)); // 已还罚息累计
+    info.setTotWavAmt(BigDecimal.valueOf(0.00)); // 减免金额累计
+
+    repository.save(info);
+
+    return true;
   }
 
-  public void delete(List<Long> loanIds) {
+  @Transactional
+  public Boolean delete(List<Long> loanIds) {
+
+    for (long loanId : loanIds) {
+      /**
+       * 判断账户状态
+       */
+      TBizLoanInfo loanInfo = repository.findById(loanId).get();
+      if (!loanInfo.getStatus().equals(LoanStatusEnum.CHECK_IN.getValue())) { //登记
+        throw new LoanException(BizExceptionEnum.LOAN_NOT_CHECK_IN, String.valueOf(loanId));
+      }
+
+      repository.deleteById(loanId);
+
+    }
+    return true;
+
   }
 
   public void put(LoanRequest loan, boolean b) {

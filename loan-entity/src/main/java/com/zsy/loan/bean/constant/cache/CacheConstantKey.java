@@ -32,4 +32,10 @@ public interface CacheConstantKey {
   String DICT_ORG_ALL = "公司";
 
   String SYS = "sys_";
+
+  String PRODUCT_NAME = "product_name_";
+  String CUSTOMER_NAME = "customer_name_";
+  String ACCT_NO_NAME = "acct_no_name_";
+
+
 }

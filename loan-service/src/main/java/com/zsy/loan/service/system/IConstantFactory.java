@@ -289,4 +289,25 @@ public interface IConstantFactory {
    * @return
    */
   String getTransferTypeName(Long status);
+
+  /**
+   * 获取产品名称
+   * @param productNo
+   * @return
+   */
+  String getProductName(Long productNo);
+
+  /**
+   * 获取用户名称
+   * @param custNo
+   * @return
+   */
+  String getCustomerName(Long custNo);
+
+  /**
+   * 获取账户名称
+   * @param lendingAcct
+   * @return
+   */
+  String getAcctName(Long lendingAcct);
 }

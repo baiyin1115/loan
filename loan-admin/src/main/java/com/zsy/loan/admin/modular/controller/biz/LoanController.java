@@ -17,13 +17,17 @@ import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.LoanVoucherInfoRepo;
 import com.zsy.loan.service.biz.impl.LoanServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
+import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.warpper.biz.LoanWarpper;
 import com.zsy.loan.utils.BeanUtil;
+import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.factory.Page;
 import io.swagger.annotations.ApiOperation;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -158,9 +162,10 @@ public class LoanController extends BaseController {
   public String loanUpdate(@PathVariable Long loanId, Model model) {
     TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
 
-    loan.setRemark(loan.getRemark().trim());
-//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
-//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+    loan.setRemark(loan.getRemark()==null?"":loan.getRemark().trim());
+    loan.setProductName(ConstantFactory.me().getProductName(loan.getProductNo()));
+    loan.setCustName(ConstantFactory.me().getCustomerName(loan.getCustNo()));
+    loan.setLendingAcctName(ConstantFactory.me().getAcctName(loan.getLendingAcct()));
 
     model.addAttribute("loan", loan);
     LogObjectHolder.me().set(loan);
@@ -187,17 +192,13 @@ public class LoanController extends BaseController {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
-//    /**
-//     * 修改校验
-//     */
-//    //公司、代偿贷款不能透支
-//    if (!(loan.getAcctType().equals(AcctTypeEnum.INTERIM_IN.getValue())
-//        || loan.getAcctType().equals(AcctTypeEnum.INTERIM_OUT.getValue()))
-//        && loan.getBalanceType()
-//        .equals(AcctBalanceTypeEnum.OVERDRAW.getValue())) {
-//      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW,
-//          String.valueOf(loan.getUserNo()));
-//    }
+    /**
+     * 校验
+     */
+    //借款结束日期必须在开始日期之前
+    if (!DateUtil.compareDate(loan.getBeginDate(),loan.getEndDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
+    }
 
     loanService.save(loan, true);
     return SUCCESS_TIP;
