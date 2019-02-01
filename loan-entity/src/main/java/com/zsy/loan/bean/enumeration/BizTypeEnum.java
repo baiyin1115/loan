@@ -366,9 +366,10 @@ public class BizTypeEnum {
   public enum LoanBizTypeEnum {
     /**
      * 1:放款,2:还款,3:服务费收取,4:服务费补偿,5:支出,6:融资,7:撤资,8:收入,9:资金登记,10:转账,11:提现,12:结转,13:代偿,14:提前还款
+     * ,15:借据登记,16:融资登记
      */
     PUT(1), REPAY(2), SERVICE_FEE_IN(3), SERVICE_FEE_OUT(4), OUT(5),INVEST(6),DIVESTMENT(7),IN(8),FUNDS_CHECK_IN(9)
-    ,TRANSFER(10),WITHDRAW(11),SETTLEMENT(12),COMPENSATION(13),PREPAYMENT(14);
+    ,TRANSFER(10),WITHDRAW(11),SETTLEMENT(12),COMPENSATION(13),PREPAYMENT(14),LOAN_CHECK_IN(15),INVEST_CHECK_IN(16);
 
     private long value;
 

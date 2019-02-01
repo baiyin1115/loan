@@ -9,7 +9,7 @@ import com.zsy.loan.bean.entity.biz.TBizCustomerInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
-import com.zsy.loan.bean.request.CustomerInfoRequest;
+import com.zsy.loan.bean.convey.CustomerInfoVo;
 import com.zsy.loan.dao.biz.CustomerInfoRepo;
 import com.zsy.loan.service.biz.impl.CustomerServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
@@ -93,7 +93,7 @@ public class CustomerController extends BaseController {
   @Permission
   @ResponseBody
   @ApiOperation(value = "新增客户", notes = "新增客户")
-  public Object add(@Valid @RequestBody CustomerInfoRequest customer, BindingResult error) {
+  public Object add(@Valid @RequestBody CustomerInfoVo customer, BindingResult error) {
 
     /**
      * 处理error
@@ -149,7 +149,7 @@ public class CustomerController extends BaseController {
   @ResponseBody
   @OpLog
   @ApiOperation(value = "修改客户", notes = "修改客户")
-  public Object update(@Valid @RequestBody CustomerInfoRequest customer, BindingResult error) {
+  public Object update(@Valid @RequestBody CustomerInfoVo customer, BindingResult error) {
     /**
      * 处理error
      */

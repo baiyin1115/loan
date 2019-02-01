@@ -47,7 +47,7 @@ public class LogInterceptor implements HandlerInterceptor {
     long startRequestTime = ThreadLocalUtil.requestTime.get();
     long endRequestTime = System.currentTimeMillis();
 
-    log.info("服务 {} 访问结束, {} request to {} ,耗时：{} ms",
+    log.info("服务 {} 访问结束, {} convey to {} ,耗时：{} ms",
         getRemoteAddr(httpServletRequest),
         httpServletRequest.getMethod(),
         httpServletRequest.getRequestURI(), (endRequestTime - startRequestTime));

@@ -1,4 +1,4 @@
-package com.zsy.loan.bean.request;
+package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.sql.Timestamp;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanVoucherRequest {
+public class LoanVoucherVo {
 
   private Long id;
 

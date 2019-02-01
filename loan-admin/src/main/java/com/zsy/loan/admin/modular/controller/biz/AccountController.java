@@ -11,7 +11,7 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctBalanceTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
-import com.zsy.loan.bean.request.AcctRequest;
+import com.zsy.loan.bean.convey.AcctVo;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.service.biz.impl.AcctServiceImpl;
@@ -95,7 +95,7 @@ public class AccountController extends BaseController {
   @Permission
   @ResponseBody
   @ApiOperation(value = "新增账户", notes = "新增账户")
-  public Object add(@Valid @RequestBody AcctRequest account, BindingResult error) {
+  public Object add(@Valid @RequestBody AcctVo account, BindingResult error) {
 
     /**
      * 处理error
@@ -162,7 +162,7 @@ public class AccountController extends BaseController {
   @ResponseBody
   @OpLog
   @ApiOperation(value = "修改账户", notes = "修改账户")
-  public Object update(@Valid @RequestBody AcctRequest account, BindingResult error) {
+  public Object update(@Valid @RequestBody AcctVo account, BindingResult error) {
     /**
      * 处理error
      */

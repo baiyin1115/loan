@@ -63,7 +63,7 @@ public class HttpKit {
   /**
    * 获取 包装防Xss Sql注入的 HttpServletRequest
    *
-   * @return request
+   * @return convey
    */
   public static HttpServletRequest getRequest() {
     HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder

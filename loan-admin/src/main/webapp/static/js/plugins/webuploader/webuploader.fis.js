@@ -1238,9 +1238,9 @@ return (function( root, factory ) {
 
             /**
              * 发送命令。当传入`callback`或者`handler`中返回`promise`时。返回一个当所有`handler`中的promise都完成后完成的新`promise`。
-             * @method request
-             * @grammar request( command, args ) => * | Promise
-             * @grammar request( command, args, callback ) => Promise
+             * @method convey
+             * @grammar convey( command, args ) => * | Promise
+             * @grammar convey( command, args, callback ) => Promise
              * @for  Uploader
              */
             request: function() {

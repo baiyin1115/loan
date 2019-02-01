@@ -1,4 +1,4 @@
-package com.zsy.loan.bean.request;
+package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.sql.Timestamp;
@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 提前还款请求
+ * 还款计划请求
  *
  * @Author zhangxh
  * @Date 2019-01-18  12:30
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanPrepayRequest {
+public class LoanRepayPlanVo {
 
   private Long id;
 

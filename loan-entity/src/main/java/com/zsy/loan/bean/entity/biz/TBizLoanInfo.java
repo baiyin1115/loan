@@ -217,6 +217,9 @@ public class TBizLoanInfo {
   private String remark;
 
   @Transient
+  private String orgName;
+
+  @Transient
   private String productName;
 
   @Transient
@@ -224,6 +227,24 @@ public class TBizLoanInfo {
 
   @Transient
   private String lendingAcctName;
+
+  @Transient
+  private String loanTypeName;
+
+  @Transient
+  private String serviceFeeTypeName;
+
+  @Transient
+  private String repayTypeName;
+
+  @Transient
+  private String isPenName;
+
+  @Transient
+  private String penNumberName;
+
+  @Transient
+  private String statusName;
 
   @Override
   public boolean equals(Object o) {

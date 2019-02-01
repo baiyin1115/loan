@@ -9,8 +9,8 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.bean.request.AcctRequest;
-import com.zsy.loan.bean.request.CustomerInfoRequest;
+import com.zsy.loan.bean.convey.AcctVo;
+import com.zsy.loan.bean.convey.CustomerInfoVo;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.dao.biz.CustomerInfoRepo;
 import com.zsy.loan.service.system.impl.SystemServiceImpl;
@@ -108,7 +108,7 @@ public class CustomerServiceImpl {
   }
 
   @Transactional
-  public Object save(CustomerInfoRequest customer,boolean isUp) {
+  public Object save(CustomerInfoVo customer,boolean isUp) {
 
     TBizCustomerInfo info = TBizCustomerInfo.builder().build();
     BeanUtils.copyProperties(customer, info);
@@ -123,14 +123,14 @@ public class CustomerServiceImpl {
      * 创建账户信息
      */
     if(!isUp){
-      AcctRequest account = null;
+      AcctVo account = null;
       if (info.getType().equals(CustomerTypeEnum.INVEST.getValue())) { //投资人
-        account = AcctRequest.builder().acctType(AcctTypeEnum.INVEST.getValue())
+        account = AcctVo.builder().acctType(AcctTypeEnum.INVEST.getValue())
             .availableBalance(BigDecimal.ZERO).balanceType(AcctBalanceTypeEnum.NO_OVERDRAW.getValue())
             .freezeBalance(BigDecimal.ZERO).remark("系统自动建立").status(AcctStatusEnum.VALID.getValue())
             .userNo(info.getId()).name(info.getName()).build();
       } else { //借款人
-        account = AcctRequest.builder().acctType(AcctTypeEnum.LOAN.getValue())
+        account = AcctVo.builder().acctType(AcctTypeEnum.LOAN.getValue())
             .availableBalance(BigDecimal.ZERO).balanceType(AcctBalanceTypeEnum.NO_OVERDRAW.getValue())
             .freezeBalance(BigDecimal.ZERO).remark("系统自动建立").status(AcctStatusEnum.VALID.getValue())
             .userNo(info.getId()).name(info.getName()).build();

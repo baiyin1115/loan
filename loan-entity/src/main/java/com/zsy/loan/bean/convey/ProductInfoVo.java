@@ -1,9 +1,8 @@
-package com.zsy.loan.bean.request;
+package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import javax.persistence.Column;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -11,10 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 
 /**
  * 产品请求
@@ -26,7 +21,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductInfoRequest {
+public class ProductInfoVo {
 
   private Long id;
 

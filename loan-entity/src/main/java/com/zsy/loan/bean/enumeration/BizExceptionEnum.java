@@ -58,8 +58,10 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
    * 贷款问题
    */
   LOAN_DATE(401, "结束日期必须在开始日期之前"),
+  LOAN_LENDING_DATE(401, "放款日期必须在开始日期之后"),
   LOAN_CALCULATE_REQ_NOT_MATCH(401, "请求与上次试算结果不一致"),
-  LOAN_NOT_CHECK_IN(401, "借据不是登记状态"),
+  LOAN_NOT_CHECK_IN(401, "不是登记状态"),
+  LOAN_STATUS_ERROR(401, "当前状态不支持这个业务"),
 
   /**
    * 客户问题

@@ -34,6 +34,35 @@ var LoanDlg = {
     // extensionNo:{validators:{notEmpty:{message:'展期期数'}}},
     // extensionRate:{validators:{notEmpty:{message:'展期利息'}}},
     // status:{validators:{notEmpty:{message:'借据状态'}}}
+  },
+  validatePutFields: {
+    // orgNo: {validators: {notEmpty: {message: '公司编号'}}},
+    // productNo: {validators: {notEmpty: {message: '产品编号'}}},
+    // custNo: {validators: {notEmpty: {message: '客户编号'}}},
+    // contrNo:{validators:{notEmpty:{message:'原始合同编号'}}},
+    // acctDate: {validators: {notEmpty: {message: '业务日期'}}},
+    // beginDate: {validators: {notEmpty: {message: '借款开始日期'}}},
+    // endDate: {validators: {notEmpty: {message: '借款结束日期'}}},
+    // prin: {validators: {notEmpty: {message: '本金'}}},
+    // serviceFee:{validators:{notEmpty:{message:'服务费'}}},
+    // receiveBigint:{validators:{notEmpty:{message:'应收利息'}}},
+    // termNo:{validators:{notEmpty:{message:'期数'}}},
+    lendingDate:{validators:{notEmpty:{message:'放款日期'}}},
+    lendingAmt:{validators:{notEmpty:{message:'放款金额'}}},
+    lendingAcct: {validators: {notEmpty: {message: '放款账户'}}},
+    // externalAcct:{validators:{notEmpty:{message:'收款账户'}}},
+    // loanType: {validators: {notEmpty: {message: '贷款类型'}}},
+    // rate: {validators: {notEmpty: {message: '利率'}}},
+    // serviceFeeScale: {validators: {notEmpty: {message: '服务费比例'}}},
+    // serviceFeeType: {validators: {notEmpty: {message: '服务费收取方式'}}},
+    // repayType: {validators: {notEmpty: {message: '还款方式'}}},
+    //isPen:{validators:{notEmpty:{message:'是否罚息'}}},
+    //penRate:{validators:{notEmpty:{message:'罚息利率'}}},
+    //penNumber:{validators:{notEmpty:{message:'罚息基数'}}}
+    ddDate:{validators:{notEmpty:{message:'约定还款日'}}}
+    // extensionNo:{validators:{notEmpty:{message:'展期期数'}}},
+    // extensionRate:{validators:{notEmpty:{message:'展期利息'}}},
+    // status:{validators:{notEmpty:{message:'借据状态'}}}
   }
 };
 
@@ -55,7 +84,10 @@ LoanDlg.set = function (key, val) {
   if ($("#" + key).attr("id") == "prin" ||
       $("#" + key).attr("id") == "serviceFee" ||
       $("#" + key).attr("id") == "receiveInterest" ||
-      $("#" + key).attr("id") == "lendingAmt"
+      $("#" + key).attr("id") == "lendingAmt" ||
+      $("#" + key).attr("id") == "schdPrin" ||
+      $("#" + key).attr("id") == "schdInterest" ||
+      $("#" + key).attr("id") == "schdServFee"
   ) {
     this.loanInfoData[key] = (typeof value == "undefined") ? Feng.parseMoney($("#" + key).val()) : value;
   } else {
@@ -105,11 +137,11 @@ LoanDlg.collectData = function () {
 /**
  * 验证数据是否为空
  */
-LoanDlg.validate = function () {
+LoanDlg.validate = function (ob) {
 
-  $('#loanInfoForm').data("bootstrapValidator").resetForm();
-  $('#loanInfoForm').bootstrapValidator('validate');
-  return $("#loanInfoForm").data('bootstrapValidator').isValid();
+  ob.data("bootstrapValidator").resetForm();
+  ob.bootstrapValidator('validate');
+  return ob.data('bootstrapValidator').isValid();
 };
 
 /**
@@ -120,7 +152,7 @@ LoanDlg.addSubmit = function () {
   this.clearData();
   this.collectData();
 
-  if (!this.validate()) {
+  if (!this.validate($('#loanInfoForm'))) {
     return;
   }
 
@@ -145,7 +177,7 @@ LoanDlg.editSubmit = function () {
   this.clearData();
   this.collectData();
 
-  if (!this.validate()) {
+  if (!this.validate($('#loanInfoForm'))) {
     return;
   }
 
@@ -162,45 +194,6 @@ LoanDlg.editSubmit = function () {
   ajax.start();
 };
 
-$(function () {
-  Feng.initValidator("loanInfoForm", LoanDlg.validateFields);
-
-  //初始化
-  $("#orgNo").val($("#orgNoValue").val());
-  $("#serviceFeeType").val($("#serviceFeeTypeValue").val());
-  $("#isPen").val($("#isPenValue").val());
-  $("#penNumber").val($("#penNumberValue").val());
-  $("#repayType").val($("#repayTypeValue").val());
-  $("#loanType").val($("#loanTypeValue").val());
-
-  $("#prin").val(Feng.formatMoney($("#prin").val(),2));
-  $("#receiveInterest").val(Feng.formatMoney($("#receiveInterest").val(),2));
-  $("#serviceFee").val(Feng.formatMoney($("#serviceFee").val(),2));
-  $("#lendingAmt").val(Feng.formatMoney($("#lendingAmt").val(),2));
-
-  //产品树
-  var tree = new $ZTree("productTree", "/product/selectProductTreeList");
-  tree.bindOnClick(LoanDlg.onClickProduct);
-  tree.init();
-  LoanDlg.productTreeInstance = tree;
-
-  //放款账户树
-  var tree = new $ZTree("lendingAcctTree",
-      "/account/selectLendingAcctTreeList");
-  tree.bindOnClick(LoanDlg.onClickLendingAcct);
-  tree.init();
-  LoanDlg.lendingAcctTreeInstance = tree;
-
-  //绑定格式化事件
-  $('#prin').bind('blur', function () {Feng.formatAmt($('#prin'));});
-  $('#serviceFee').bind('blur', function () {Feng.formatAmt($('#serviceFee'));});
-  $('#receiveInterest').bind('blur', function () {Feng.formatAmt($('#receiveInterest'));});
-  $('#lendingAmt').bind('blur', function () {Feng.formatAmt($('#lendingAmt'));});
-
-  //alert(Feng.formatMoney(0.00,2));
-
-});
-
 /**
  * 试算
  */
@@ -209,7 +202,7 @@ LoanDlg.calculate = function () {
   this.clearData();
   this.collectData();
 
-  if (!this.validate()) {
+  if (!this.validate($('#loanInfoForm'))) {
     return;
   }
 
@@ -231,6 +224,113 @@ LoanDlg.calculate = function () {
   ajax.setContentType("application/json")
   ajax.start();
 };
+
+/**
+ * 放款
+ */
+LoanDlg.putSubmit = function () {
+
+  this.clearData();
+  this.collectData();
+
+  if (!this.validate($('#loanPutInfoForm'))) {
+    return;
+  }
+
+  //提交信息
+  var ajax = new $ax(Feng.ctxPath + "/loan/put", function (data) {
+    Feng.success("放款成功!");
+    window.parent.Loan.table.refresh();
+    LoanDlg.close();
+  }, function (data) {
+    Feng.error("放款失败!" + data.responseJSON.message + "!");
+  });
+  ajax.set(this.loanInfoData);
+  ajax.setContentType("application/json")
+  ajax.start();
+};
+
+/**
+ * 放款试算
+ */
+LoanDlg.putCalculate = function () {
+
+  // var arr = [ 4, "Pete", 8, "John" ];
+  // Feng.infoDetail("试算详情",arr)
+
+  this.clearData();
+  this.collectData();
+
+  if (!this.validate($('#loanPutInfoForm'))) {
+    return;
+  }
+
+  //提交信息
+  var ajax = new $ax(Feng.ctxPath + "/loan/put_calculate", function (data) {
+    Feng.success("试算成功!");
+
+    //设置数据信息
+    $("#serviceFee").val(Feng.formatMoney(data.serviceFee,2));
+    $("#receiveInterest").val(Feng.formatMoney(data.receiveInterest,2));
+    $("#termNo").val(data.termNo);
+    $("#lendingAmt").val(Feng.formatMoney(data.lendingAmt,2));
+
+  }, function (data) {
+    Feng.error("试算失败!" + data.responseJSON.message + "!");
+  });
+  ajax.set(this.loanInfoData);
+  //alert(JSON.stringify(this.loanInfoData));
+  ajax.setContentType("application/json")
+  ajax.start();
+};
+
+
+$(function () {
+  Feng.initValidator("loanInfoForm", LoanDlg.validateFields);
+  Feng.initValidator("loanPutInfoForm", LoanDlg.validatePutFields);
+
+  //初始化
+  $("#orgNo").val($("#orgNoValue").val());
+  $("#serviceFeeType").val($("#serviceFeeTypeValue").val());
+  $("#isPen").val($("#isPenValue").val());
+  $("#penNumber").val($("#penNumberValue").val());
+  $("#repayType").val($("#repayTypeValue").val());
+  $("#loanType").val($("#loanTypeValue").val());
+
+  $("#prin").val(Feng.formatMoney($("#prin").val(),2));
+  $("#receiveInterest").val(Feng.formatMoney($("#receiveInterest").val(),2));
+  $("#serviceFee").val(Feng.formatMoney($("#serviceFee").val(),2));
+  $("#lendingAmt").val(Feng.formatMoney($("#lendingAmt").val(),2));
+  $("#schdPrin").val(Feng.formatMoney($("#schdPrin").val(),2));
+  $("#schdInterest").val(Feng.formatMoney($("#schdInterest").val(),2));
+  $("#schdServFee").val(Feng.formatMoney($("#schdServFee").val(),2));
+
+
+  //产品树
+  var tree = new $ZTree("productTree", "/product/selectProductTreeList");
+  tree.bindOnClick(LoanDlg.onClickProduct);
+  tree.init();
+  LoanDlg.productTreeInstance = tree;
+
+  //放款账户树
+  var tree = new $ZTree("lendingAcctTree",
+      "/account/selectLendingAcctTreeList");
+  tree.bindOnClick(LoanDlg.onClickLendingAcct);
+  tree.init();
+  LoanDlg.lendingAcctTreeInstance = tree;
+
+  //绑定格式化事件
+  $('#prin').bind('blur', function () {Feng.formatAmt($('#prin'));});
+  $('#serviceFee').bind('blur', function () {Feng.formatAmt($('#serviceFee'));});
+  $('#receiveInterest').bind('blur', function () {Feng.formatAmt($('#receiveInterest'));});
+  $('#lendingAmt').bind('blur', function () {Feng.formatAmt($('#lendingAmt'));});
+  $('#schdPrin').bind('blur', function () {Feng.formatAmt($('#schdPrin'));});
+  $('#schdInterest').bind('blur', function () {Feng.formatAmt($('#schdInterest'));});
+  $('#schdServFee').bind('blur', function () {Feng.formatAmt($('#schdServFee'));});
+
+  //alert(Feng.formatMoney(0.00,2));
+
+});
 
 //账户部分---------------------------------------------------------------------------------
 /**

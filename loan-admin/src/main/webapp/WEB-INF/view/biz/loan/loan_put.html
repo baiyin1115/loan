@@ -1,0 +1,119 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="loanPutInfoForm">
+
+            <input type="hidden" id="id" value="${loan.id}">
+
+            @/*
+            <input type="hidden" id="orgNoValue" value="${loan.orgNo}">
+            <input type="hidden" id="serviceFeeTypeValue" value="${loan.serviceFeeType}">
+            <input type="hidden" id="isPenValue" value="${loan.isPen}">
+            <input type="hidden" id="penNumberValue" value="${loan.penNumber}">
+            <input type="hidden" id="repayTypeValue" value="${loan.repayType}">
+            <input type="hidden" id="loanTypeValue" value="${loan.loanType}">
+            <input type="hidden" id="status" value="${loan.status}">
+            @*/
+
+            <div class="row">
+
+                <div class="col-sm-3">
+
+                    <#TimeInput id="lendingDate" name="放款日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.lendingDate}" />
+
+                    <#input id="ddDate" name="约定还款日" underline="false" value="${loan.ddDate}" />
+
+                    <#input id="lendingAmt" name="放款金额" underline="false" value="${loan.lendingAmt}"/>
+
+                    <#input id="lendingAcctName" name="放款账户" underline="false" value="${loan.lendingAcctName}" hiddenValue="${loan.lendingAcct}"
+                        hidden="lendingAcct" />
+
+                    <#input id="externalAcct" name="收款账户" underline="false" value="${loan.externalAcct}"/>
+
+                    <#input id="schdInterest" name="应还利息" underline="false" value="${loan.schdInterest}"  />
+
+                    <#input id="schdServFee" name="应收服务费" underline="false" value="${loan.schdServFee}"  />
+
+                    <#input id="schdPrin" name="应还本金" underline="false" value="${loan.schdPrin}"  />
+                </div>
+
+                <div class="col-sm-3">
+
+                    <#input id="prin" name="本金" underline="false" value="${loan.prin}" readonly="readonly" />
+
+                    <#input id="serviceFee" name="服务费" underline="false" value="${loan.serviceFee}" readonly="readonly"/>
+
+                    <#input id="receiveInterest" name="应收利息" underline="false" value="${loan.receiveInterest}" readonly="readonly" />
+
+                    <#input id="termNo" name="期数" underline="false" value="${loan.termNo}" readonly="readonly" />
+
+                    <#input id="statusName" name="借据状态" underline="false" value="${loan.statusName}" hiddenValue="${loan.status}"
+                        hidden="status" readonly="readonly" />
+
+                </div>
+
+                <div class="col-sm-3">
+
+                    <#input id="productName" name="公司" underline="false" value="${loan.orgName}" hiddenValue="${loan.orgNo}"
+                        hidden="orgNo" readonly="readonly" />
+
+                    <#input id="productName" name="产品" underline="false" value="${loan.productName}" hiddenValue="${loan.productNo}"
+                        hidden="productNo" readonly="readonly" />
+
+                    <#input id="contrNo" name="合同编号" underline="false" value="${loan.contrNo}" readonly="readonly"/>
+
+                    <#input id="productName" name="客户" underline="false" value="${loan.custName}" hiddenValue="${loan.custNo}"
+                        hidden="custNo" readonly="readonly" />
+
+                    <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.acctDate}" readonly="readonly" />
+
+                    <#TimeInput id="beginDate" name="借款开始日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.beginDate}" readonly="readonly" />
+
+                    <#TimeInput id="endDate" name="借款结束日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.endDate}" readonly="readonly" />
+
+                </div>
+
+                <div class="col-sm-3">
+
+                    <#input id="loanTypeName" name="贷款类型" underline="false" value="${loan.loanTypeName}" hiddenValue="${loan.loanType}"
+                        hidden="loanType" readonly="readonly" />
+
+                    <#input id="rate" name="利率" underline="false" value="${loan.rate}" readonly="readonly" />
+
+                    <#input id="serviceFeeScale" name="服务费比例" underline="false" value="${loan.serviceFeeScale}" readonly="readonly" />
+
+                    <#input id="serviceFeeTypeName" name="服务费收取方式" underline="false" value="${loan.serviceFeeTypeName}" hiddenValue="${loan.serviceFeeType}"
+                        hidden="serviceFeeType" readonly="readonly" />
+
+                    <#input id="repayTypeName" name="还款方式" underline="false" value="${loan.repayTypeName}" hiddenValue="${loan.repayType}"
+                        hidden="repayType" readonly="readonly" />
+
+                    <#input id="isPenName" name="是否罚息" underline="false" value="${loan.isPenName}" hiddenValue="${loan.isPen}"
+                        hidden="isPen" readonly="readonly" />
+
+                    <#input id="penRate" name="罚息利率" underline="false" value="${loan.penRate}" readonly="readonly" />
+
+                    <#input id="penNumberName" name="罚息基数" underline="false" value="${loan.penNumberName}" hiddenValue="${loan.penNumber}"
+                        hidden="penNumber" readonly="readonly" />
+                </div>
+            </div>
+
+            <div class="row" >
+                <div class="col-sm-9">
+                    <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50" value="${loan.remark}"/>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="LoanDlg.putCalculate()"/>
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="LoanDlg.putSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="LoanDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/loan/loan_info.js"></script>
+@}

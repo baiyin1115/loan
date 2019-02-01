@@ -9,7 +9,7 @@ import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
-import com.zsy.loan.bean.request.ProductInfoRequest;
+import com.zsy.loan.bean.convey.ProductInfoVo;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.service.biz.impl.ProductServiceImpl;
@@ -89,7 +89,7 @@ public class ProductController extends BaseController {
   @RequestMapping(value = "/add")
   @Permission
   @ResponseBody
-  public Object add(@Valid @RequestBody ProductInfoRequest product, BindingResult error) {
+  public Object add(@Valid @RequestBody ProductInfoVo product, BindingResult error) {
 
     /**
      * 处理error
@@ -134,7 +134,7 @@ public class ProductController extends BaseController {
   @RequestMapping(value = "/update")
   @Permission
   @ResponseBody
-  public Object update(@Valid @RequestBody ProductInfoRequest product, BindingResult error) {
+  public Object update(@Valid @RequestBody ProductInfoVo product, BindingResult error) {
     /**
      * 处理error
      */

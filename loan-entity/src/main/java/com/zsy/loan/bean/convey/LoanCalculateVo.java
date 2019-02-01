@@ -1,9 +1,12 @@
-package com.zsy.loan.bean.request;
+package com.zsy.loan.bean.convey;
 
+import com.zsy.loan.bean.entity.biz.TBizProductInfo;
+import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,7 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 借据请求
+ * 试算
  *
  * @Author zhangxh
  * @Date 2019-01-18  12:30
@@ -21,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanRequest {
+public class LoanCalculateVo {
 
   private Long id;
 
@@ -61,11 +64,10 @@ public class LoanRequest {
   private BigDecimal prin;
 
   @NotNull(message = "[利率]不能为空！")
-  @DecimalMax(value = "1.00", message = "[利率]不能超过1.00")
   @ApiModelProperty(value = "利率")
+  @DecimalMax(value = "1.00", message = "[利率]不能超过1.00")
   private BigDecimal rate;
 
-  @NotNull(message = "[应收利息]不能为空！")
   @ApiModelProperty(value = "应收利息")
   private BigDecimal receiveInterest;
 
@@ -73,32 +75,28 @@ public class LoanRequest {
   @ApiModelProperty(value = "产品还款方式")
   private Long repayType;
 
-  @NotNull(message = "[期数]不能为空！")
   @ApiModelProperty(value = "期数")
   private Long termNo;
 
   @ApiModelProperty(value = "放款日期")
   private Date lendingDate;
 
-
   @ApiModelProperty(value = "放款金额")
   private BigDecimal lendingAmt;
 
-  @NotNull(message = "[放款账户]不能为空！")
   @ApiModelProperty(value = "放款账户")
   private Long lendingAcct;
 
   @ApiModelProperty(value = "收款账户")
   private String externalAcct;
 
+  @ApiModelProperty(value = "服务费")
+  private BigDecimal serviceFee;
+
   @ApiModelProperty( value = "服务费比例")
   @NotNull(message = "[服务费比例]不能为空！")
   @DecimalMax(value = "1.00", message = "[服务费比例]不能超过1.00")
   private BigDecimal serviceFeeScale;
-
-  @NotNull(message = "[服务费]不能为空！")
-  @ApiModelProperty(value = "服务费")
-  private BigDecimal serviceFee;
 
   @NotNull(message = "[服务费收取方式]不能为空！")
   @ApiModelProperty(value = "服务费收取方式")
@@ -107,16 +105,12 @@ public class LoanRequest {
   @ApiModelProperty(value = "约定还款日")
   private Long ddDate;
 
-  @NotNull(message = "[是否罚息]不能为空！")
   @ApiModelProperty(value = "是否罚息")
   private Long isPen;
 
-  @ApiModelProperty(value = "罚息利率")
-  @NotNull(message = "[罚息利率]不能为空！")
-  @DecimalMax(value = "1.00", message = "[罚息利率]不能超过1.00")
+  @ApiModelProperty( value = "罚息利率")
   private BigDecimal penRate;
 
-  @NotNull(message = "[罚息基数]不能为空！")
   @ApiModelProperty(value = "罚息基数")
   private Long penNumber;
 
@@ -170,5 +164,21 @@ public class LoanRequest {
 
   @ApiModelProperty(value = "备注")
   private String remark;
+
+  @ApiModelProperty(value = "日利息",hidden=true)
+  private BigDecimal dayRate;
+  @ApiModelProperty(value = "月利息",hidden=true)
+  private BigDecimal monthRate;
+  @ApiModelProperty(value = "相差天数",hidden=true)
+  private int day;
+  @ApiModelProperty(value = "相差月数",hidden=true)
+  private int month;
+  @ApiModelProperty(value = "产品信息",hidden=true)
+  private TBizProductInfo product;
+  @ApiModelProperty(value = "还款计划",hidden=true)
+  private List<TBizRepayPlan> repayPlanList;
+
+  @ApiModelProperty(value = "业务类型")
+  private Long loanBizType;
 
 }

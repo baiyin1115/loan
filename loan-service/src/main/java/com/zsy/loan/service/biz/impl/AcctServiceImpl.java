@@ -7,11 +7,10 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerStatusEnum;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.bean.request.AcctRequest;
+import com.zsy.loan.bean.convey.AcctVo;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.dao.biz.CustomerInfoRepo;
-import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.system.impl.SystemServiceImpl;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.factory.Page;
@@ -53,7 +52,7 @@ public class AcctServiceImpl {
 
 
   @Transactional
-  public Object save(@Valid AcctRequest account,boolean isUp) {
+  public Object save(@Valid AcctVo account,boolean isUp) {
 
     TBizAcct info = TBizAcct.builder().build();
     BeanUtils.copyProperties(account, info);

@@ -1,9 +1,8 @@
-package com.zsy.loan.bean.request;
+package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AcctRequest {
+public class AcctVo {
 
   private Long id;
 

@@ -2,7 +2,7 @@ package com.zsy.loan.service.biz.impl;
 
 import com.google.common.base.Strings;
 import com.zsy.loan.bean.entity.biz.TBizProductInfo;
-import com.zsy.loan.bean.request.ProductInfoRequest;
+import com.zsy.loan.bean.convey.ProductInfoVo;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.system.UserRepository;
@@ -80,7 +80,7 @@ public class ProductServiceImpl {
     return page;
   }
 
-  public Object save(ProductInfoRequest product) {
+  public Object save(ProductInfoVo product) {
 
     TBizProductInfo info = TBizProductInfo.builder().build();
     BeanUtils.copyProperties(product, info);

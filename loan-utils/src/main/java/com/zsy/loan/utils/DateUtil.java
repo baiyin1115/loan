@@ -20,9 +20,11 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
@@ -58,7 +60,7 @@ public class DateUtil {
    * 获取YYYY-MM-DD格式
    */
   public static String getDay(Date date) {
-    if(date == null){
+    if (date == null) {
       return "";
     }
     return formatDate(date, "yyyy-MM-dd");
@@ -130,7 +132,7 @@ public class DateUtil {
   }
 
   public static boolean compareDate(Date start, Date end) {
-    return end.getTime() > start.getTime();
+    return end.getTime() >= start.getTime();
   }
 
   /**
@@ -400,11 +402,10 @@ public class DateUtil {
   /**
    * 得到n天之后的日期
    */
-  public static String getAfterDayDate(String days) {
-    int daysInt = Integer.parseInt(days);
+  public static String getAfterDayString(int days) {
 
     Calendar canlendar = Calendar.getInstance(); // java.util包
-    canlendar.add(Calendar.DATE, daysInt); // 日期减 如果不够减会将月变动
+    canlendar.add(Calendar.DATE, days); // 日期减 如果不够减会将月变动
     Date date = canlendar.getTime();
 
     SimpleDateFormat sdfd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -412,6 +413,105 @@ public class DateUtil {
 
     return dateStr;
   }
+
+  public static Date getAfterDayDate(Date early, int days) {
+
+    Calendar canlendar = java.util.Calendar.getInstance(); // java.util包
+    canlendar.setTime(early);
+    canlendar.add(Calendar.DATE, days); // 日期减 如果不够减会将月变动
+    Date date = canlendar.getTime();
+
+    return date;
+  }
+
+  /**
+   * 时间加减月数
+   * @param startDate 要处理的时间，Null则为当前时间
+   * @param months 加减的月数
+   * @return Date
+   */
+  public static Date dateAddMonths(Date startDate, int months) {
+    if (startDate == null) {
+      startDate = new Date();
+    }
+    Calendar c = Calendar.getInstance();
+    c.setTime(startDate);
+    c.set(Calendar.MONTH, c.get(Calendar.MONTH) + months);
+    return c.getTime();
+  }
+
+  public static void main(String[] args) {
+    System.out.println(format(getAfterDayDate(parseDate("2019-03-30"),30+30-getDaysOfMonth("201904")),"yyyy-MM-dd"));
+    System.out.println(format(getAfterDayDate(parseDate("2019-04-30"),60+30-getDaysOfMonth("201904")),"yyyy-MM-dd"));
+  }
+
+
+  public static int getDaysOfMonth(String strdate) {
+    int m = Integer.parseInt(strdate.substring(4, 6));
+    switch (m) {
+      case 1:
+      case 3:
+      case 5:
+      case 7:
+      case 8:
+      case 10:
+      case 12:
+        return 31;
+      case 4:
+      case 6:
+      case 9:
+      case 11:
+        return 30;
+      case 2:
+        if (isLeapYear(strdate)) {
+          return 29;
+        } else {
+          return 28;
+        }
+      default:
+        return 0;
+    }
+  }
+
+  /**
+   * 判断年份是否为闰年
+   * 判断闰年的条件， 能被4整除同时不能被100整除，或者能被400整除
+   */
+  public static boolean isLeapYear(String strdate) {
+
+    int year = Integer.parseInt(strdate.substring(0, 4));
+
+    boolean isLeapYear = false;
+    if (year % 4 == 0 && year % 100 != 0) {
+      isLeapYear = true;
+    } else if (year % 400 == 0) {
+      isLeapYear = true;
+    }
+    return isLeapYear;
+  }
+
+
+//  public static Date getAfterDayDates(Date early, int days, int termNo) {
+//
+//    List<Date> arr = new ArrayList<>(termNo);
+//
+//    Calendar calendar = java.util.Calendar.getInstance(); // java.util包
+//    calendar.setTime(early);
+//
+//    int year = calendar.get(Calendar.YEAR);
+//    int month = calendar.get(Calendar.MONTH);
+//    int day = calendar.get(Calendar.DATE);
+//
+//    for (int i = 0; i < termNo; i++) {
+//      calendar.add(Calendar.DATE, days); // 日期减 如果不够减会将月变动
+//      Date newDate = calendar.getTime();
+//
+//    }
+//
+//
+//
+//    return date;
+//  }
 
   /**
    * 得到n天之后是周几
@@ -430,9 +530,6 @@ public class DateUtil {
   }
 
 
-  public static void main(String[] args) {
-    System.out.println(getTime(new Date()));
-    System.out.println(getAfterDayWeek("3"));
-  }
+
 
 }

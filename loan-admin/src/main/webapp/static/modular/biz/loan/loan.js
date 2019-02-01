@@ -128,6 +128,23 @@ Loan.openLoanDetail = function () {
 };
 
 /**
+ * 打开放款界面
+ */
+Loan.openPutLoan = function () {
+  if (this.check()) {
+    var index = layer.open({
+      type: 2,
+      title: '放款',
+      area: ['1280px', '750px'], //宽高
+      fix: false, //不固定
+      maxmin: true,
+      content: Feng.ctxPath + '/loan/to_loan_put/' + Loan.seItem.id
+    });
+    this.layerIndex = index;
+  }
+};
+
+/**
  * 删除借据
  */
 Loan.delete = function () {
@@ -146,50 +163,6 @@ Loan.delete = function () {
     };
 
     Feng.confirm("是否刪除该借据?", operation);
-  }
-};
-
-/**
- * 锁定
- */
-Loan.freeze = function () {
-  if (this.checkAll()) {
-
-    var operation = function () {
-      var ajax = new $ax(Feng.ctxPath + "/loan/freeze", function () {
-        Feng.success("设置成功!");
-        Loan.table.refresh();
-      }, function (data) {
-        Feng.error("设置失败!" + data.responseJSON.message + "!");
-      });
-      ajax.setData(Loan.seItems);
-      ajax.setContentType("application/json")
-      ajax.start();
-    };
-
-    Feng.confirm("是否将该贷款锁定?", operation);
-  }
-};
-
-/**
- * 解锁
- */
-Loan.unfreeze = function () {
-  if (this.checkAll()) {
-
-    var operation = function () {
-      var ajax = new $ax(Feng.ctxPath + "/loan/unfreeze", function () {
-        Feng.success("解锁成功!");
-        Loan.table.refresh();
-      }, function (data) {
-        Feng.error("解锁失败!" + data.responseJSON.message + "!");
-      });
-      ajax.setData(Loan.seItems);
-      ajax.setContentType("application/json")
-      ajax.start();
-    };
-
-    Feng.confirm("是否将该贷款解锁?", operation);
   }
 };
 

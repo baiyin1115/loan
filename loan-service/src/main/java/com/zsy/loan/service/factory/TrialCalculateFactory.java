@@ -1,12 +1,18 @@
 package com.zsy.loan.service.factory;
 
+import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.ServiceFeeTypeEnum;
-import com.zsy.loan.bean.request.LoanCalculateRequest;
+import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
+import com.zsy.loan.utils.DateUtil;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  *
  * 根据还款方式、本金、利率、服务费收取方式、服务费比例、开始结束日期计算
- * 利息、服务费、放款金额、期数、应还本金、应还利息、应收服务费
+ * 利息、服务费、放款金额、期数、应还本金、应还利息、应收服务费、还款计划信息
  *
  * @Author zhangxh
  * @Date 2019-01-30  9:59
@@ -27,8 +33,8 @@ public class TrialCalculateFactory {
   /**
    * 试算工厂
    */
-  public static Map<RepayTypeEnum, Function<LoanCalculateRequest, LoanCalculateRequest>> maps
-      = new HashMap<RepayTypeEnum, Function<LoanCalculateRequest, LoanCalculateRequest>>();
+  public static Map<RepayTypeEnum, Function<LoanCalculateVo, LoanCalculateVo>> maps
+      = new HashMap<RepayTypeEnum, Function<LoanCalculateVo, LoanCalculateVo>>();
 
   static {
     //这里用到landa表达式，新特性。 其中 Cat，Dog 可以看成 if-else 中的条件
@@ -44,36 +50,68 @@ public class TrialCalculateFactory {
    * @param data
    * @return
    */
-  private static LoanCalculateRequest bInterestAPrincipal(LoanCalculateRequest data) {
+  private static LoanCalculateVo bInterestAPrincipal(LoanCalculateVo data) {
 
     log.info("要试算的数据是："+data);
-    LoanCalculateRequest result =  LoanCalculateRequest.builder().build();
+    LoanCalculateVo result =  LoanCalculateVo.builder().build();
     BeanKit.copyProperties(data,result);
 
-    // 期数
-    result.setTermNo((long)result.getMonth());
+    if(data.getLoanBizType().equals(LoanBizTypeEnum.LOAN_CHECK_IN.getValue())){  //融资登记
+      // 期数
+      result.setTermNo((long)result.getMonth());
 
-    // 应收利息 = 本金*月利息*期数
-    result.setReceiveInterest(BigDecimalUtil.mul(data.getPrin(),data.getMonthRate(), BigDecimal.valueOf(data.getMonth())));
+      // 应收利息 = 本金*月利息*期数
+      result.setReceiveInterest(BigDecimalUtil.mul(data.getPrin(),data.getMonthRate(), BigDecimal.valueOf(data.getMonth())));
 
-    // 服务费 = 本金 * 服务费比例
-    result.setServiceFee(BigDecimalUtil.mul(data.getPrin(),data.getServiceFeeScale()));
+      // 服务费 = 本金 * 服务费比例
+      result.setServiceFee(BigDecimalUtil.mul(data.getPrin(),data.getServiceFeeScale()));
 
-    // 放款金额 首期直接扣减服务费
-    if(data.getServiceFeeType().equals(ServiceFeeTypeEnum.FIRST.getValue())){
-      result.setLendingAmt(BigDecimalUtil.sub(data.getPrin(),result.getServiceFee()));
-    }else{
-      result.setLendingAmt(data.getPrin());
+      // 放款金额 首期直接扣减服务费
+      if(data.getServiceFeeType().equals(ServiceFeeTypeEnum.FIRST.getValue())){
+        result.setLendingAmt(BigDecimalUtil.sub(data.getPrin(),result.getServiceFee()));
+      }else{
+        result.setLendingAmt(data.getPrin());
+      }
+
+      // 应还本金
+      result.setSchdPrin(data.getPrin());
+
+      // 应还利息
+      result.setSchdInterest(result.getReceiveInterest());
+
+      // 应收服务费
+      result.setSchdServFee(result.getServiceFee());
     }
 
-    // 应还本金
-    result.setSchdPrin(data.getPrin());
+    if(data.getLoanBizType().equals(LoanBizTypeEnum.PUT.getValue())) {  //放款
+      Long termNo = data.getTermNo(); //期数
+      BigDecimal schdPrin = data.getSchdPrin(); //应还本金
+      BigDecimal schdInterest = data.getSchdInterest(); //应还利息
+      BigDecimal schdServFee = data.getSchdServFee(); //应收服务费
 
-    // 应还利息
-    result.setSchdInterest(result.getReceiveInterest());
+      //当期
+      BigDecimal ctdPrin = BigDecimalUtil.div(schdPrin,BigDecimal.valueOf(termNo));
+      BigDecimal ctdInterest = BigDecimalUtil.div(schdInterest,BigDecimal.valueOf(termNo));
+      BigDecimal ctdServFee = BigDecimalUtil.div(schdServFee,BigDecimal.valueOf(termNo));
+      Date beginDate = data.getBeginDate();
+      Date endDate = null;
 
-    // 应收服务费
-    result.setSchdServFee(result.getServiceFee());
+      List<TBizRepayPlan> list = new ArrayList<>(termNo.intValue());
+
+      for (int i = 0; i < termNo; i++) {
+        TBizRepayPlan plan = TBizRepayPlan.builder().build();
+        BeanKit.copyProperties(data,plan);
+
+        plan.setId(null);
+        plan.setTermNo(i+1l); //当前期
+        plan.setBeginDate(beginDate); //开始时间
+//        plan.setEndDate(DateUtil.getAfterDayDate(data.getProduct().getCycleInterval().intValue()));
+
+      }
+
+
+    }
+
 
     log.info("试算结果为："+result);
     return result;
@@ -84,7 +122,7 @@ public class TrialCalculateFactory {
    * @param data
    * @return
    */
-  private static LoanCalculateRequest bInterestAPrincipal2(LoanCalculateRequest data) {
+  private static LoanCalculateVo bInterestAPrincipal2(LoanCalculateVo data) {
 
     return bInterestAPrincipal(data);
   }
@@ -94,10 +132,10 @@ public class TrialCalculateFactory {
    * @param data
    * @return
    */
-  private static LoanCalculateRequest aDebtServiceDue(LoanCalculateRequest data) {
+  private static LoanCalculateVo aDebtServiceDue(LoanCalculateVo data) {
 
     log.info("要试算的数据是："+data);
-    LoanCalculateRequest result =  LoanCalculateRequest.builder().build();
+    LoanCalculateVo result =  LoanCalculateVo.builder().build();
     BeanKit.copyProperties(data,result);
 
     // 期数 = 就是一期
@@ -135,7 +173,7 @@ public class TrialCalculateFactory {
    * @param data
    * @return
    */
-  private static LoanCalculateRequest equalLoan(LoanCalculateRequest data) {
+  private static LoanCalculateVo equalLoan(LoanCalculateVo data) {
 
     //TODO
     return null;
@@ -146,7 +184,7 @@ public class TrialCalculateFactory {
    * @param data
    * @return
    */
-  private static LoanCalculateRequest equalPrincipal(LoanCalculateRequest data) {
+  private static LoanCalculateVo equalPrincipal(LoanCalculateVo data) {
 
     //TODO
     return null;

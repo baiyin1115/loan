@@ -1,15 +1,15 @@
 package com.zsy.loan.service.biz.impl;
 
-import com.zsy.loan.bean.entity.biz.TBizAcct;
-import com.zsy.loan.bean.entity.biz.TBizCustomerInfo;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.bean.request.LoanCalculateRequest;
-import com.zsy.loan.bean.request.LoanRequest;
+import com.zsy.loan.bean.convey.LoanCalculateVo;
+import com.zsy.loan.bean.convey.LoanPutVo;
+import com.zsy.loan.bean.convey.LoanVo;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.biz.RepayPlanRepo;
@@ -28,7 +28,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import org.springframework.beans.BeanUtils;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -99,14 +99,15 @@ public class LoanServiceImpl {
     return page;
   }
 
-  public Boolean save(LoanRequest loan, boolean b) {
+  public Boolean save(LoanVo loan, boolean b) {
 
     /**
      * 试算
      */
-    LoanCalculateRequest calculateRequest = LoanCalculateRequest.builder().build();
+    LoanCalculateVo calculateRequest = LoanCalculateVo.builder().build();
     BeanKit.copyProperties(loan, calculateRequest);
-    LoanCalculateRequest result = calculate(calculateRequest); //试算结果
+    calculateRequest.setLoanBizType(LoanBizTypeEnum.LOAN_CHECK_IN.getValue()); //设置业务类型
+    LoanCalculateVo result = calculate(calculateRequest); //试算结果
 
     /**
      * 比较试算结果是否与传入的一致
@@ -164,16 +165,60 @@ public class LoanServiceImpl {
 
   }
 
-  public void put(LoanRequest loan, boolean b) {
+  public Boolean put(LoanPutVo loan, boolean b) {
+
+//    /**
+//     * 试算
+//     */
+//    LoanCalculateVo calculateRequest = LoanCalculateVo.builder().build();
+//    BeanKit.copyProperties(loan, calculateRequest);
+//    LoanCalculateVo result = calculate(calculateRequest); //试算结果
+//
+//    /**
+//     * 比较试算结果是否与传入的一致
+//     */
+//    if (!loan.getTermNo().equals(result.getTermNo())) {
+//      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "期数不一致");
+//    }
+//    if (loan.getReceiveInterest().compareTo(result.getReceiveInterest()) != 0) {
+//      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
+//    }
+//    if (loan.getServiceFee().compareTo(result.getServiceFee()) != 0) {
+//      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "服务费不一致");
+//    }
+//
+//
+//    TBizLoanInfo info = TBizLoanInfo.builder().build();
+//    BeanKit.copyProperties(loan, info);
+//
+//    /**
+//     * 赋值
+//     */
+//    info.setStatus(LoanStatusEnum.CHECK_IN.getValue()); //登记
+//    info.setSchdPrin(result.getPrin()); // 应还本金
+//    info.setSchdInterest(result.getReceiveInterest()); // 应还利息
+//    info.setSchdServFee(result.getServiceFee()); // 应收服务费
+//
+//    info.setSchdPen(BigDecimal.valueOf(0.00)); // 逾期罚息累计
+//    info.setTotPaidPrin(BigDecimal.valueOf(0.00)); // 已还本金累计
+//    info.setTotPaidInterest(BigDecimal.valueOf(0.00)); // 已还利息累计
+//    info.setTotPaidServFee(BigDecimal.valueOf(0.00)); // 已收服务费累计
+//    info.setTotPaidPen(BigDecimal.valueOf(0.00)); // 已还罚息累计
+//    info.setTotWavAmt(BigDecimal.valueOf(0.00)); // 减免金额累计
+//
+//    repository.save(info);
+//
+    return true;
+
   }
 
-  public void delay(LoanRequest loan, boolean b) {
+  public void delay(LoanVo loan, boolean b) {
   }
 
-  public void breach(LoanRequest loan, boolean b) {
+  public void breach(LoanVo loan, boolean b) {
   }
 
-  public void updateVoucher(LoanRequest loan, boolean b) {
+  public void updateVoucher(LoanVo loan, boolean b) {
   }
 
   public Page<TBizRepayPlan> getPlanPages(Page<TBizRepayPlan> page, TBizRepayPlan condition) {
@@ -214,7 +259,7 @@ public class LoanServiceImpl {
     return page;
   }
 
-  public void repay(LoanRequest loan, boolean b) {
+  public void repay(LoanVo loan, boolean b) {
   }
 
   private void setOrgList(Long orgNo, Path path, CriteriaBuilder criteriaBuilder,
@@ -237,11 +282,11 @@ public class LoanServiceImpl {
   /**
    * 试算
    */
-  public LoanCalculateRequest calculate(LoanCalculateRequest loan) {
+  public LoanCalculateVo calculate(LoanCalculateVo loan) {
 
     /**
      * 根据还款方式、本金、利率、服务费收取方式、服务费比例、开始结束日期计算
-     * 利息、服务费、放款金额、期数、应还本金、应还利息、应收服务费
+     * 利息、服务费、放款金额、期数、应还本金、应还利息、应收服务费、还款计划相关信息
      */
     loan.setDayRate(BigDecimalUtil
         .div(loan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_UP)); //日利息
@@ -251,7 +296,7 @@ public class LoanServiceImpl {
     loan.setMonth(DateUtil.getMonthFloor(loan.getBeginDate(), loan.getEndDate())); //相差月数
     loan.setProduct(productRepo.findById(loan.getProductNo()).get()); //产品信息
 
-    LoanCalculateRequest result = TrialCalculateFactory.maps
+    LoanCalculateVo result = TrialCalculateFactory.maps
         .get(RepayTypeEnum.getEnumByKey(loan.getRepayType())).apply(loan);
 
     return result;

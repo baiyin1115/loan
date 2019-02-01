@@ -70,12 +70,12 @@ CodeMirror.defineMode("vbscript", function(conf, parserConf) {
 
     var aspBuiltinObjsWords = ['server', 'response', 'request', 'session', 'application'];
     var aspKnownProperties = ['buffer', 'cachecontrol', 'charset', 'contenttype', 'expires', 'expiresabsolute', 'isclientconnected', 'pics', 'status', //response
-                              'clientcertificate', 'cookies', 'form', 'querystring', 'servervariables', 'totalbytes', //request
+                              'clientcertificate', 'cookies', 'form', 'querystring', 'servervariables', 'totalbytes', //convey
                               'contents', 'staticobjects', //application
                               'codepage', 'lcid', 'sessionid', 'timeout', //session
                               'scripttimeout']; //server
     var aspKnownMethods = ['addheader', 'appendtolog', 'binarywrite', 'end', 'flush', 'redirect', //response
-                           'binaryread', //request
+                           'binaryread', //convey
                            'remove', 'removeall', 'lock', 'unlock', //application
                            'abandon', //session
                            'getlasterror', 'htmlencode', 'mappath', 'transfer', 'urlencode']; //server

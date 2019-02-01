@@ -121,6 +121,10 @@ public class BigDecimalUtil {
     return result;
   }
 
+  public static BigDecimal div(BigDecimal value1, BigDecimal value2){
+    return div(value1,value2,2,BigDecimal.ROUND_HALF_UP);
+  }
+
   public static BigDecimal div(BigDecimal value1, BigDecimal value2, int scale, int routingMode) {
     //如果精确范围小于0，抛出异常信息
     if (scale < 0) {

@@ -10,10 +10,16 @@
     <label class="col-sm-3 control-label">${name}</label>
     <div class="col-sm-9">
         <input type="text" class="form-control layer-date"
-               onclick="laydate({istime: ${isTime}, format: '${pattern}'})" id="${id}"
+               id="${id}"
+
+               @if(isNotEmpty(readonly)){
+                readonly="${readonly}"
+               @}else{
+                onclick="laydate({istime: ${isTime}, format: '${pattern}'})"
+               @}
 
                @if(isNotEmpty(value)){
-               value="${tool.dateType(value)}"
+                value="${tool.dateType(value)}"
                @}
 
         />

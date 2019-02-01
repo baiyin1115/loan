@@ -137,7 +137,7 @@
      * Refresh the remote server data,
      * you can set {silent: true} to refresh the data silently,
      * and set {url: newUrl} to change the url.
-     * To supply query params specific to this request, set {query: {foo: 'bar'}}
+     * To supply query params specific to this convey, set {query: {foo: 'bar'}}
      */
     refresh: function (parms) {
       if (typeof parms != "undefined") {
