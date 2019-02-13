@@ -107,8 +107,7 @@ public class LoanPutVo {
   @ApiModelProperty(value = "服务费收取方式")
   private Long serviceFeeType;
 
-  @NotNull(message = "[约定还款日]不能为空！")
-  @Max(value = 31, message = "[约定还款日]不能超过31")
+  @Max(value = 27, message = "[约定还款日]不能超过27")
   @ApiModelProperty(value = "约定还款日")
   private Long ddDate;
 
@@ -128,7 +127,7 @@ public class LoanPutVo {
   @ApiModelProperty(value = "展期期数")
   private Long extensionNo;
 
-  @ApiModelProperty(value = "展期利息")
+  @ApiModelProperty(value = "展期利率")
   private BigDecimal extensionRate;
 
   @ApiModelProperty(value = "应还本金")

@@ -81,7 +81,13 @@ LoanCustomerDlg.setCustomer = function () {
 };
 
 LoanCustomerDlg.close = function () {
-  parent.layer.close(window.parent.LoanDlg.custLayerIndex);
+  if(window.parent.LoanDlg != undefined){
+    parent.layer.close(window.parent.LoanDlg.custLayerIndex);
+  }
+
+  if(window.parent.Loan != undefined){
+    parent.layer.close(window.parent.Loan.custLayerIndex);
+  }
 }
 
 

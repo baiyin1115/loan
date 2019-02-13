@@ -4,6 +4,9 @@ import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
+import com.zsy.loan.bean.convey.LoanCalculateVo;
+import com.zsy.loan.bean.convey.LoanPutVo;
+import com.zsy.loan.bean.convey.LoanVo;
 import com.zsy.loan.bean.dictmap.biz.LoanDict;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizLoanVoucherInfo;
@@ -12,9 +15,6 @@ import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
-import com.zsy.loan.bean.convey.LoanCalculateVo;
-import com.zsy.loan.bean.convey.LoanPutVo;
-import com.zsy.loan.bean.convey.LoanVo;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.LoanVoucherInfoRepo;
 import com.zsy.loan.service.biz.impl.LoanServiceImpl;
@@ -22,7 +22,10 @@ import com.zsy.loan.service.factory.LoanStatusFactory;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.warpper.biz.LoanWarpper;
+import com.zsy.loan.service.warpper.biz.RepayPlanWarpper;
 import com.zsy.loan.utils.BeanUtil;
+import com.zsy.loan.utils.BigDecimalUtil;
+import com.zsy.loan.utils.DateTimeKit;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.factory.Page;
 import io.swagger.annotations.ApiOperation;
@@ -102,7 +105,7 @@ public class LoanController extends BaseController {
 
     page = loanService.getPlanPages(page, condition);
     page.setRecords(
-        (List<TBizRepayPlan>) new LoanWarpper(BeanUtil.objectsToMaps(page.getRecords()))
+        (List<TBizRepayPlan>) new RepayPlanWarpper(BeanUtil.objectsToMaps(page.getRecords()))
             .warp());
     return super.packForBT(page);
   }
@@ -144,7 +147,7 @@ public class LoanController extends BaseController {
     /**
      * 校验
      */
-    //借款结束日期必须在开始日期之前
+    //借款结束日期必须在开始日期之后
     if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
     }
@@ -172,7 +175,7 @@ public class LoanController extends BaseController {
     /**
      * 校验
      */
-    //借款结束日期必须在开始日期之前
+    //借款结束日期必须在开始日期之后
     if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
     }
@@ -222,7 +225,7 @@ public class LoanController extends BaseController {
     /**
      * 校验
      */
-    //借款结束日期必须在开始日期之前
+    //借款结束日期必须在开始日期之后
     if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
     }
@@ -257,8 +260,19 @@ public class LoanController extends BaseController {
   @Permission
   @RequestMapping("/to_loan_put/{loanId}")
   public String loanPut(@PathVariable Long loanId, Model model) {
+
     TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
 
+    //设置中文信息
+    setLoanNameMsg(loan);
+
+    model.addAttribute("loan", loan);
+    LogObjectHolder.me().set(loan);
+    return PREFIX + "loan_put.html";
+
+  }
+
+  private void setLoanNameMsg(TBizLoanInfo loan) {
     //获取名称
     loan.setRemark(loan.getRemark() == null ? "" : loan.getRemark().trim());
     loan.setProductName(ConstantFactory.me().getProductName(loan.getProductNo()));
@@ -269,16 +283,12 @@ public class LoanController extends BaseController {
     loan.setCustName(ConstantFactory.me().getCustomerName(loan.getCustNo()));
     loan.setLendingAcctName(ConstantFactory.me().getAcctName(loan.getLendingAcct()));
     loan.setLoanTypeName(ConstantFactory.me().getLoanTypeName(loan.getLoanType()));
-    loan.setServiceFeeTypeName(ConstantFactory.me().getServiceFeeTypeName(loan.getServiceFeeType()));
+    loan.setServiceFeeTypeName(
+        ConstantFactory.me().getServiceFeeTypeName(loan.getServiceFeeType()));
     loan.setRepayTypeName(ConstantFactory.me().getRepayTypeName(loan.getRepayType()));
     loan.setIsPenName(ConstantFactory.me().getIsPenName(loan.getIsPen()));
     loan.setPenNumberName(ConstantFactory.me().getPenNumberName(loan.getPenNumber()));
     loan.setStatusName(ConstantFactory.me().getLoanStatusName(loan.getStatus()));
-
-    model.addAttribute("loan", loan);
-    LogObjectHolder.me().set(loan);
-    return PREFIX + "loan_put.html";
-
   }
 
   /**
@@ -303,13 +313,13 @@ public class LoanController extends BaseController {
     /**
      * 校验
      */
-    //借款结束日期必须在开始日期之前
+    //借款结束日期必须在开始日期之后
     if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
     }
 
     //放款日期必须在开始日期之后
-    if (DateUtil.compareDate(loan.getBeginDate(), loan.getLendingDate())) {
+    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getLendingDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
     }
 
@@ -325,7 +335,6 @@ public class LoanController extends BaseController {
    */
   @BussinessLog(value = "放款试算", dict = LoanDict.class)
   @RequestMapping(value = "/put_calculate")
-  @Permission
   @ResponseBody
   @ApiOperation(value = "放款试算", notes = "放款试算")
   public LoanCalculateVo putCalculate(@Valid @RequestBody LoanCalculateVo loan,
@@ -339,13 +348,13 @@ public class LoanController extends BaseController {
     /**
      * 校验
      */
-    //借款结束日期必须在开始日期之前
+    //借款结束日期必须在开始日期之后
     if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
     }
 
     //放款日期必须在开始日期之后
-    if (DateUtil.compareDate(loan.getBeginDate(), loan.getLendingDate())) {
+    if (!DateUtil.compareDate(loan.getBeginDate(),loan.getLendingDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
     }
 
@@ -354,7 +363,28 @@ public class LoanController extends BaseController {
     //借据状态校验
     LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PUT.getValue());
 
-    return loanService.calculate(loan);
+    LoanCalculateVo calculateVo = loanService.calculate(loan);
+
+    StringBuffer tmp = new StringBuffer();
+    tmp.append("本金：" + BigDecimalUtil.formatAmt(calculateVo.getSchdPrin()));
+    tmp.append(",利息：" + BigDecimalUtil.formatAmt(calculateVo.getSchdInterest()));
+    tmp.append(",服务费：" + BigDecimalUtil.formatAmt(calculateVo.getSchdServFee()));
+    tmp.append(",放款金额：" + BigDecimalUtil.formatAmt(calculateVo.getLendingAmt()));
+    tmp.append(",放款日期：" + DateTimeKit.formatDate(calculateVo.getLendingDate()));
+    tmp.append("<BR>");
+
+    for (TBizRepayPlan plan : calculateVo.getRepayPlanList()) {
+      tmp.append("--------------------------------------------------------------<BR>");
+      tmp.append("第：" + plan.getTermNo() + "期");
+      tmp.append(",还款日期：" + DateTimeKit.formatDate(plan.getDdDate()));
+      tmp.append(",本期应还本金：" + BigDecimalUtil.formatAmt(plan.getCtdPrin()));
+      tmp.append(",本期应还利息：" + BigDecimalUtil.formatAmt(plan.getCtdInterest()));
+      tmp.append(",本期应收服务费：" + BigDecimalUtil.formatAmt(plan.getCtdServFee()));
+      tmp.append("<BR>");
+    }
+    calculateVo.setResultMsg(tmp.toString());
+
+    return calculateVo;
   }
 
   /**
@@ -363,14 +393,15 @@ public class LoanController extends BaseController {
   @Permission
   @RequestMapping("/to_loan_delay/{loanId}")
   public String loanDelay(@PathVariable Long loanId, Model model) {
+
     TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
 
-//    loan.setRemark(loan.getRemark().trim());
-//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
-//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+    //设置中文信息
+    setLoanNameMsg(loan);
 
     model.addAttribute("loan", loan);
     LogObjectHolder.me().set(loan);
+
     return PREFIX + "loan_delay.html";
 
   }
@@ -400,6 +431,63 @@ public class LoanController extends BaseController {
 
     loanService.delay(loan, true);
     return SUCCESS_TIP;
+  }
+
+  /**
+   * 展期试算
+   */
+  @BussinessLog(value = "展期试算", dict = LoanDict.class)
+  @RequestMapping(value = "/delay_calculate")
+  @ResponseBody
+  @ApiOperation(value = "展期试算", notes = "展期试算")
+  public LoanCalculateVo delayCalculate(@Valid @RequestBody LoanCalculateVo loan,
+      BindingResult error) {
+
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    /**
+     * 校验
+     */
+    //借款结束日期必须在开始日期之后
+    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
+    }
+
+    //放款日期必须在开始日期之后
+    if (!DateUtil.compareDate(loan.getBeginDate(),loan.getLendingDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
+    }
+
+    loan.setLoanBizType(LoanBizTypeEnum.DELAY.getValue()); //设置业务类型
+
+    //借据状态校验
+    LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.DELAY.getValue());
+
+    LoanCalculateVo calculateVo = loanService.calculate(loan);
+
+    StringBuffer tmp = new StringBuffer();
+    tmp.append("本金：" + BigDecimalUtil.formatAmt(calculateVo.getSchdPrin()));
+    tmp.append(",利息：" + BigDecimalUtil.formatAmt(calculateVo.getSchdInterest()));
+    tmp.append(",服务费：" + BigDecimalUtil.formatAmt(calculateVo.getSchdServFee()));
+    tmp.append(",放款金额：" + BigDecimalUtil.formatAmt(calculateVo.getLendingAmt()));
+    tmp.append(",放款日期：" + DateTimeKit.formatDate(calculateVo.getLendingDate()));
+    tmp.append("<BR>");
+
+    for (TBizRepayPlan plan : calculateVo.getRepayPlanList()) {
+      tmp.append("--------------------------------------------------------------<BR>");
+      tmp.append("第：" + plan.getTermNo() + "期");
+      tmp.append(",还款日期：" + DateTimeKit.formatDate(plan.getDdDate()));
+      tmp.append(",本期应还本金：" + BigDecimalUtil.formatAmt(plan.getCtdPrin()));
+      tmp.append(",本期应还利息：" + BigDecimalUtil.formatAmt(plan.getCtdInterest()));
+      tmp.append(",本期应收服务费：" + BigDecimalUtil.formatAmt(plan.getCtdServFee()));
+      tmp.append("<BR>");
+    }
+    calculateVo.setResultMsg(tmp.toString());
+
+    return calculateVo;
   }
 
   /**

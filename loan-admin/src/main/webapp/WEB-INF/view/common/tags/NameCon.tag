@@ -10,5 +10,39 @@
                 type="button">${name}
         </button>
     </div>
-    <input type="text" class="form-control" id="${id}" placeholder="${placeholder!}" />
+    @/* <input type="text" class="form-control" id="${id}" placeholder="${placeholder!}" /> @*/
+    <input class="form-control" id="${id}" name="${id}"
+           @if(isNotEmpty(value)){
+           value="${tool.dateType(value)}"
+           @}
+           @if(isNotEmpty(type)){
+           type="${type}"
+           @}else{
+           type="text"
+           @}
+           @if(isNotEmpty(readonly)){
+           readonly="${readonly}"
+           @}
+           @if(isNotEmpty(clickFun)){
+           onclick="${clickFun}"
+           @}
+           @if(isNotEmpty(style)){
+           style="${style}"
+           @}
+           @if(isNotEmpty(disabled)){
+           disabled="${disabled}"
+           @}
+           @if(isNotEmpty(changeFun)){
+           onchange="${changeFun}"
+           @}
+    >
+    @if(isNotEmpty(hidden)){
+    <input class="form-control" type="hidden" id="${hidden}" value="${hiddenValue!}">
+    @}
+    @if(isNotEmpty(selectFlag)){
+    <div id="${selectId}" style="display: none; position: absolute; z-index: 200;">
+        <ul id="${selectTreeId}" class="ztree tree-box" style="${selectStyle!}"></ul>
+    </div>
+    @}
+
 </div>

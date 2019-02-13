@@ -17,9 +17,11 @@
     this.height = 665;						//默认表格高度665
     this.data = {};
     this.queryParams = {}; // 向后台传递的自定义参数
+    this.pageSize = 15;
+    this.pageList = [15, 50, 100];
   };
 
-  var BSTable = function (bstableId, url, columns, height) {
+  var BSTable = function (bstableId, url, columns, height,pageSize,pageList) {
     this.btInstance = null;					//jquery和BootStrapTable绑定的对象
     this.bstableId = bstableId;
     this.url = Feng.ctxPath + url;
@@ -34,6 +36,16 @@
     }
     this.data = {};
     this.queryParams = {}; // 向后台传递的自定义参数
+    if(pageSize != null && pageSize != "" ){
+      this.pageSize = pageSize;
+    }else{
+      this.pageSize = 15;
+    }
+    if(pageList != null ){
+      this.pageList = pageList;
+    }else{
+      this.pageList = [15, 50, 100];
+    }
   };
 
   BSTable.prototype = {
@@ -58,8 +70,8 @@
             sortable: true,      		//是否启用排序
             sortOrder: "desc",     		//排序方式
             pageNumber: 1,      			//初始化加载第一页，默认第一页
-            pageSize: 15,      			//每页的记录行数（*）
-            pageList: [15, 50, 100],  	//可供选择的每页的行数（*）
+            pageSize: this.pageSize,      			//每页的记录行数（*）
+            pageList: this.pageList,  	//可供选择的每页的行数（*）
             queryParamsType: 'limit', 	//默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
             queryParams: function (param) {
               return $.extend(me.queryParams, param);

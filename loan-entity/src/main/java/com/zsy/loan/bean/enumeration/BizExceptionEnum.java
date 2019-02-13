@@ -9,6 +9,8 @@ import com.zsy.loan.bean.exception.ServiceExceptionEnum;
  */
 public enum BizExceptionEnum implements ServiceExceptionEnum {
 
+  NOT_EXISTED_ING(401, "当前业务不存在或者正在处理中"),
+
   /**
    * 字典
    */
@@ -57,7 +59,7 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
   /**
    * 贷款问题
    */
-  LOAN_DATE(401, "结束日期必须在开始日期之前"),
+  LOAN_DATE(401, "结束日期必须在开始日期之后"),
   LOAN_LENDING_DATE(401, "放款日期必须在开始日期之后"),
   LOAN_CALCULATE_REQ_NOT_MATCH(401, "请求与上次试算结果不一致"),
   LOAN_NOT_CHECK_IN(401, "不是登记状态"),

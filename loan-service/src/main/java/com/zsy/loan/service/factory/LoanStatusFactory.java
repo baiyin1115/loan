@@ -22,11 +22,39 @@ public class LoanStatusFactory {
   public static Map<String, LoanStatusVo> maps = new HashMap<String, LoanStatusVo>();
 
   static {
-    maps.put(LoanStatusEnum.CHECK_IN.getValue() + "_" + LoanStatusEnum.PUT.getValue(),
+
+    /**
+     * 放款
+     */
+    maps.put(LoanStatusEnum.CHECK_IN.getValue() + "_" + LoanBizTypeEnum.PUT.getValue(),//登记-放款
         LoanStatusVo.builder()
             .currentStatus(LoanStatusEnum.CHECK_IN)
             .nextStatus(LoanStatusEnum.PUT)
-            .bizType(LoanBizTypeEnum.PUT).build()); //登记-放款
+            .bizType(LoanBizTypeEnum.PUT).build());
+
+    /**
+     * 展期
+     */
+    maps.put(LoanStatusEnum.PUT.getValue() + "_" + LoanBizTypeEnum.DELAY.getValue(),//已放款-展期
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.PUT)
+            .nextStatus(LoanStatusEnum.DELAY)
+            .bizType(LoanBizTypeEnum.DELAY).build());
+    maps.put(LoanStatusEnum.REPAY_IND.getValue() + "_" + LoanBizTypeEnum.DELAY.getValue(), //还款中-展期
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.REPAY_IND)
+            .nextStatus(LoanStatusEnum.DELAY)
+            .bizType(LoanBizTypeEnum.DELAY).build());
+    maps.put(LoanStatusEnum.OVERDUE.getValue() + "_" + LoanBizTypeEnum.DELAY.getValue(),//已逾期-展期
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.OVERDUE)
+            .nextStatus(LoanStatusEnum.DELAY)
+            .bizType(LoanBizTypeEnum.DELAY).build());
+    maps.put(LoanStatusEnum.DELAY.getValue() + "_" + LoanBizTypeEnum.DELAY.getValue(),//已展期-展期
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.DELAY)
+            .nextStatus(LoanStatusEnum.DELAY)
+            .bizType(LoanBizTypeEnum.DELAY).build());
   }
 
   /**

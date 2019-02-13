@@ -1,7 +1,7 @@
 @layout("/common/_container.html"){
 <div class="ibox float-e-margins">
     <div class="ibox-content">
-        <div class="form-horizontal" id="loanPutInfoForm">
+        <div class="form-horizontal" id="loanDelayInfoForm">
 
             <input type="hidden" id="id" value="${loan.id}">
 
@@ -19,9 +19,9 @@
 
                 <div class="col-sm-3">
 
-                    <#TimeInput id="lendingDate" name="放款日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.lendingDate}" />
+                    <#input id="extensionNo" name="展期期数" underline="false" value="${loan.extensionNo}"  />
 
-                    <#input id="ddDate" name="约定还款日" underline="false" value="${loan.ddDate}" />
+                    <#input id="extensionRate" name="展期利率" underline="false" value="${loan.extensionRate}" />
 
                     <#input id="lendingAmt" name="放款金额" underline="false" value="${loan.lendingAmt}" readonly="readonly"/>
 
@@ -39,9 +39,9 @@
 
                 <div class="col-sm-3">
 
-                    <#input id="prin" name="本金" underline="false" value="${loan.prin}" readonly="readonly" readonly="readonly"/>
+                    <#input id="prin" name="本金" underline="false" value="${loan.prin}" readonly="readonly"/>
 
-                    <#input id="serviceFee" name="服务费" underline="false" value="${loan.serviceFee}" readonly="readonly" readonly="readonly"/>
+                    <#input id="serviceFee" name="服务费" underline="false" value="${loan.serviceFee}" readonly="readonly" />
 
                     <#input id="receiveInterest" name="应收利息" underline="false" value="${loan.receiveInterest}" readonly="readonly" />
 
@@ -49,6 +49,10 @@
 
                     <#input id="statusName" name="借据状态" underline="false" value="${loan.statusName}" hiddenValue="${loan.status}"
                         hidden="status" readonly="readonly" />
+
+                    <#TimeInput id="lendingDate" name="放款日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.lendingDate}" readonly="readonly" />
+
+                    <#input id="ddDate" name="约定还款日" underline="false" value="${loan.ddDate}" readonly="readonly" />
 
                 </div>
 
@@ -106,8 +110,8 @@
 
             <div class="row btn-group-m-t">
                 <div class="col-sm-10">
-                    <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="LoanDlg.putCalculate()"/>
-                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="LoanDlg.putSubmit()"/>
+                    <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="LoanDlg.delayCalculate()"/>
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="LoanDlg.delaySubmit()"/>
                     <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="LoanDlg.close()"/>
                 </div>
             </div>

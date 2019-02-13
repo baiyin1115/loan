@@ -123,7 +123,7 @@ public class LoanVo {
   @ApiModelProperty(value = "展期期数")
   private Long extensionNo;
 
-  @ApiModelProperty(value = "展期利息")
+  @ApiModelProperty(value = "展期利率")
   private BigDecimal extensionRate;
 
   @ApiModelProperty(value = "应还本金")

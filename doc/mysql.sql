@@ -185,7 +185,7 @@ CREATE TABLE `t_biz_loan_info`  (
   `pen_rate` decimal(15, 3) DEFAULT NULL COMMENT '罚息利率,按日千分比填写,默认0.000',
   `pen_number` bigint(20) DEFAULT NULL COMMENT '罚息基数,本金:1,未还金额:2',
   `extension_no` bigint(20) DEFAULT NULL COMMENT '展期期数,期数',
-  `extension_rate` decimal(15, 3) DEFAULT NULL COMMENT '展期利息,',
+  `extension_rate` decimal(15, 3) DEFAULT NULL COMMENT '展期利率,',
   `schd_prin` decimal(15, 2) DEFAULT NULL COMMENT '应还本金,',
   `schd_bigint` decimal(15, 2) DEFAULT NULL COMMENT '应还利息,',
   `schd_serv_fee` decimal(15, 2) DEFAULT NULL COMMENT '应收服务费,',

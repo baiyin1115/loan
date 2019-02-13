@@ -132,6 +132,10 @@ public class DateUtil {
   }
 
   public static boolean compareDate(Date start, Date end) {
+    if (start == null || end == null) {
+      return false;
+    }
+
     return end.getTime() >= start.getTime();
   }
 

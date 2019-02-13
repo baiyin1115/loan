@@ -32,7 +32,7 @@ var LoanDlg = {
     //penNumber:{validators:{notEmpty:{message:'罚息基数'}}}
     // ddDate:{validators:{notEmpty:{message:'约定还款日'}}},
     // extensionNo:{validators:{notEmpty:{message:'展期期数'}}},
-    // extensionRate:{validators:{notEmpty:{message:'展期利息'}}},
+    // extensionRate:{validators:{notEmpty:{message:'展期利率'}}},
     // status:{validators:{notEmpty:{message:'借据状态'}}}
   },
   validatePutFields: {
@@ -47,9 +47,6 @@ var LoanDlg = {
     // serviceFee:{validators:{notEmpty:{message:'服务费'}}},
     // receiveBigint:{validators:{notEmpty:{message:'应收利息'}}},
     // termNo:{validators:{notEmpty:{message:'期数'}}},
-    lendingDate:{validators:{notEmpty:{message:'放款日期'}}},
-    lendingAmt:{validators:{notEmpty:{message:'放款金额'}}},
-    lendingAcct: {validators: {notEmpty: {message: '放款账户'}}},
     // externalAcct:{validators:{notEmpty:{message:'收款账户'}}},
     // loanType: {validators: {notEmpty: {message: '贷款类型'}}},
     // rate: {validators: {notEmpty: {message: '利率'}}},
@@ -59,10 +56,42 @@ var LoanDlg = {
     //isPen:{validators:{notEmpty:{message:'是否罚息'}}},
     //penRate:{validators:{notEmpty:{message:'罚息利率'}}},
     //penNumber:{validators:{notEmpty:{message:'罚息基数'}}}
-    ddDate:{validators:{notEmpty:{message:'约定还款日'}}}
+    // ddDate:{validators:{notEmpty:{message:'约定还款日'}}}
     // extensionNo:{validators:{notEmpty:{message:'展期期数'}}},
-    // extensionRate:{validators:{notEmpty:{message:'展期利息'}}},
+    // extensionRate:{validators:{notEmpty:{message:'展期利率'}}},
     // status:{validators:{notEmpty:{message:'借据状态'}}}
+    lendingDate:{validators:{notEmpty:{message:'放款日期'}}},
+    lendingAmt:{validators:{notEmpty:{message:'放款金额'}}},
+    lendingAcct: {validators: {notEmpty: {message: '放款账户'}}}
+  },
+  validateDelayFields: {
+    // orgNo: {validators: {notEmpty: {message: '公司编号'}}},
+    // productNo: {validators: {notEmpty: {message: '产品编号'}}},
+    // custNo: {validators: {notEmpty: {message: '客户编号'}}},
+    // contrNo:{validators:{notEmpty:{message:'原始合同编号'}}},
+    // acctDate: {validators: {notEmpty: {message: '业务日期'}}},
+    // beginDate: {validators: {notEmpty: {message: '借款开始日期'}}},
+    // endDate: {validators: {notEmpty: {message: '借款结束日期'}}},
+    // prin: {validators: {notEmpty: {message: '本金'}}},
+    // serviceFee:{validators:{notEmpty:{message:'服务费'}}},
+    // receiveBigint:{validators:{notEmpty:{message:'应收利息'}}},
+    // termNo:{validators:{notEmpty:{message:'期数'}}},
+    // lendingDate:{validators:{notEmpty:{message:'放款日期'}}},
+    // lendingAmt:{validators:{notEmpty:{message:'放款金额'}}},
+    // lendingAcct: {validators: {notEmpty: {message: '放款账户'}}},
+    // externalAcct:{validators:{notEmpty:{message:'收款账户'}}},
+    // loanType: {validators: {notEmpty: {message: '贷款类型'}}},
+    // rate: {validators: {notEmpty: {message: '利率'}}},
+    // serviceFeeScale: {validators: {notEmpty: {message: '服务费比例'}}},
+    // serviceFeeType: {validators: {notEmpty: {message: '服务费收取方式'}}},
+    // repayType: {validators: {notEmpty: {message: '还款方式'}}},
+    //isPen:{validators:{notEmpty:{message:'是否罚息'}}},
+    //penRate:{validators:{notEmpty:{message:'罚息利率'}}},
+    //penNumber:{validators:{notEmpty:{message:'罚息基数'}}}
+    // ddDate:{validators:{notEmpty:{message:'约定还款日'}}}
+    // status:{validators:{notEmpty:{message:'借据状态'}}}
+    extensionNo:{validators:{notEmpty:{message:'展期期数'}}},
+    extensionRate:{validators:{notEmpty:{message:'展期利率'}}}
   }
 };
 
@@ -230,24 +259,31 @@ LoanDlg.calculate = function () {
  */
 LoanDlg.putSubmit = function () {
 
-  this.clearData();
-  this.collectData();
-
   if (!this.validate($('#loanPutInfoForm'))) {
     return;
   }
 
-  //提交信息
-  var ajax = new $ax(Feng.ctxPath + "/loan/put", function (data) {
-    Feng.success("放款成功!");
-    window.parent.Loan.table.refresh();
-    LoanDlg.close();
-  }, function (data) {
-    Feng.error("放款失败!" + data.responseJSON.message + "!");
-  });
-  ajax.set(this.loanInfoData);
-  ajax.setContentType("application/json")
-  ajax.start();
+  var operation = function () {
+
+    LoanDlg.clearData();
+    LoanDlg.collectData();
+
+    //提交信息
+    var ajax = new $ax(Feng.ctxPath + "/loan/put", function (data) {
+      Feng.success("放款成功!");
+      window.parent.Loan.refreshLoanPlan();
+      window.parent.Loan.table.refresh();
+      LoanDlg.close();
+    }, function (data) {
+      Feng.error("放款失败!" + data.responseJSON.message + "!");
+    });
+    ajax.set(LoanDlg.loanInfoData);
+    ajax.setContentType("application/json")
+    ajax.start();
+  };
+
+  Feng.confirm("是否放款,放款后信息不可修改?", operation);
+
 };
 
 /**
@@ -255,25 +291,16 @@ LoanDlg.putSubmit = function () {
  */
 LoanDlg.putCalculate = function () {
 
-  // var arr = [ 4, "Pete", 8, "John" ];
-  // Feng.infoDetail("试算详情",arr)
-
-  this.clearData();
-  this.collectData();
-
   if (!this.validate($('#loanPutInfoForm'))) {
     return;
   }
 
+  this.clearData();
+  this.collectData();
+
   //提交信息
   var ajax = new $ax(Feng.ctxPath + "/loan/put_calculate", function (data) {
-    Feng.success("试算成功!");
-
-    //设置数据信息
-    $("#serviceFee").val(Feng.formatMoney(data.serviceFee,2));
-    $("#receiveInterest").val(Feng.formatMoney(data.receiveInterest,2));
-    $("#termNo").val(data.termNo);
-    $("#lendingAmt").val(Feng.formatMoney(data.lendingAmt,2));
+    Feng.infoDetail("试算详情", data.resultMsg);
 
   }, function (data) {
     Feng.error("试算失败!" + data.responseJSON.message + "!");
@@ -284,10 +311,70 @@ LoanDlg.putCalculate = function () {
   ajax.start();
 };
 
+/**
+ * 展期
+ */
+LoanDlg.delaySubmit = function () {
 
+  if (!this.validate($('#loanDelayInfoForm'))) {
+    return;
+  }
+
+  var operation = function () {
+
+    LoanDlg.clearData();
+    LoanDlg.collectData();
+
+    //提交信息
+    var ajax = new $ax(Feng.ctxPath + "/loan/delay", function (data) {
+      Feng.success("展期成功!");
+      window.parent.Loan.refreshLoanPlan();
+      window.parent.Loan.table.refresh();
+      LoanDlg.close();
+    }, function (data) {
+      Feng.error("展期失败!" + data.responseJSON.message + "!");
+    });
+    ajax.set(LoanDlg.loanInfoData);
+    ajax.setContentType("application/json")
+    ajax.start();
+  };
+
+  Feng.confirm("是否展期?", operation);
+
+};
+
+/**
+ * 展期试算
+ */
+LoanDlg.delayCalculate = function () {
+
+  if (!this.validate($('#loanDelayInfoForm'))) {
+    return;
+  }
+
+  this.clearData();
+  this.collectData();
+
+  //提交信息
+  var ajax = new $ax(Feng.ctxPath + "/loan/delay_calculate", function (data) {
+    Feng.infoDetail("试算详情", data.resultMsg);
+
+  }, function (data) {
+    Feng.error("试算失败!" + data.responseJSON.message + "!");
+  });
+  ajax.set(this.loanInfoData);
+  //alert(JSON.stringify(this.loanInfoData));
+  ajax.setContentType("application/json")
+  ajax.start();
+};
+
+/**
+ * 初始化
+ */
 $(function () {
   Feng.initValidator("loanInfoForm", LoanDlg.validateFields);
   Feng.initValidator("loanPutInfoForm", LoanDlg.validatePutFields);
+  Feng.initValidator("loanDelayInfoForm", LoanDlg.validateDelayFields);
 
   //初始化
   $("#orgNo").val($("#orgNoValue").val());

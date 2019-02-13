@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -33,6 +34,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
 @Table(name = "t_biz_repay_plan")
 public class TBizRepayPlan {
 
@@ -98,8 +100,8 @@ public class TBizRepayPlan {
   private BigDecimal ctdPrin;
 
 
-  @Column(name = "ctd_bigint")
-  private BigDecimal ctdBigint;
+  @Column(name = "ctd_interest")
+  private BigDecimal ctdInterest;
 
 
   @Column(name = "ctd_serv_fee")
@@ -114,8 +116,8 @@ public class TBizRepayPlan {
   private BigDecimal paidPrin;
 
 
-  @Column(name = "paid_bigint")
-  private BigDecimal paidBigint;
+  @Column(name = "paid_interest")
+  private BigDecimal paidInterest;
 
 
   @Column(name = "paid_serv_fee")
@@ -224,7 +226,7 @@ public class TBizRepayPlan {
     if (ctdPrin != null ? !ctdPrin.equals(that.ctdPrin) : that.ctdPrin != null) {
       return false;
     }
-    if (ctdBigint != null ? !ctdBigint.equals(that.ctdBigint) : that.ctdBigint != null) {
+    if (ctdInterest != null ? !ctdInterest.equals(that.ctdInterest) : that.ctdInterest != null) {
       return false;
     }
     if (ctdServFee != null ? !ctdServFee.equals(that.ctdServFee) : that.ctdServFee != null) {
@@ -236,7 +238,7 @@ public class TBizRepayPlan {
     if (paidPrin != null ? !paidPrin.equals(that.paidPrin) : that.paidPrin != null) {
       return false;
     }
-    if (paidBigint != null ? !paidBigint.equals(that.paidBigint) : that.paidBigint != null) {
+    if (paidInterest != null ? !paidInterest.equals(that.paidInterest) : that.paidInterest != null) {
       return false;
     }
     if (paidServFee != null ? !paidServFee.equals(that.paidServFee) : that.paidServFee != null) {
@@ -275,11 +277,11 @@ public class TBizRepayPlan {
     result = 31 * result + (externalAcct != null ? externalAcct.hashCode() : 0);
     result = 31 * result + (int) (inAcctNo ^ (inAcctNo >>> 32));
     result = 31 * result + (ctdPrin != null ? ctdPrin.hashCode() : 0);
-    result = 31 * result + (ctdBigint != null ? ctdBigint.hashCode() : 0);
+    result = 31 * result + (ctdInterest != null ? ctdInterest.hashCode() : 0);
     result = 31 * result + (ctdServFee != null ? ctdServFee.hashCode() : 0);
     result = 31 * result + (ctdPen != null ? ctdPen.hashCode() : 0);
     result = 31 * result + (paidPrin != null ? paidPrin.hashCode() : 0);
-    result = 31 * result + (paidBigint != null ? paidBigint.hashCode() : 0);
+    result = 31 * result + (paidInterest != null ? paidInterest.hashCode() : 0);
     result = 31 * result + (paidServFee != null ? paidServFee.hashCode() : 0);
     result = 31 * result + (paidPen != null ? paidPen.hashCode() : 0);
     result = 31 * result + (wavAmt != null ? wavAmt.hashCode() : 0);

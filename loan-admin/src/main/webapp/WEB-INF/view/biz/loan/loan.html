@@ -10,10 +10,17 @@
                     <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-3">
-                                <#NameCon id="orgNo" name="公司编号" />
+                                <#SelectCon id="orgNo" name="公司" underline="false">
+                                    <option value=""></option>
+                                    @for(dict in userown.getOrgList()){
+                                    <option value="${dict.num}">${dict.name}</option>
+                                    @}
+                                </#SelectCon>
                             </div>
                             <div class="col-sm-3">
-                                <#NameCon id="custNo" name="客户编号" />
+                                <#NameCon id="custName" name="客户" underline="false" readonly="readonly" hidden="custNo"
+                                    clickFun="Loan.openCustList(); return false;"
+                                />
                             </div>
                             <div class="col-sm-3">
                                 <#NameCon id="contrNo" name="原始合同编号" />
@@ -50,6 +57,9 @@
                             @}
                             @if(shiro.hasPermission("/loan/print")){
                                 <#button name="打印" icon="fa-print" clickFun="Loan.openPrintLoan()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/loan/repay")){
+                            <#button name="刷新还款计划" icon="fa-refresh" clickFun="Loan.refreshLoanPlan()" space="true"/>
                             @}
                         </div>
                         <#table id="LoanTable"/>

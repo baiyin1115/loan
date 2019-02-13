@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -102,6 +103,7 @@ public class LoanCalculateVo {
   @ApiModelProperty(value = "服务费收取方式")
   private Long serviceFeeType;
 
+  @Max(value = 27, message = "[约定还款日]不能超过27")
   @ApiModelProperty(value = "约定还款日")
   private Long ddDate;
 
@@ -117,7 +119,8 @@ public class LoanCalculateVo {
   @ApiModelProperty(value = "展期期数")
   private Long extensionNo;
 
-  @ApiModelProperty(value = "展期利息")
+  @ApiModelProperty(value = "展期利率")
+  @DecimalMax(value = "1.00", message = "[展期利率]不能超过1.00")
   private BigDecimal extensionRate;
 
   @ApiModelProperty(value = "应还本金")
@@ -178,7 +181,10 @@ public class LoanCalculateVo {
   @ApiModelProperty(value = "还款计划",hidden=true)
   private List<TBizRepayPlan> repayPlanList;
 
-  @ApiModelProperty(value = "业务类型")
+  @ApiModelProperty(value = "业务类型",hidden=true)
   private Long loanBizType;
+
+  @ApiModelProperty(value = "计算详情",hidden=true)
+  private String resultMsg;
 
 }
