@@ -187,4 +187,16 @@ public class LoanCalculateVo {
   @ApiModelProperty(value = "计算详情",hidden=true)
   private String resultMsg;
 
+  @ApiModelProperty(value = "展期日利息",hidden=true)
+  private BigDecimal delayDayRate;
+  @ApiModelProperty(value = "展期月利息",hidden=true)
+  private BigDecimal delayMonthRate;
+
+  @ApiModelProperty(value = "罚息日利息",hidden=true)
+  private BigDecimal penDayRate;
+  @ApiModelProperty(value = "罚息月利息",hidden=true)
+  private BigDecimal penMonthRate;
+  @ApiModelProperty(value = "当前展期期数")
+  private Long currentExtensionNo;
+
 }

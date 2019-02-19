@@ -47,6 +47,20 @@ public class BigDecimalUtil {
     return parama.add(paramb);
   }
 
+  public static BigDecimal add(BigDecimal... para) {
+    BigDecimal result = BigDecimal.ZERO;
+
+    for (int i = 0; i < para.length; i++) {
+      if (i == 0) {
+        result = para[i];
+      } else {
+        result = result.add(para[i]);
+      }
+    }
+
+    return result;
+  }
+
   /**
    * double 精确相减
    */
@@ -161,7 +175,7 @@ public class BigDecimalUtil {
    */
   public static String formatAmt(BigDecimal bigDecimal) {
     if (bigDecimal == null) {
-      return "";
+      return "0.00";
     }
     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.CHINA);
     format.setDecimalSeparatorAlwaysShown(true);
@@ -180,7 +194,7 @@ public class BigDecimalUtil {
    */
   public static String formatHundred(BigDecimal bigDecimal) {
     if (bigDecimal == null) {
-      return "";
+      return "0.00";
     }
     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.CHINA);
     format.setDecimalSeparatorAlwaysShown(true);
@@ -195,7 +209,7 @@ public class BigDecimalUtil {
 
   public static String formatThousand(BigDecimal bigDecimal) {
     if (bigDecimal == null) {
-      return "";
+      return "0.00";
     }
     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.CHINA);
     format.setDecimalSeparatorAlwaysShown(true);

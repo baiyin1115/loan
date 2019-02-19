@@ -5,6 +5,7 @@ import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.convey.LoanCalculateVo;
+import com.zsy.loan.bean.convey.LoanDelayVo;
 import com.zsy.loan.bean.convey.LoanPutVo;
 import com.zsy.loan.bean.convey.LoanVo;
 import com.zsy.loan.bean.dictmap.biz.LoanDict;
@@ -13,6 +14,7 @@ import com.zsy.loan.bean.entity.biz.TBizLoanVoucherInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
@@ -348,13 +350,17 @@ public class LoanController extends BaseController {
     /**
      * 校验
      */
+    if (loan.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
     //借款结束日期必须在开始日期之后
     if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
     }
 
     //放款日期必须在开始日期之后
-    if (!DateUtil.compareDate(loan.getBeginDate(),loan.getLendingDate())) {
+    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getLendingDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
     }
 
@@ -415,19 +421,37 @@ public class LoanController extends BaseController {
   @ResponseBody
   @OpLog
   @ApiOperation(value = "展期", notes = "展期")
-  public Object delay(@Valid @RequestBody LoanVo loan, BindingResult error) {
+  public Object delay(@Valid @RequestBody LoanDelayVo loan, BindingResult error) {
+
     /**
      * 处理error
      */
     exportErr(error);
 
+    /**
+     * 校验
+     */
     if (loan.getId() == null) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
-    /**
-     * 修改校验
-     */
+    //借款结束日期必须在开始日期之后
+    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
+    }
+
+    //放款日期必须在开始日期之后
+    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getLendingDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
+    }
+
+    if (RepayTypeEnum.A_DEBT_SERVICE_DUE.getValue() == loan.getRepayType()
+        && loan.getCurrentExtensionNo() > 1) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, " 一次性还本付息展期数不能超过1");
+    }
+
+    //借据状态校验
+    LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.DELAY.getValue());
 
     loanService.delay(loan, true);
     return SUCCESS_TIP;
@@ -451,13 +475,17 @@ public class LoanController extends BaseController {
     /**
      * 校验
      */
+    if (loan.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
     //借款结束日期必须在开始日期之后
     if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
     }
 
     //放款日期必须在开始日期之后
-    if (!DateUtil.compareDate(loan.getBeginDate(),loan.getLendingDate())) {
+    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getLendingDate())) {
       throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
     }
 
@@ -469,11 +497,17 @@ public class LoanController extends BaseController {
     LoanCalculateVo calculateVo = loanService.calculate(loan);
 
     StringBuffer tmp = new StringBuffer();
-    tmp.append("本金：" + BigDecimalUtil.formatAmt(calculateVo.getSchdPrin()));
-    tmp.append(",利息：" + BigDecimalUtil.formatAmt(calculateVo.getSchdInterest()));
-    tmp.append(",服务费：" + BigDecimalUtil.formatAmt(calculateVo.getSchdServFee()));
-    tmp.append(",放款金额：" + BigDecimalUtil.formatAmt(calculateVo.getLendingAmt()));
-    tmp.append(",放款日期：" + DateTimeKit.formatDate(calculateVo.getLendingDate()));
+    tmp.append("应还本金：" + BigDecimalUtil.formatAmt(calculateVo.getSchdPrin()));
+    tmp.append(",应还利息：" + BigDecimalUtil.formatAmt(calculateVo.getSchdInterest()));
+    tmp.append(",应收服务费：" + BigDecimalUtil.formatAmt(calculateVo.getSchdServFee()));
+    tmp.append(",应收罚息：" + BigDecimalUtil.formatAmt(calculateVo.getSchdPen()));
+    tmp.append("<BR>");
+
+    tmp.append("已还本金累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidPrin()));
+    tmp.append(",已还利息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidInterest()));
+    tmp.append(",已收服务费累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidServFee()));
+    tmp.append(",已还罚息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidPen()));
+    tmp.append(",减免金额累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotWavAmt()));
     tmp.append("<BR>");
 
     for (TBizRepayPlan plan : calculateVo.getRepayPlanList()) {
@@ -483,6 +517,8 @@ public class LoanController extends BaseController {
       tmp.append(",本期应还本金：" + BigDecimalUtil.formatAmt(plan.getCtdPrin()));
       tmp.append(",本期应还利息：" + BigDecimalUtil.formatAmt(plan.getCtdInterest()));
       tmp.append(",本期应收服务费：" + BigDecimalUtil.formatAmt(plan.getCtdServFee()));
+      tmp.append(",本期应收罚息：" + BigDecimalUtil.formatAmt(plan.getCtdPen()));
+      tmp.append(",状态：" + ConstantFactory.me().getRepayStatusName(plan.getStatus()));
       tmp.append("<BR>");
     }
     calculateVo.setResultMsg(tmp.toString());

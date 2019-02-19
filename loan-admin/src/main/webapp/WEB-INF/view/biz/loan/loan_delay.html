@@ -14,14 +14,20 @@
             <input type="hidden" id="loanTypeValue" value="${loan.loanType}">
             <input type="hidden" id="status" value="${loan.status}">
 
+            <input type="hidden" id="schdPen" value="${loan.schdPen}">
+            <input type="hidden" id="totPaidPrin" value="${loan.totPaidPrin}">
+            <input type="hidden" id="totPaidInterest" value="${loan.totPaidInterest}">
+            <input type="hidden" id="totPaidServFee" value="${loan.totPaidServFee}">
+            <input type="hidden" id="totPaidPen" value="${loan.totPaidPen}">
+            <input type="hidden" id="totWavAmt" value="${loan.totWavAmt}">
 
             <div class="row">
 
                 <div class="col-sm-3">
 
-                    <#input id="extensionNo" name="展期期数" underline="false" value="${loan.extensionNo}"  />
+                    <#input id="currentExtensionNo" name="展期期数" underline="false" value=""  />
 
-                    <#input id="extensionRate" name="展期利率" underline="false" value="${loan.extensionRate}" />
+                    <#input id="extensionRate" name="展期利率" underline="false" value="" />
 
                     <#input id="lendingAmt" name="放款金额" underline="false" value="${loan.lendingAmt}" readonly="readonly"/>
 
@@ -54,6 +60,8 @@
 
                     <#input id="ddDate" name="约定还款日" underline="false" value="${loan.ddDate}" readonly="readonly" />
 
+                    <#input id="extensionNo" name="已展期期数" underline="false" value="${loan.extensionNo}" readonly="readonly" />
+
                 </div>
 
                 <div class="col-sm-3">
@@ -74,6 +82,8 @@
                     <#TimeInput id="beginDate" name="借款开始日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.beginDate}" readonly="readonly" />
 
                     <#TimeInput id="endDate" name="借款结束日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.endDate}" readonly="readonly" />
+
+                    <#input id="lastExtensionRate" name="上次展期利率" underline="false" value="${loan.extensionRate}" readonly="readonly" />
 
                 </div>
 

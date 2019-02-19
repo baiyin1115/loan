@@ -1,7 +1,9 @@
 
 package com.zsy.loan.dao.biz;
 
-import com.zsy.loan.bean.entity.biz. TBizRepayPlan;
+import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,11 +16,13 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @Author zhangxh
  * @Date 2019-01-18  12:35
  */
-public interface RepayPlanRepo extends PagingAndSortingRepository< TBizRepayPlan, Long>
-    , JpaRepository< TBizRepayPlan, Long>, JpaSpecificationExecutor< TBizRepayPlan> {
+public interface RepayPlanRepo extends PagingAndSortingRepository<TBizRepayPlan, Long>
+    , JpaRepository<TBizRepayPlan, Long>, JpaSpecificationExecutor<TBizRepayPlan> {
 
   @Modifying
   @Query(nativeQuery = true, value = "delete from t_biz_repay_plan where loan_no=?1")
   int deleteByLoanNo(Long loanNo);
+
+  List<TBizRepayPlan> findByLoanNo(Long loanId);
 
 }

@@ -90,7 +90,7 @@ var LoanDlg = {
     //penNumber:{validators:{notEmpty:{message:'罚息基数'}}}
     // ddDate:{validators:{notEmpty:{message:'约定还款日'}}}
     // status:{validators:{notEmpty:{message:'借据状态'}}}
-    extensionNo:{validators:{notEmpty:{message:'展期期数'}}},
+    currentExtensionNo:{validators:{notEmpty:{message:'展期期数'}}},
     extensionRate:{validators:{notEmpty:{message:'展期利率'}}}
   }
 };
@@ -160,7 +160,7 @@ LoanDlg.collectData = function () {
       'totPaidInterest').set('totPaidServFee').set('totPaidPen').set(
       'totWavAmt')
   .set('status').set('createBy').set('modifiedBy').set('createAt').set(
-      'updateAt').set('remark');
+      'updateAt').set('remark').set("currentExtensionNo");
 };
 
 /**

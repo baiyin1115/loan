@@ -10,6 +10,7 @@ import com.zsy.loan.bean.exception.ServiceExceptionEnum;
 public enum BizExceptionEnum implements ServiceExceptionEnum {
 
   NOT_EXISTED_ING(401, "当前业务不存在或者正在处理中"),
+  PARAMETER_ERROR(401, "参数错误"),
 
   /**
    * 字典
