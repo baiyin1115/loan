@@ -55,6 +55,55 @@ public class LoanStatusFactory {
             .currentStatus(LoanStatusEnum.DELAY)
             .nextStatus(LoanStatusEnum.DELAY)
             .bizType(LoanBizTypeEnum.DELAY).build());
+
+    /**
+     * 提前还款-全额
+     */
+    maps.put(LoanStatusEnum.PUT.getValue() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue(),//已放款-提前还款
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.PUT)
+            .nextStatus(LoanStatusEnum.SETTLE)
+            .bizType(LoanBizTypeEnum.PREPAYMENT).build());
+    maps.put(LoanStatusEnum.REPAY_IND.getValue() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue(), //还款中-提前还款
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.REPAY_IND)
+            .nextStatus(LoanStatusEnum.SETTLE)
+            .bizType(LoanBizTypeEnum.PREPAYMENT).build());
+    maps.put(LoanStatusEnum.OVERDUE.getValue() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue(),//已逾期-提前还款
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.OVERDUE)
+            .nextStatus(LoanStatusEnum.SETTLE)
+            .bizType(LoanBizTypeEnum.PREPAYMENT).build());
+    maps.put(LoanStatusEnum.DELAY.getValue() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue(),//已展期-提前还款
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.DELAY)
+            .nextStatus(LoanStatusEnum.SETTLE)
+            .bizType(LoanBizTypeEnum.PREPAYMENT).build());
+
+    /**
+     * 提前还款-部分还款
+     */
+    maps.put(LoanStatusEnum.PUT.getValue() + "_" + LoanBizTypeEnum.PART_REPAYMENT.getValue(),//已放款-部分还款
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.PUT)
+            .nextStatus(LoanStatusEnum.REPAY_IND)
+            .bizType(LoanBizTypeEnum.PART_REPAYMENT).build());
+    maps.put(LoanStatusEnum.REPAY_IND.getValue() + "_" + LoanBizTypeEnum.PART_REPAYMENT.getValue(), //还款中-部分还款
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.REPAY_IND)
+            .nextStatus(LoanStatusEnum.REPAY_IND)
+            .bizType(LoanBizTypeEnum.PART_REPAYMENT).build());
+//    maps.put(LoanStatusEnum.OVERDUE.getValue() + "_" + LoanBizTypeEnum.PART_REPAYMENT.getValue(),//已逾期-部分还款
+//        LoanStatusVo.builder()
+//            .currentStatus(LoanStatusEnum.OVERDUE)
+//            .nextStatus(LoanStatusEnum.OVERDUE)
+//            .bizType(LoanBizTypeEnum.PART_REPAYMENT).build());
+    maps.put(LoanStatusEnum.DELAY.getValue() + "_" + LoanBizTypeEnum.PART_REPAYMENT.getValue(),//已展期-部分还款
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.DELAY)
+            .nextStatus(LoanStatusEnum.DELAY)
+            .bizType(LoanBizTypeEnum.PART_REPAYMENT).build());
+
   }
 
   /**

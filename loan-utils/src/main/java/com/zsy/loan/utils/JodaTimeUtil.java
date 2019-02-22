@@ -12,10 +12,10 @@ public class JodaTimeUtil {
 
   public static void main(String[] args) {
 
-    Date dateTime1 = DateTimeKit.parse("2019-02-28", DateTimeKit.NORM_DATE_PATTERN);
-//
-    Date dateTime2 = getAfterDayMonth(dateTime1, 1);
-    System.out.println(DateTimeKit.formatDate(dateTime2));
+//    Date dateTime1 = DateTimeKit.parse("2019-02-28", DateTimeKit.NORM_DATE_PATTERN);
+////
+//    Date dateTime2 = getAfterDayMonth(dateTime1, 1);
+//    System.out.println(DateTimeKit.formatDate(dateTime2));
 //    dateTime2 = getAfterDayMonth(dateTime1, 2);
 //    System.out.println(DateTimeKit.formatDate(dateTime2));
 //    dateTime2 = getAfterDayMonth(dateTime1, 3);
@@ -32,10 +32,10 @@ public class JodaTimeUtil {
 //    dateTime2 = getAfterDayDate(dateTime1, 30);
 //    System.out.println(DateTimeKit.formatDate(dateTime2));
 
-    Date dateBegin = DateTimeKit.parse("2019-01-31", DateTimeKit.NORM_DATE_PATTERN);
-    Date dateEnd = DateTimeKit.parse("2019-02-28", DateTimeKit.NORM_DATE_PATTERN);
+    Date dateBegin = DateTimeKit.parse("2019-02-01", DateTimeKit.NORM_DATE_PATTERN);
+    Date dateEnd = DateTimeKit.parse("2019-02-03", DateTimeKit.NORM_DATE_PATTERN);
 
-//    System.out.println(daysBetween(dateBegin, dateEnd));
+    System.out.println(daysBetween(dateBegin, dateEnd));
 //    System.out.println(MonthsBetween(dateBegin, dateEnd));
 //    System.out.println(getMonthFloor(dateBegin, dateEnd));
 //
@@ -53,21 +53,21 @@ public class JodaTimeUtil {
 //    System.out.println(MonthsBetween(dateBegin, dateEnd));
 //    System.out.println(getMonthFloor(dateBegin, dateEnd));
 
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 5)));
-
-    dateBegin = DateTimeKit.parse("2019-02-28", DateTimeKit.NORM_DATE_PATTERN);
-    dateEnd = DateTimeKit.parse("2019-03-31", DateTimeKit.NORM_DATE_PATTERN);
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 27)));
-
-    dateBegin = DateTimeKit.parse("2019-01-15", DateTimeKit.NORM_DATE_PATTERN);
-    dateEnd = DateTimeKit.parse("2019-02-15", DateTimeKit.NORM_DATE_PATTERN);
-
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 16)));
-
-    dateBegin = DateTimeKit.parse("2019-01-01", DateTimeKit.NORM_DATE_PATTERN);
-    dateEnd = DateTimeKit.parse("2019-01-31", DateTimeKit.NORM_DATE_PATTERN);
-
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 30)));
+//    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 5)));
+//
+//    dateBegin = DateTimeKit.parse("2019-02-28", DateTimeKit.NORM_DATE_PATTERN);
+//    dateEnd = DateTimeKit.parse("2019-03-31", DateTimeKit.NORM_DATE_PATTERN);
+//    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 27)));
+//
+//    dateBegin = DateTimeKit.parse("2019-01-15", DateTimeKit.NORM_DATE_PATTERN);
+//    dateEnd = DateTimeKit.parse("2019-02-15", DateTimeKit.NORM_DATE_PATTERN);
+//
+//    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 16)));
+//
+//    dateBegin = DateTimeKit.parse("2019-01-01", DateTimeKit.NORM_DATE_PATTERN);
+//    dateEnd = DateTimeKit.parse("2019-01-31", DateTimeKit.NORM_DATE_PATTERN);
+//
+//    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 30)));
 
   }
 

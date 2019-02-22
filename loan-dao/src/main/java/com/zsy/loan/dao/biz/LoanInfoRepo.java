@@ -24,9 +24,9 @@ public interface LoanInfoRepo extends PagingAndSortingRepository<TBizLoanInfo, L
   TBizLoanInfo lockRecordByIdStatus(Long id, Long status);
 
   @Modifying
-  @Query(nativeQuery = true, value = "update t_biz_loan_info t set status=?2,remark=?3,lending_date=?4,dd_date=?5,acct_date=?6 where t.id =?1 ")
-  int put(Long id, Long status, String remark, Date lendingDate, Long ddDate, Date acctDate);
-
+  @Query(nativeQuery = true, value = "update t_biz_loan_info t set status=?2,remark=?3,lending_date=?4,dd_date=?5,acct_date=?6,tot_paid_serv_fee=?7 "
+      + "  where t.id =?1 ")
+  int put(Long id, Long status, String remark, Date lendingDate, Long ddDate, Date acctDate, BigDecimal totPaidServFee);
 
   @Modifying
   @Query(nativeQuery = true, value = "update t_biz_loan_info t set status=:status,remark=:remark,acct_date=:acctDate,"

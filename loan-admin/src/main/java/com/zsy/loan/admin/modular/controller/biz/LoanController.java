@@ -6,6 +6,7 @@ import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.convey.LoanDelayVo;
+import com.zsy.loan.bean.convey.LoanPrepayVo;
 import com.zsy.loan.bean.convey.LoanPutVo;
 import com.zsy.loan.bean.convey.LoanVo;
 import com.zsy.loan.bean.dictmap.biz.LoanDict;
@@ -274,25 +275,6 @@ public class LoanController extends BaseController {
 
   }
 
-  private void setLoanNameMsg(TBizLoanInfo loan) {
-    //获取名称
-    loan.setRemark(loan.getRemark() == null ? "" : loan.getRemark().trim());
-    loan.setProductName(ConstantFactory.me().getProductName(loan.getProductNo()));
-    loan.setCustName(ConstantFactory.me().getCustomerName(loan.getCustNo()));
-    loan.setLendingAcctName(ConstantFactory.me().getAcctName(loan.getLendingAcct()));
-    loan.setOrgName(ConstantFactory.me().getDeptName(loan.getOrgNo().intValue()));
-    loan.setProductName(ConstantFactory.me().getProductName(loan.getProductNo()));
-    loan.setCustName(ConstantFactory.me().getCustomerName(loan.getCustNo()));
-    loan.setLendingAcctName(ConstantFactory.me().getAcctName(loan.getLendingAcct()));
-    loan.setLoanTypeName(ConstantFactory.me().getLoanTypeName(loan.getLoanType()));
-    loan.setServiceFeeTypeName(
-        ConstantFactory.me().getServiceFeeTypeName(loan.getServiceFeeType()));
-    loan.setRepayTypeName(ConstantFactory.me().getRepayTypeName(loan.getRepayType()));
-    loan.setIsPenName(ConstantFactory.me().getIsPenName(loan.getIsPen()));
-    loan.setPenNumberName(ConstantFactory.me().getPenNumberName(loan.getPenNumber()));
-    loan.setStatusName(ConstantFactory.me().getLoanStatusName(loan.getStatus()));
-  }
-
   /**
    * 放款
    */
@@ -527,6 +509,157 @@ public class LoanController extends BaseController {
   }
 
   /**
+   * 跳转到提前还款
+   */
+  @Permission
+  @RequestMapping("/to_loan_prepay/{loanId}")
+  public String loanPrepay(@PathVariable Long loanId, Model model) {
+
+    LoanCalculateVo loan = loanService.getPrepayInfo(loanId);
+
+    //设置中文信息
+    setLoanNameMsg(loan);
+
+    model.addAttribute("loan", loan);
+
+    return PREFIX + "loan_prepay.html";
+
+  }
+
+  /**
+   * 提前还款
+   */
+  @BussinessLog(value = "提前还款", dict = LoanDict.class)
+  @RequestMapping(value = "/prepay")
+  @Permission
+  @ResponseBody
+  @OpLog
+  @ApiOperation(value = "提前还款", notes = "提前还款")
+  public Object prepay(@Valid @RequestBody LoanPrepayVo loan, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    /**
+     * 校验
+     */
+    if (loan.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    //借款结束日期必须在开始日期之后
+    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
+    }
+
+    //放款日期必须在开始日期之后
+    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getLendingDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
+    }
+
+    //借据状态校验
+    LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue());
+
+    loanService.prepay(loan, true);
+
+    return SUCCESS_TIP;
+  }
+
+  /**
+   * 提前还款试算
+   */
+  @BussinessLog(value = "提前还款试算", dict = LoanDict.class)
+  @RequestMapping(value = "/prepay_calculate")
+  @ResponseBody
+  @ApiOperation(value = "提前还款试算", notes = "提前还款试算")
+  public LoanCalculateVo prepayCalculate(@Valid @RequestBody LoanCalculateVo loan,
+      BindingResult error) {
+
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    /**
+     * 校验
+     */
+    if (loan.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    //借款结束日期必须在开始日期之后
+    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getEndDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
+    }
+
+    //借据状态校验
+    if (loan.getCurrentRepayPrin()
+        .compareTo(BigDecimalUtil.sub(loan.getRepayAmt(), loan.getRepayInterest(), loan.getRepayPen(), loan.getRepayServFee())) == 0) { //提前结清
+      LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue());
+    } else {
+      LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PART_REPAYMENT.getValue());
+    }
+
+    loan.setLoanBizType(LoanBizTypeEnum.PREPAYMENT.getValue()); //设置业务类型
+
+    LoanCalculateVo calculateVo = loanService.prepayCalculate(loan);
+
+    StringBuffer tmp = new StringBuffer();
+    tmp.append("应还本金：" + BigDecimalUtil.formatAmt(calculateVo.getSchdPrin()));
+    tmp.append(",应还利息：" + BigDecimalUtil.formatAmt(calculateVo.getSchdInterest()));
+    tmp.append(",应收服务费：" + BigDecimalUtil.formatAmt(calculateVo.getSchdServFee()));
+    tmp.append(",应收罚息：" + BigDecimalUtil.formatAmt(calculateVo.getSchdPen()));
+    tmp.append("<BR>");
+
+    tmp.append("已还本金累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidPrin()));
+    tmp.append(",已还利息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidInterest()));
+    tmp.append(",已收服务费累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidServFee()));
+    tmp.append(",已还罚息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidPen()));
+    tmp.append(",减免金额累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotWavAmt()));
+    tmp.append(",借据状态：" + ConstantFactory.me().getLoanStatusName(calculateVo.getStatus()));
+    tmp.append("<BR>");
+
+    for (TBizRepayPlan plan : calculateVo.getCurrentRepayPlans()) {
+      tmp.append("--------------------------------------------------------------<BR>");
+      tmp.append("第：" + plan.getTermNo() + "期");
+      tmp.append(",还款日期：" + DateTimeKit.formatDate(plan.getDdDate()));
+      tmp.append(",本期应还本金：" + BigDecimalUtil.formatAmt(plan.getCtdPrin()));
+      tmp.append(",本期应还利息：" + BigDecimalUtil.formatAmt(plan.getCtdInterest()));
+      tmp.append(",本期应收服务费：" + BigDecimalUtil.formatAmt(plan.getCtdServFee()));
+      tmp.append(",本期应收罚息：" + BigDecimalUtil.formatAmt(plan.getCtdPen()));
+      tmp.append(",本期已还本金：" + BigDecimalUtil.formatAmt(plan.getPaidPrin()));
+      tmp.append(",本期已还利息：" + BigDecimalUtil.formatAmt(plan.getPaidInterest()));
+      tmp.append(",本期已收服务费：" + BigDecimalUtil.formatAmt(plan.getPaidServFee()));
+      tmp.append(",本期已收罚息：" + BigDecimalUtil.formatAmt(plan.getCtdPen()));
+      tmp.append(",本期减免：" + BigDecimalUtil.formatAmt(plan.getWavAmt()));
+      tmp.append(",计息天数：" + plan.getDdNum());
+      tmp.append(",状态：" + ConstantFactory.me().getRepayStatusName(plan.getStatus()));
+      tmp.append("<BR>");
+    }
+    for (TBizRepayPlan plan : calculateVo.getAfterPayRecords()) {
+      tmp.append("--------------------------------------------------------------<BR>");
+      tmp.append("第：" + plan.getTermNo() + "期");
+      tmp.append(",还款日期：" + DateTimeKit.formatDate(plan.getDdDate()));
+      tmp.append(",本期应还本金：" + BigDecimalUtil.formatAmt(plan.getCtdPrin()));
+      tmp.append(",本期应还利息：" + BigDecimalUtil.formatAmt(plan.getCtdInterest()));
+      tmp.append(",本期应收服务费：" + BigDecimalUtil.formatAmt(plan.getCtdServFee()));
+      tmp.append(",本期应收罚息：" + BigDecimalUtil.formatAmt(plan.getCtdPen()));
+      tmp.append(",本期已还本金：" + BigDecimalUtil.formatAmt(plan.getPaidPrin()));
+      tmp.append(",本期已还利息：" + BigDecimalUtil.formatAmt(plan.getPaidInterest()));
+      tmp.append(",本期已收服务费：" + BigDecimalUtil.formatAmt(plan.getPaidServFee()));
+      tmp.append(",本期已收罚息：" + BigDecimalUtil.formatAmt(plan.getCtdPen()));
+      tmp.append(",本期减免：" + BigDecimalUtil.formatAmt(plan.getWavAmt()));
+      tmp.append(",计息天数：" + plan.getDdNum());
+      tmp.append(",状态：" + ConstantFactory.me().getRepayStatusName(plan.getStatus()));
+      tmp.append("<BR>");
+    }
+    calculateVo.setResultMsg(tmp.toString());
+
+    return calculateVo;
+  }
+
+  /**
    * 跳转到违约还款
    */
   @Permission
@@ -554,51 +687,6 @@ public class LoanController extends BaseController {
   @OpLog
   @ApiOperation(value = "违约还款", notes = "违约还款")
   public Object breach(@Valid @RequestBody LoanVo loan, BindingResult error) {
-    /**
-     * 处理error
-     */
-    exportErr(error);
-
-    if (loan.getId() == null) {
-      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
-    }
-
-    /**
-     * 修改校验
-     */
-
-    loanService.breach(loan, true);
-    return SUCCESS_TIP;
-  }
-
-  /**
-   * 跳转到提前还款
-   */
-  @Permission
-  @RequestMapping("/to_loan_prepay/{loanId}")
-  public String loanPrepay(@PathVariable Long loanId, Model model) {
-    TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
-
-//    loan.setRemark(loan.getRemark().trim());
-//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
-//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
-
-    model.addAttribute("loan", loan);
-    LogObjectHolder.me().set(loan);
-    return PREFIX + "loan_prepay.html";
-
-  }
-
-  /**
-   * 提前还款
-   */
-  @BussinessLog(value = "提前还款", dict = LoanDict.class)
-  @RequestMapping(value = "/prepay")
-  @Permission
-  @ResponseBody
-  @OpLog
-  @ApiOperation(value = "提前还款", notes = "提前还款")
-  public Object prepay(@Valid @RequestBody LoanVo loan, BindingResult error) {
     /**
      * 处理error
      */
@@ -757,4 +845,42 @@ public class LoanController extends BaseController {
   }
 
 
+  private void setLoanNameMsg(TBizLoanInfo loan) {
+
+    //获取名称
+    loan.setRemark(loan.getRemark() == null ? "" : loan.getRemark().trim());
+    loan.setProductName(ConstantFactory.me().getProductName(loan.getProductNo()));
+    loan.setCustName(ConstantFactory.me().getCustomerName(loan.getCustNo()));
+    loan.setLendingAcctName(ConstantFactory.me().getAcctName(loan.getLendingAcct()));
+    loan.setOrgName(ConstantFactory.me().getDeptName(loan.getOrgNo().intValue()));
+    loan.setProductName(ConstantFactory.me().getProductName(loan.getProductNo()));
+    loan.setCustName(ConstantFactory.me().getCustomerName(loan.getCustNo()));
+    loan.setLendingAcctName(ConstantFactory.me().getAcctName(loan.getLendingAcct()));
+    loan.setLoanTypeName(ConstantFactory.me().getLoanTypeName(loan.getLoanType()));
+    loan.setServiceFeeTypeName(
+        ConstantFactory.me().getServiceFeeTypeName(loan.getServiceFeeType()));
+    loan.setRepayTypeName(ConstantFactory.me().getRepayTypeName(loan.getRepayType()));
+    loan.setIsPenName(ConstantFactory.me().getIsPenName(loan.getIsPen()));
+    loan.setPenNumberName(ConstantFactory.me().getPenNumberName(loan.getPenNumber()));
+    loan.setStatusName(ConstantFactory.me().getLoanStatusName(loan.getStatus()));
+  }
+
+  private void setLoanNameMsg(LoanCalculateVo calculateVo) {
+    //获取名称
+    calculateVo.setRemark(calculateVo.getRemark() == null ? "" : calculateVo.getRemark().trim());
+    calculateVo.setProductName(ConstantFactory.me().getProductName(calculateVo.getProductNo()));
+    calculateVo.setCustName(ConstantFactory.me().getCustomerName(calculateVo.getCustNo()));
+    calculateVo.setLendingAcctName(ConstantFactory.me().getAcctName(calculateVo.getLendingAcct()));
+    calculateVo.setOrgName(ConstantFactory.me().getDeptName(calculateVo.getOrgNo().intValue()));
+    calculateVo.setProductName(ConstantFactory.me().getProductName(calculateVo.getProductNo()));
+    calculateVo.setCustName(ConstantFactory.me().getCustomerName(calculateVo.getCustNo()));
+    calculateVo.setLendingAcctName(ConstantFactory.me().getAcctName(calculateVo.getLendingAcct()));
+    calculateVo.setLoanTypeName(ConstantFactory.me().getLoanTypeName(calculateVo.getLoanType()));
+    calculateVo.setServiceFeeTypeName(
+        ConstantFactory.me().getServiceFeeTypeName(calculateVo.getServiceFeeType()));
+    calculateVo.setRepayTypeName(ConstantFactory.me().getRepayTypeName(calculateVo.getRepayType()));
+    calculateVo.setIsPenName(ConstantFactory.me().getIsPenName(calculateVo.getIsPen()));
+    calculateVo.setPenNumberName(ConstantFactory.me().getPenNumberName(calculateVo.getPenNumber()));
+    calculateVo.setStatusName(ConstantFactory.me().getLoanStatusName(calculateVo.getStatus()));
+  }
 }

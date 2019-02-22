@@ -2,6 +2,7 @@ package com.zsy.loan.service.biz.impl;
 
 import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.convey.LoanDelayVo;
+import com.zsy.loan.bean.convey.LoanPrepayVo;
 import com.zsy.loan.bean.convey.LoanPutVo;
 import com.zsy.loan.bean.convey.LoanVo;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
@@ -9,6 +10,7 @@ import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanStatusEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
@@ -30,6 +32,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -236,8 +239,9 @@ public class LoanServiceImpl {
      */
     info.setStatus(LoanStatusEnum.PUT.getValue()); //已放款
     info.setAcctDate(systemService.getSysAcctDate());
-    repository.put(info.getId(), info.getStatus(), info.getRemark(), info.getLendingDate(),
-        info.getDdDate(), info.getAcctDate());
+    repository
+        .put(info.getId(), LoanStatusEnum.PUT.getValue(), info.getRemark(), info.getLendingDate(), result.getDdDate(), systemService.getSysAcctDate(),
+            result.getTotPaidServFee());
 
     /**
      * 先删除后插保存还款计划信息
@@ -315,6 +319,71 @@ public class LoanServiceImpl {
     return true;
   }
 
+  /**
+   * 提前还款
+   */
+  public void prepay(@Valid LoanPrepayVo loan, boolean b) {
+  }
+
+  /**
+   * 提前还款试算
+   */
+  public LoanCalculateVo prepayCalculate(LoanCalculateVo loan) {
+    /**
+     *设置共同数据信息
+     */
+    setCalculateCommon(loan);
+
+    //当前期还款计划
+    List<TBizRepayPlan> currentRepayPlans = repayPlanRepo.findCurrentTermRecord(loan.getId(), systemService.getSysAcctDate());
+    if (currentRepayPlans == null || currentRepayPlans.size() == 0) {
+      throw new LoanException(BizExceptionEnum.NOT_FOUND, "未查询到当前期还款计划");
+    }
+    loan.setCurrentRepayPlans(currentRepayPlans);
+
+    //当前期以前未还的还款计划 5:待还，4:已逾期
+    Long currentTermNo = currentRepayPlans.get(0).getTermNo();
+    List<Long> status = new ArrayList<>(2);
+    status.add(RepayStatusEnum.NOT_REPAY.getValue());
+    status.add(RepayStatusEnum.OVERDUE.getValue());
+    List<TBizRepayPlan> notPayRecords = repayPlanRepo.findNotPayRecord(loan.getId(), status, currentTermNo);
+    if (notPayRecords != null && notPayRecords.size() != 0) {
+      throw new LoanException(BizExceptionEnum.LOAN_STATUS_ERROR, "有未还的还款计划，不能提前还款");
+    }
+
+    List<TBizRepayPlan> afterPayRecords = repayPlanRepo.findAfterPayRecord(loan.getId(), currentTermNo);
+    loan.setAfterPayRecords(afterPayRecords);
+
+    return executeCalculate(loan);
+
+  }
+
+  /**
+   * 取得提前还款数据信息
+   */
+  public LoanCalculateVo getPrepayInfo(Long loanId) {
+
+    //借据
+    TBizLoanInfo loan = repository.findById(loanId).get();
+
+    /**
+     * 试算
+     */
+    LoanCalculateVo calculateRequest = LoanCalculateVo.builder().build();
+    BeanKit.copyProperties(loan, calculateRequest);
+    calculateRequest.setLoanBizType(LoanBizTypeEnum.PREPAYMENT.getValue()); //设置业务类型
+    LoanCalculateVo result = prepayCalculate(calculateRequest); //试算结果
+
+    return result;
+  }
+
+  /**
+   * 还款
+   */
+  @Transactional
+  public void repay(LoanVo loan, boolean b) {
+  }
+
   public void breach(LoanVo loan, boolean b) {
   }
 
@@ -367,9 +436,6 @@ public class LoanServiceImpl {
     return page;
   }
 
-  public void repay(LoanVo loan, boolean b) {
-  }
-
   private void setOrgList(Long orgNo, Path path, CriteriaBuilder criteriaBuilder,
       List<Predicate> list) {
     if (!ObjectUtils.isEmpty(orgNo)) {
@@ -388,7 +454,7 @@ public class LoanServiceImpl {
   }
 
   /**
-   * 试算
+   * 试算--登记、放款、展期试算
    */
   public LoanCalculateVo calculate(LoanCalculateVo loan) {
 
@@ -396,29 +462,8 @@ public class LoanServiceImpl {
      * 根据还款方式、本金、利率、服务费收取方式、服务费比例、开始结束日期计算
      * 利息、服务费、放款金额、期数、应还本金、应还利息、应收服务费、还款计划相关信息
      */
-    loan.setDayRate(BigDecimalUtil
-        .div(loan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_UP)); //日利息
-    loan.setMonthRate(BigDecimalUtil
-        .div(loan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_UP)); //月利息
-    loan.setDay(JodaTimeUtil.daysBetween(loan.getBeginDate(), loan.getEndDate())); //相差天数
-    loan.setMonth(JodaTimeUtil.getMonthFloor(loan.getBeginDate(), loan.getEndDate())); //相差月数
-    loan.setProduct(productRepo.findById(loan.getProductNo()).get()); //产品信息
-
-    if (loan.getExtensionRate() != null) {
-      loan.setDelayDayRate(BigDecimalUtil
-          .div(loan.getExtensionRate(), BigDecimal.valueOf(360), 6,
-              BigDecimal.ROUND_HALF_UP)); //展期日利息
-      loan.setDelayMonthRate(BigDecimalUtil
-          .div(loan.getExtensionRate(), BigDecimal.valueOf(12), 6,
-              BigDecimal.ROUND_HALF_UP)); //展期月利息
-    }
-
-    if (loan.getPenRate() != null) {
-      loan.setPenDayRate(BigDecimalUtil
-          .div(loan.getPenRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_UP)); //罚息日利息
-      loan.setPenMonthRate(BigDecimalUtil
-          .div(loan.getPenRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_UP)); //罚息月利息
-    }
+    //设置共同信息
+    setCalculateCommon(loan);
 
     /**
      * 查询下还款计划
@@ -426,11 +471,50 @@ public class LoanServiceImpl {
     List<TBizRepayPlan> repayPlans = repayPlanRepo.findByLoanNo(loan.getId());
     loan.setRepayPlanList(repayPlans);
 
+    return executeCalculate(loan);
+
+  }
+
+  /**
+   * 设置试算的共同数据信息
+   */
+  private void setCalculateCommon(LoanCalculateVo loan) {
+    loan.setDayRate(BigDecimalUtil
+        .div(loan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN)); //日利息
+    loan.setMonthRate(BigDecimalUtil
+        .div(loan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN)); //月利息
+    loan.setDay(JodaTimeUtil.daysBetween(loan.getBeginDate(), loan.getEndDate())); //相差天数
+    loan.setMonth(JodaTimeUtil.getMonthFloor(loan.getBeginDate(), loan.getEndDate())); //相差月数
+    loan.setProduct(productRepo.findById(loan.getProductNo()).get()); //产品信息
+
+    if (loan.getExtensionRate() != null) {
+      loan.setDelayDayRate(BigDecimalUtil
+          .div(loan.getExtensionRate(), BigDecimal.valueOf(360), 6,
+              BigDecimal.ROUND_HALF_EVEN)); //展期日利息
+      loan.setDelayMonthRate(BigDecimalUtil
+          .div(loan.getExtensionRate(), BigDecimal.valueOf(12), 6,
+              BigDecimal.ROUND_HALF_EVEN)); //展期月利息
+    }
+
+    loan.setAcctDate(systemService.getSysAcctDate()); //设置当前账务日期
+
+    if (loan.getPenRate() != null) {
+      loan.setPenDayRate(BigDecimalUtil
+          .div(loan.getPenRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN)); //罚息日利息
+      loan.setPenMonthRate(BigDecimalUtil
+          .div(loan.getPenRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN)); //罚息月利息
+    }
+  }
+
+
+  public LoanCalculateVo executeCalculate(LoanCalculateVo loan) {
+
     LoanCalculateVo result = LoanTrialCalculateFactory.maps
         .get(RepayTypeEnum.getEnumByKey(loan.getRepayType()) + "_" + LoanBizTypeEnum
             .getEnumByKey(loan.getLoanBizType())).apply(loan);
 
     return result;
-
   }
+
+
 }

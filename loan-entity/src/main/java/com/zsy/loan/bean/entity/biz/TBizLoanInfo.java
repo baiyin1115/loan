@@ -248,6 +248,7 @@ public class TBizLoanInfo {
   @Transient
   private String statusName;
 
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

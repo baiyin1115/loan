@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Transient;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -29,42 +30,33 @@ public class LoanCalculateVo {
 
   private Long id;
 
-  @NotNull(message = "[公司编号]不能为空！")
   @ApiModelProperty(value = "公司编号 ")
   private Long orgNo;
 
-  @NotNull(message = "[产品编号]不能为空！")
   @ApiModelProperty(value = "产品编号")
   private Long productNo;
 
-  @NotNull(message = "[客户编号]不能为空！")
   @ApiModelProperty(value = "客户编号")
   private Long custNo;
 
   @ApiModelProperty(value = "原始合同编号")
   private String contrNo;
 
-  @NotNull(message = "[贷款类型]不能为空！")
   @ApiModelProperty(value = "贷款类型")
   private Long loanType;
 
-  @NotNull(message = "[业务日期]不能为空！")
   @ApiModelProperty(value = "业务日期")
   private Date acctDate;
 
-  @NotNull(message = "[借款开始日期]不能为空！")
   @ApiModelProperty(value = "借款开始日期")
   private Date beginDate;
 
-  @NotNull(message = "[借款结束日期]不能为空！")
   @ApiModelProperty(value = "借款结束日期")
   private Date endDate;
 
-  @NotNull(message = "[本金]不能为空！")
   @ApiModelProperty(value = "本金")
   private BigDecimal prin;
 
-  @NotNull(message = "[利率]不能为空！")
   @ApiModelProperty(value = "利率")
   @DecimalMax(value = "1.00", message = "[利率]不能超过1.00")
   private BigDecimal rate;
@@ -72,7 +64,6 @@ public class LoanCalculateVo {
   @ApiModelProperty(value = "应收利息")
   private BigDecimal receiveInterest;
 
-  @NotNull(message = "[产品还款方式]不能为空！")
   @ApiModelProperty(value = "产品还款方式")
   private Long repayType;
 
@@ -95,11 +86,9 @@ public class LoanCalculateVo {
   private BigDecimal serviceFee;
 
   @ApiModelProperty( value = "服务费比例")
-  @NotNull(message = "[服务费比例]不能为空！")
   @DecimalMax(value = "1.00", message = "[服务费比例]不能超过1.00")
   private BigDecimal serviceFeeScale;
 
-  @NotNull(message = "[服务费收取方式]不能为空！")
   @ApiModelProperty(value = "服务费收取方式")
   private Long serviceFeeType;
 
@@ -198,5 +187,57 @@ public class LoanCalculateVo {
   private BigDecimal penMonthRate;
   @ApiModelProperty(value = "当前展期期数")
   private Long currentExtensionNo;
+
+  @ApiModelProperty(value = "当前期还款计划")
+  List<TBizRepayPlan> currentRepayPlans;
+
+  @ApiModelProperty(value = "当前期以前的未还还款计划")
+  List<TBizRepayPlan> notPayRecords;
+
+  @ApiModelProperty(value = "当前期以后的还款计划")
+  List<TBizRepayPlan> afterPayRecords;
+
+  private String orgName;
+
+  private String productName;
+
+  private String custName;
+
+  private String lendingAcctName;
+
+  private String loanTypeName;
+
+  private String serviceFeeTypeName;
+
+  private String repayTypeName;
+
+  private String isPenName;
+
+  private String penNumberName;
+
+  private String statusName;
+
+  @ApiModelProperty(value = "当前用户录入还款本金")
+  private BigDecimal currentRepayPrin;
+
+  @ApiModelProperty(value = "当前用户录入费用=利息+服务费+罚息")
+  private BigDecimal currentRepayFee;
+
+  @ApiModelProperty(value = "当前用户录入减免")
+  private BigDecimal currentRepayWav;
+
+  @ApiModelProperty(value = "计算提前还清金额")
+  private BigDecimal repayAmt;
+
+  @ApiModelProperty(value = "计算提前还款利息")
+  private BigDecimal repayInterest;
+
+  @ApiModelProperty(value = "计算提前还款罚息")
+  private BigDecimal repayPen;
+
+  @ApiModelProperty(value = "计算提前还款服务费")
+  private BigDecimal repayServFee;
+
+
 
 }

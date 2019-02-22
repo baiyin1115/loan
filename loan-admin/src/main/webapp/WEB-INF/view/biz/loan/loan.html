@@ -46,11 +46,11 @@
                             @if(shiro.hasPermission("/loan/delay")){
                                 <#button name="展期" icon="fa-expand" clickFun="Loan.openDelayLoan()" space="true"/>
                             @}
+                            @if(shiro.hasPermission("/loan/prepay")){
+                            <#button name="提前还款" icon="fa-recycle" clickFun="Loan.openPrepayLoan()" space="true"/>
+                            @}
                             @if(shiro.hasPermission("/loan/breach")){
                                 <#button name="违约还款" icon="fa-recycle" clickFun="Loan.openBreachLoan()" space="true"/>
-                            @}
-                            @if(shiro.hasPermission("/loan/prepay")){
-                                <#button name="提前还款" icon="fa-recycle" clickFun="Loan.openPrepayLoan()" space="true"/>
                             @}
                             @if(shiro.hasPermission("/loan/loan_update_voucher")){
                                 <#button name="原始凭证" icon="fa-cube" clickFun="Loan.openUpdateVoucherLoan()" space="true"/>
