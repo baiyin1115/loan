@@ -149,7 +149,13 @@ LoanDlg.set = function (key, val) {
       $("#" + key).attr("id") == "schdServFee" ||
       $("#" + key).attr("id") == "currentRepayPrin" ||
       $("#" + key).attr("id") == "currentRepayFee" ||
-      $("#" + key).attr("id") == "currentRepayWav"
+      $("#" + key).attr("id") == "currentRepayWav" ||
+      $("#" + key).attr("id") == "repayAmt" ||
+      $("#" + key).attr("id") == "repayInterest" ||
+      $("#" + key).attr("id") == "repayPen" ||
+      $("#" + key).attr("id") == "repayServFee" ||
+      $("#" + key).attr("id") == "backAmt"
+
   ) {
     this.loanInfoData[key] = (typeof value == "undefined") ? Feng.parseMoney(
         $("#" + key).val()) : value;
@@ -198,7 +204,8 @@ LoanDlg.collectData = function () {
       'updateAt').set('remark').set("currentExtensionNo")
 
   .set("currentRepayPrin").set("currentRepayFee").set("currentRepayWav")
-  .set("repayAmt").set("repayInterest").set("repayPen").set("repayServFee");
+  .set("repayAmt").set("repayInterest").set("repayPen").set("repayServFee")
+  .set("backAmt");
 
 };
 
@@ -492,6 +499,12 @@ $(function () {
   $("#currentRepayFee").val(Feng.formatMoney($("#currentRepayFee").val(), 2));
   $("#currentRepayWav").val(Feng.formatMoney($("#currentRepayWav").val(), 2));
 
+  $("#repayAmt").val(Feng.formatMoney($("#repayAmt").val(), 2));
+  $("#repayInterest").val(Feng.formatMoney($("#repayInterest").val(), 2));
+  $("#repayPen").val(Feng.formatMoney($("#repayPen").val(), 2));
+  $("#repayServFee").val(Feng.formatMoney($("#repayServFee").val(), 2));
+  $("#backAmt").val(Feng.formatMoney($("#backAmt").val(), 2));
+
   //产品树
   var tree = new $ZTree("productTree", "/product/selectProductTreeList");
   tree.bindOnClick(LoanDlg.onClickProduct);
@@ -535,6 +548,21 @@ $(function () {
   });
   $('#currentRepayWav').bind('blur', function () {
     Feng.formatAmt($('#currentRepayWav'));
+  });
+  $('#repayServFee').bind('blur', function () {
+    Feng.formatAmt($('#repayServFee'));
+  });
+  $('#repayAmt').bind('blur', function () {
+    Feng.formatAmt($('#repayAmt'));
+  });
+  $('#repayInterest').bind('blur', function () {
+    Feng.formatAmt($('#repayInterest'));
+  });
+  $('#repayPen').bind('blur', function () {
+    Feng.formatAmt($('#repayPen'));
+  });
+  $('#backAmt').bind('blur', function () {
+    Feng.formatAmt($('#backAmt'));
   });
 
   //alert(Feng.formatMoney(0.00,2));

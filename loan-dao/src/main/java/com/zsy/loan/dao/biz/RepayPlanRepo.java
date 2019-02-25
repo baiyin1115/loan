@@ -27,7 +27,14 @@ public interface RepayPlanRepo extends PagingAndSortingRepository<TBizRepayPlan,
 
   List<TBizRepayPlan> findByLoanNo(Long loanNo);
 
-  @Query(nativeQuery = true, value = "select * from t_biz_repay_plan where loan_no=:loanNo and begin_date <=:currentDate and end_date>=:currentDate order by id asc ")
+  /**
+   * 开始时间、结束时间不能查询出来当前期，要不计算会特别复杂
+   * @param loanNo
+   * @param currentDate
+   * @return
+   */
+  @Query(nativeQuery = true, value = "select * from t_biz_repay_plan where loan_no=:loanNo and begin_date <:currentDate and end_date>:currentDate "
+      + "order by id asc ")
   List<TBizRepayPlan> findCurrentTermRecord(@Param("loanNo") Long loanNo,@Param("currentDate") Date currentDate);
 
   @Query(nativeQuery = true, value = "select * from t_biz_repay_plan where loan_no=:loanNo and status in (:status) and term_no < :currentTermNo order by id asc ")

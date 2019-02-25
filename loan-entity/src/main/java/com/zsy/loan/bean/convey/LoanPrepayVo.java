@@ -61,7 +61,6 @@ public class LoanPrepayVo {
   @ApiModelProperty(value = "利率")
   private BigDecimal rate;
 
-  @NotNull(message = "[应收利息]不能为空！")
   @ApiModelProperty(value = "应收利息")
   private BigDecimal receiveInterest;
 
@@ -73,11 +72,9 @@ public class LoanPrepayVo {
   @ApiModelProperty(value = "期数")
   private Long termNo;
 
-  @NotNull(message = "[放款日期]不能为空！")
   @ApiModelProperty(value = "放款日期")
   private Date lendingDate;
 
-  @NotNull(message = "[放款金额]不能为空！")
   @ApiModelProperty(value = "放款金额")
   private BigDecimal lendingAmt;
 
@@ -92,7 +89,6 @@ public class LoanPrepayVo {
   @DecimalMax(value = "1.00", message = "[服务费比例]不能超过1.00")
   private BigDecimal serviceFeeScale;
 
-  @NotNull(message = "[服务费]不能为空！")
   @ApiModelProperty(value = "服务费")
   private BigDecimal serviceFee;
 

@@ -94,6 +94,20 @@ public class LoanTrialCalculateFactory {
         LoanTrialCalculateFactory::bInterestAPrincipal2_prepayment);
     maps.put(RepayTypeEnum.A_DEBT_SERVICE_DUE + "_" + LoanBizTypeEnum.PREPAYMENT,
         LoanTrialCalculateFactory::aDebtServiceDue_prepayment);
+
+    /**
+     * 部分还款试算
+     */
+    maps.put(RepayTypeEnum.EQUAL_LOAN + "_" + LoanBizTypeEnum.PART_REPAYMENT,
+        LoanTrialCalculateFactory::equalLoan_prepayment);
+    maps.put(RepayTypeEnum.EQUAL_PRINCIPAL + "_" + LoanBizTypeEnum.PART_REPAYMENT,
+        LoanTrialCalculateFactory::equalPrincipal_prepayment);
+    maps.put(RepayTypeEnum.B_INTEREST_A_PRINCIPAL + "_" + LoanBizTypeEnum.PART_REPAYMENT,
+        LoanTrialCalculateFactory::bInterestAPrincipal_prepayment);
+    maps.put(RepayTypeEnum.B_INTEREST_A_PRINCIPAL_2 + "_" + LoanBizTypeEnum.PART_REPAYMENT,
+        LoanTrialCalculateFactory::bInterestAPrincipal2_prepayment);
+    maps.put(RepayTypeEnum.A_DEBT_SERVICE_DUE + "_" + LoanBizTypeEnum.PART_REPAYMENT,
+        LoanTrialCalculateFactory::aDebtServiceDue_prepayment);
   }
 
   /**
@@ -828,23 +842,9 @@ public class LoanTrialCalculateFactory {
   /**
    * 提前还款试算--一次性还本付息
    */
-  private static LoanCalculateVo aDebtServiceDue_prepayment(LoanCalculateVo loanCalculateVo) {
-    return null;
-  }
+  private static LoanCalculateVo aDebtServiceDue_prepayment(LoanCalculateVo data) {
 
-  /**
-   * 提前还款试算--先息后本[上交息]
-   */
-  private static LoanCalculateVo bInterestAPrincipal2_prepayment(LoanCalculateVo loanCalculateVo) {
-    return null;
-  }
-
-  /**
-   * 提前还款试算--先息后本
-   */
-  private static LoanCalculateVo bInterestAPrincipal_prepayment(LoanCalculateVo data) {
-
-    log.info("展期试算--先息后本--要试算的数据是：" + data);
+    log.info("提前还款试算--一次性还本付息--要试算的数据是：" + data);
     LoanCalculateVo result = LoanCalculateVo.builder().build();
     BeanKit.copyProperties(data, result);
 
@@ -869,29 +869,29 @@ public class LoanTrialCalculateFactory {
     BigDecimal repayInterest = BigDecimal.valueOf(0.00); //计算提前还款利息
     BigDecimal repayPen = BigDecimal.valueOf(0.00); //计算提前还款罚息
     BigDecimal repayServFee = BigDecimal.valueOf(0.00); //计算提前还款服务费
-    int day = JodaTimeUtil.daysBetween(data.getBeginDate(), data.getAcctDate()); //计息天数
-
     BigDecimal dayRate = BigDecimal.valueOf(0.00); //日利息
-    BigDecimal monthRate = BigDecimal.valueOf(0.00);//月利息
 
-    for (TBizRepayPlan plan : currentRepayPlans) {
-      dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
-      // 当前期待还利息 = 待还本金*日利息*天数 - 已还利息 如果有已还利息 证明是退款部分
-      BigDecimal currentInterest = BigDecimalUtil.sub(BigDecimalUtil.mul(dayRate, schdPrin, BigDecimal.valueOf(day)), plan.getPaidInterest());
-      repayInterest = BigDecimalUtil.add(repayInterest, currentInterest);
-      // 计算提前还款罚息 = 当前期应收罚息-已收罚息
-      BigDecimal currentPen = BigDecimalUtil.sub(plan.getCtdPen(), plan.getPaidPen());
-      repayPen = BigDecimalUtil.add(repayPen, currentPen);
-      // 计算提前还款服务费 = 当前期应收服务费-已收服务费
-      BigDecimal currentServFee = BigDecimalUtil.sub(plan.getCtdServFee(), plan.getPaidServFee());
-      repayServFee = BigDecimalUtil.add(repayServFee, currentServFee);
-    }
+    TBizRepayPlan plan = currentRepayPlans.get(0); //就一笔
+
+    int day = JodaTimeUtil.daysBetween(plan.getBeginDate(), data.getAcctDate()); //计息天数
+    dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
+    // 当前期待还利息 = 待还本金*日利息*天数
+    BigDecimal currentInterest = BigDecimalUtil.mul(dayRate, schdPrin, BigDecimal.valueOf(day));
+    repayInterest = BigDecimalUtil.add(repayInterest, currentInterest);
+    // 计算提前还款罚息 = 当前期应收罚息-已收罚息
+    BigDecimal currentPen = BigDecimalUtil.sub(plan.getCtdPen(), plan.getPaidPen());
+    repayPen = BigDecimalUtil.add(repayPen, currentPen);
+    // 计算提前还款服务费 = 当前期应收服务费-已收服务费
+    BigDecimal currentServFee = BigDecimalUtil.sub(plan.getCtdServFee(), plan.getPaidServFee());
+    repayServFee = BigDecimalUtil.add(repayServFee, currentServFee);
+
     repayAmt = BigDecimalUtil.add(schdPrin, repayInterest, repayPen, repayServFee);
 
     result.setRepayAmt(repayAmt);
     result.setRepayInterest(repayInterest);
     result.setRepayPen(repayPen);
     result.setRepayServFee(repayServFee);
+    result.setBackAmt(BigDecimal.valueOf(0.00));
 
     if (isOpen) { //打开页面部分已经计算完了
       return result;
@@ -908,60 +908,214 @@ public class LoanTrialCalculateFactory {
     BigDecimal currentRepayPrin = data.getCurrentRepayPrin(); //当前用户录入还款本金
     BigDecimal currentRepayFee = data.getCurrentRepayFee(); //当前用户录入费用=利息+服务费+罚息
     BigDecimal currentRepayWav = data.getCurrentRepayWav(); //当前用户录入减免
+
+    if (currentRepayPrin.compareTo(BigDecimalUtil.sub(repayAmt, repayInterest, repayPen, repayServFee)) > 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "当前用户录入还款本金不能大于待还的本金");
+    }
+
+    if (currentRepayPrin.compareTo(BigDecimalUtil.sub(repayAmt, repayInterest, repayPen, repayServFee)) != 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "一次性还本付息不允许部分还款！！！");
+    }
+
+    if (currentRepayFee.compareTo(BigDecimalUtil.add(repayInterest, repayPen, repayServFee)) < 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "费用>=提前结清相关项的和");
+    }
+    if (currentRepayWav.compareTo(BigDecimalUtil.add(repayInterest, repayPen, repayServFee)) > 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "减免<=提前结清相关项的和");
+    }
+
+    //更新还款计划状态
+    plan.setPaidPrin(BigDecimalUtil.add(plan.getPaidPrin(), currentRepayPrin));
+    plan.setWavAmt(BigDecimalUtil.add(plan.getWavAmt(), currentRepayWav));
+    plan.setCtdInterest(currentInterest);
+    plan.setPaidInterest(currentInterest);
+    plan.setStatus(RepayStatusEnum.REPAID.getValue());
+    plan.setDdDate(data.getAcctDate());
+    plan.setAcctDate(data.getAcctDate());
+    plan.setPaidServFee(BigDecimalUtil.add(plan.getPaidServFee(), currentServFee));
+    plan.setPaidPen(BigDecimalUtil.add(plan.getPaidPen(), currentPen));
+    plan.setDdNum((long) day);
+
+    //更新还款计划状态
+    upAfterRepayPlan(data, afterPayRecords);
+
+    /**
+     * 借据部分处理
+     */
+    result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));
+    result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), currentRepayWav));
+    result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), repayInterest));
+    result.setTotPaidPen(BigDecimalUtil.add(data.getTotPaidPen(), repayPen));
+    result.setTotPaidServFee(BigDecimalUtil.add(data.getTotPaidServFee(), repayServFee));
+    result.setStatus(LoanStatusFactory.getNextStatus(data.getStatus() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue()).getValue());
+
+    log.info("提前还款试算--一次性还本付息--试算结果为：" + result);
+    return result;
+  }
+
+  /**
+   * 提前还款试算--先息后本[上交息]
+   */
+  private static LoanCalculateVo bInterestAPrincipal2_prepayment(LoanCalculateVo data) {
+
+    log.info("提前还款试算--先息后本[上交息]--要试算的数据是：" + data);
+    LoanCalculateVo result = LoanCalculateVo.builder().build();
+    BeanKit.copyProperties(data, result);
+
+    boolean isOpen = false; //是否是打开页面要展示提前还款信息
+    if (data.getCurrentRepayPrin() == null && data.getCurrentRepayFee() == null && data.getCurrentRepayWav() == null) {
+      isOpen = true;
+    }
+
+    TBizRepayPlan currentRepayPlan = null;
+    List<TBizRepayPlan> currentRepayPlans = data.getCurrentRepayPlans(); //当前还款计划
+    for (TBizRepayPlan plan : currentRepayPlans) {
+      if (plan.getCtdInterest().compareTo(BigDecimal.valueOf(0.00)) > 0) {
+        currentRepayPlan = plan; //应该计算的还款计划期
+      }
+    }
+
+    //当前期校验
+    if (!currentRepayPlan.getStatus().equals(RepayStatusEnum.REPAID.getValue())) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "当前期必须已还");
+    }
+
+    BigDecimal schdPrin = BigDecimalUtil.sub(data.getSchdPrin(), data.getTotPaidPrin()); //应还本金=应还本金-已还本金累计
+    List<TBizRepayPlan> afterPayRecords = data.getAfterPayRecords(); //当前期以后的还款计划
+
+    /**
+     * 提前还清部分
+     * 计算提前还清金额 = 计算提前还款利息 + 计算提前还款罚息 + 计算提前还款服务费 + 待还本金
+     * 计算提前还款利息 =  当前期待还利息（日利息*天数 算头不算尾）- 当前期已还
+     * 计算提前还款罚息 =  当前期待收罚息
+     * 计算提前还款服务费 = 当前待收服务费
+     * 待收=应还-已还
+     */
+    BigDecimal repayAmt = BigDecimal.valueOf(0.00); //计算提前还清金额
+    BigDecimal repayInterest = BigDecimal.valueOf(0.00); //计算提前还款利息
+    BigDecimal repayPen = BigDecimal.valueOf(0.00); //计算提前还款罚息
+    BigDecimal repayServFee = BigDecimal.valueOf(0.00); //计算提前还款服务费
+    BigDecimal backAmt = BigDecimal.valueOf(0.00); //退款金额
+//    int day = JodaTimeUtil.daysBetween(data.getBeginDate(), data.getAcctDate()); //计息天数
+
+    BigDecimal dayRate = BigDecimal.valueOf(0.00); //日利息
+    BigDecimal monthRate = BigDecimal.valueOf(0.00);//月利息
+
+    for (TBizRepayPlan plan : currentRepayPlans) {
+      dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
+      int day = JodaTimeUtil.daysBetween(plan.getBeginDate(), data.getAcctDate()); //计息天数
+
+      if (plan.getCtdInterest().compareTo(BigDecimal.valueOf(0.00)) != 0) {
+        // 当前期待还利息 = 待还本金*日利息*天数
+        BigDecimal currentInterest = BigDecimalUtil.mul(dayRate, schdPrin, BigDecimal.valueOf(day));
+        if (plan.getPaidInterest().compareTo(BigDecimal.valueOf(0.00)) > 0) { //考虑到已还款的情况
+          backAmt = BigDecimalUtil.add(backAmt, BigDecimalUtil.sub(currentInterest, plan.getPaidInterest()));
+        }
+        repayInterest = BigDecimalUtil.add(repayInterest, currentInterest);
+      }
+
+      // 计算提前还款罚息 = 当前期应收罚息-已收罚息
+      BigDecimal currentPen = BigDecimalUtil.sub(plan.getCtdPen(), plan.getPaidPen());
+      repayPen = BigDecimalUtil.add(repayPen, currentPen);
+
+      // 计算提前还款服务费 = 当前期应收服务费-已收服务费
+      BigDecimal currentServFee = BigDecimalUtil.sub(plan.getCtdServFee(), plan.getPaidServFee());
+      repayServFee = BigDecimalUtil.add(repayServFee, currentServFee);
+    }
+    repayAmt = BigDecimalUtil.add(schdPrin, repayInterest, repayPen, repayServFee);
+
+    result.setRepayAmt(repayAmt);
+    result.setRepayInterest(repayInterest);
+    result.setRepayPen(repayPen);
+    result.setRepayServFee(repayServFee);
+    result.setBackAmt(backAmt);
+
+    if (isOpen) { //打开页面部分已经计算完了
+      return result;
+    }
+
+    //判断两次结果是否一致
+    if (repayAmt.compareTo(data.getRepayAmt()) != 0) {
+      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "计算提前还清金额");
+    }
+
+    /**
+     * 用户录入后计算部分--更新本金 重新计算每期利息
+     */
+    BigDecimal currentRepayPrin = data.getCurrentRepayPrin(); //当前用户录入还款本金
+    BigDecimal currentRepayFee = data.getCurrentRepayFee(); //当前用户录入费用=利息+服务费+罚息
+    BigDecimal currentRepayWav = data.getCurrentRepayWav(); //当前用户录入减免
+
+    if (currentRepayPrin.compareTo(BigDecimalUtil.sub(repayAmt, repayInterest, repayPen, repayServFee)) > 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "当前用户录入还款本金不能大于待还的本金");
+    }
+
     if (currentRepayPrin.compareTo(BigDecimalUtil.sub(repayAmt, repayInterest, repayPen, repayServFee)) == 0) { //提前结清
-      if (BigDecimalUtil.sub(currentRepayFee, currentRepayWav).compareTo(BigDecimalUtil.add(repayInterest, repayPen, repayServFee)) != 0) {
-        throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "提前结清-费用部分金额必须相符");
+
+      if (currentRepayFee.compareTo(BigDecimalUtil.add(repayInterest, repayPen, repayServFee)) < 0) {
+        throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "费用>=提前结清相关项的和");
+      }
+      if (currentRepayWav.compareTo(BigDecimalUtil.add(repayInterest, repayPen, repayServFee)) > 0) {
+        throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "减免<=提前结清相关项的和");
       }
 
       //更新还款计划状态
       for (int i = 0; i < currentRepayPlans.size(); i++) {
-        TBizRepayPlan plan = currentRepayPlans.get(i);
-        plan.setStatus(RepayStatusEnum.REPAID.getValue());
-        plan.setDdDate(data.getAcctDate());
-        plan.setAcctDate(data.getAcctDate());
-        if (i == 0) {
-          plan.setPaidPrin(BigDecimalUtil.add(plan.getPaidPrin(), currentRepayPrin));
-        }
 
+        TBizRepayPlan plan = currentRepayPlans.get(i);
+
+        int day = JodaTimeUtil.daysBetween(plan.getBeginDate(), data.getAcctDate()); //计息天数
         dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
-        // 当前期待还利息 = 待还本金*日利息*天数 - 已还利息 如果有已还利息 证明是退款部分
-        BigDecimal currentInterest = BigDecimalUtil.sub(BigDecimalUtil.mul(dayRate, schdPrin, BigDecimal.valueOf(day)), plan.getPaidInterest());
+        // 当前期待还利息 = 待还本金*日利息*天数
+        BigDecimal currentInterest = BigDecimalUtil.mul(dayRate, schdPrin, BigDecimal.valueOf(day));
         // 计算提前还款罚息 = 当前期应收罚息-已收罚息
         BigDecimal currentPen = BigDecimalUtil.sub(plan.getCtdPen(), plan.getPaidPen());
         // 计算提前还款服务费 = 当前期应收服务费-已收服务费
         BigDecimal currentServFee = BigDecimalUtil.sub(plan.getCtdServFee(), plan.getPaidServFee());
 
-        //设置当前期还款计划信息
-        plan.setPaidInterest(BigDecimalUtil.add(plan.getPaidInterest(), currentInterest));
+        if (plan.getId().equals(currentRepayPlan.getId())) { //当前期
+          plan.setPaidPrin(BigDecimalUtil.add(plan.getPaidPrin(), currentRepayPrin));
+          plan.setWavAmt(BigDecimalUtil.add(plan.getWavAmt(), currentRepayWav));
+          plan.setCtdInterest(currentInterest);
+          plan.setDdNum((long) day);
+        }
+
+        if (plan.getPaidInterest().compareTo(BigDecimal.valueOf(0.00)) > 0) { //考虑到已还款的情况
+          plan.setPaidInterest(currentInterest);
+        }
+
         plan.setPaidServFee(BigDecimalUtil.add(plan.getPaidServFee(), currentServFee));
         plan.setPaidPen(BigDecimalUtil.add(plan.getPaidPen(), currentPen));
-        plan.setDdNum((long) day);
-      }
-      //更新还款计划状态
-      for (int i = 0; i < afterPayRecords.size(); i++) {
-        TBizRepayPlan plan = afterPayRecords.get(i);
+        plan.setStatus(RepayStatusEnum.REPAID.getValue());
+        plan.setDdDate(data.getAcctDate());
         plan.setAcctDate(data.getAcctDate());
-        plan.setStatus(RepayStatusEnum.END.getValue());
       }
+
+      //更新还款计划状态
+      upAfterRepayPlan(data, afterPayRecords);
 
       /**
        * 借据部分处理
        */
       result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));
       result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), currentRepayWav));
-      result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), repayInterest));
+      result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), repayInterest, backAmt)); //会有退款
       result.setTotPaidPen(BigDecimalUtil.add(data.getTotPaidPen(), repayPen));
       result.setTotPaidServFee(BigDecimalUtil.add(data.getTotPaidServFee(), repayServFee));
       result.setStatus(LoanStatusFactory.getNextStatus(data.getStatus() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue()).getValue());
 
     } else { //部分还款 ---只还本金
 
+      backAmt = BigDecimal.valueOf(0.00); //退款金额 --重新计算
+
       BigDecimal remainderPrin = BigDecimalUtil.sub(result.getSchdPrin(), result.getTotPaidPrin(), currentRepayPrin); //待还本金
       BigDecimal difference = BigDecimal.valueOf(0.00); // 存下差额
       //更新还款计划状态
       for (int i = 0; i < currentRepayPlans.size(); i++) {
         TBizRepayPlan plan = currentRepayPlans.get(i);
-        if (plan.getStatus().equals(RepayStatusEnum.NOT_REPAY.getValue()) && plan.getCtdInterest().compareTo(BigDecimal.valueOf(0.00)) != 0) {
+        if (plan.getCtdInterest().compareTo(BigDecimal.valueOf(0.00)) != 0) {
+
+          int day = JodaTimeUtil.daysBetween(plan.getBeginDate(), data.getAcctDate()); //计息天数
           //应还利息 = 原待还利息-减少的利息（还款的本金*日利息*剩余计息天数）
           dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
           //减少的利息
@@ -970,32 +1124,248 @@ public class LoanTrialCalculateFactory {
           plan.setCtdInterest(BigDecimalUtil.sub(plan.getCtdInterest(), lowerInterest));
           plan.setAcctDate(data.getAcctDate());
 
+          if (plan.getPaidInterest().compareTo(BigDecimal.valueOf(0.00)) > 0) { //考虑到已还款的情况
+            plan.setPaidInterest(BigDecimalUtil.sub(plan.getPaidInterest(), lowerInterest)); //修改已还金额，退款已在上面记录
+            backAmt = BigDecimalUtil.add(lowerInterest.negate());
+          }
         }
       }
-      //更新还款计划状态
-      for (int i = 0; i < afterPayRecords.size(); i++) {
-        TBizRepayPlan plan = afterPayRecords.get(i);
-        plan.setAcctDate(data.getAcctDate());
-        //应还利息 = 待还本金*月利息
-        monthRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN);
-        BigDecimal remainderInterest = BigDecimalUtil.mul(remainderPrin, monthRate);
-        difference = BigDecimalUtil.add(difference, BigDecimalUtil.sub(plan.getCtdInterest(), remainderInterest));
-        plan.setCtdInterest(remainderInterest);
-        plan.setAcctDate(data.getAcctDate());
-        if (i == afterPayRecords.size() - 1) {
-          plan.setCtdPrin(remainderPrin);
+
+      if (afterPayRecords != null) {
+        //更新还款计划状态
+        for (int i = 0; i < afterPayRecords.size(); i++) {
+          TBizRepayPlan plan = afterPayRecords.get(i);
+
+          //应还利息 = 待还本金*月利息
+          monthRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN);
+          BigDecimal remainderInterest = BigDecimalUtil.mul(remainderPrin, monthRate);
+          difference = BigDecimalUtil.add(difference, BigDecimalUtil.sub(plan.getCtdInterest(), remainderInterest));
+          plan.setAcctDate(data.getAcctDate());
+          if (i == afterPayRecords.size() - 1) {
+            plan.setCtdPrin(remainderPrin);
+          } else {
+            plan.setCtdInterest(remainderInterest);
+          }
         }
       }
 
       /**
        * 借据部分处理
        */
+      result.setBackAmt(backAmt);
+      result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), backAmt)); //会有退款
       result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));
       result.setStatus(LoanStatusFactory.getNextStatus(data.getStatus() + "_" + LoanBizTypeEnum.PART_REPAYMENT.getValue()).getValue());
       result.setSchdInterest(BigDecimalUtil.sub(result.getSchdInterest(), difference));
     }
 
-    log.info("展期试算--先息后本--试算结果为：" + result);
+    log.info("提前还款试算--先息后本[上交息]--试算结果为：" + result);
+    return result;
+  }
+
+  /**
+   * 更新当前期后面的还款计划信息
+   */
+  private static void upAfterRepayPlan(LoanCalculateVo data, List<TBizRepayPlan> afterPayRecords) {
+    if (afterPayRecords != null) {
+      for (int i = 0; i < afterPayRecords.size(); i++) {
+        TBizRepayPlan plan = afterPayRecords.get(i);
+        plan.setAcctDate(data.getAcctDate());
+        plan.setStatus(RepayStatusEnum.END.getValue());
+      }
+    }
+  }
+
+  /**
+   * 提前还款试算--先息后本
+   */
+  private static LoanCalculateVo bInterestAPrincipal_prepayment(LoanCalculateVo data) {
+
+    log.info("提前还款试算--先息后本--要试算的数据是：" + data);
+    LoanCalculateVo result = LoanCalculateVo.builder().build();
+    BeanKit.copyProperties(data, result);
+
+    boolean isOpen = false; //是否是打开页面要展示提前还款信息
+    if (data.getCurrentRepayPrin() == null && data.getCurrentRepayFee() == null && data.getCurrentRepayWav() == null) {
+      isOpen = true;
+    }
+
+    List<TBizRepayPlan> currentRepayPlans = data.getCurrentRepayPlans(); //当前还款计划
+    BigDecimal schdPrin = BigDecimalUtil.sub(data.getSchdPrin(), data.getTotPaidPrin()); //应还本金=应还本金-已还本金累计
+    List<TBizRepayPlan> afterPayRecords = data.getAfterPayRecords(); //当前期以后的还款计划
+
+    /**
+     * 提前还清部分
+     * 计算提前还清金额 = 计算提前还款利息 + 计算提前还款罚息 + 计算提前还款服务费 + 待还本金
+     * 计算提前还款利息 =  当前期待还利息（日利息*天数 算头不算尾）
+     * 计算提前还款罚息 =  当前期待收罚息
+     * 计算提前还款服务费 = 当前待收服务费
+     * 待收=应还-已还
+     */
+    BigDecimal repayAmt = BigDecimal.valueOf(0.00); //计算提前还清金额
+    BigDecimal repayInterest = BigDecimal.valueOf(0.00); //计算提前还款利息
+    BigDecimal repayPen = BigDecimal.valueOf(0.00); //计算提前还款罚息
+    BigDecimal repayServFee = BigDecimal.valueOf(0.00); //计算提前还款服务费
+    BigDecimal backAmt = BigDecimal.valueOf(0.00); //退款金额
+    //int day = JodaTimeUtil.daysBetween(data.getBeginDate(), data.getAcctDate()); //计息天数
+
+    BigDecimal dayRate = BigDecimal.valueOf(0.00); //日利息
+    BigDecimal monthRate = BigDecimal.valueOf(0.00);//月利息
+
+    for (TBizRepayPlan plan : currentRepayPlans) {
+
+      int day = JodaTimeUtil.daysBetween(plan.getBeginDate(), data.getAcctDate()); //计息天数
+      dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
+      // 当前期待还利息 = 待还本金*日利息*天数
+      BigDecimal currentInterest = BigDecimalUtil.mul(dayRate, schdPrin, BigDecimal.valueOf(day));
+      repayInterest = BigDecimalUtil.add(repayInterest, currentInterest);
+      // 计算提前还款罚息 = 当前期应收罚息-已收罚息
+      BigDecimal currentPen = BigDecimalUtil.sub(plan.getCtdPen(), plan.getPaidPen());
+      repayPen = BigDecimalUtil.add(repayPen, currentPen);
+      // 计算提前还款服务费 = 当前期应收服务费-已收服务费
+      BigDecimal currentServFee = BigDecimalUtil.sub(plan.getCtdServFee(), plan.getPaidServFee());
+      repayServFee = BigDecimalUtil.add(repayServFee, currentServFee);
+
+      if (plan.getPaidInterest().compareTo(BigDecimal.valueOf(0.00)) > 0) { //考虑到已还款的情况
+        backAmt = BigDecimalUtil.add(backAmt, BigDecimalUtil.sub(currentInterest, plan.getPaidInterest()));
+      }
+
+    }
+    repayAmt = BigDecimalUtil.add(schdPrin, repayInterest, repayPen, repayServFee);
+
+    result.setRepayAmt(repayAmt);
+    result.setRepayInterest(repayInterest);
+    result.setRepayPen(repayPen);
+    result.setRepayServFee(repayServFee);
+    result.setBackAmt(backAmt);
+
+    if (isOpen) { //打开页面部分已经计算完了
+      return result;
+    }
+
+    //判断两次结果是否一致
+    if (repayAmt.compareTo(data.getRepayAmt()) != 0) {
+      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "计算提前还清金额");
+    }
+
+    /**
+     * 用户录入后计算部分--更新本金 重新计算每期利息
+     */
+    BigDecimal currentRepayPrin = data.getCurrentRepayPrin(); //当前用户录入还款本金
+    BigDecimal currentRepayFee = data.getCurrentRepayFee(); //当前用户录入费用=利息+服务费+罚息
+    BigDecimal currentRepayWav = data.getCurrentRepayWav(); //当前用户录入减免
+
+    if (currentRepayPrin.compareTo(BigDecimalUtil.sub(repayAmt, repayInterest, repayPen, repayServFee)) > 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "当前用户录入还款本金不能大于待还的本金");
+    }
+
+    if (currentRepayPrin.compareTo(BigDecimalUtil.sub(repayAmt, repayInterest, repayPen, repayServFee)) == 0) { //提前结清
+      if (currentRepayFee.compareTo(BigDecimalUtil.add(repayInterest, repayPen, repayServFee)) < 0) {
+        throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "费用>=提前结清相关项的和");
+      }
+      if (currentRepayWav.compareTo(BigDecimalUtil.add(repayInterest, repayPen, repayServFee)) > 0) {
+        throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "减免<=提前结清相关项的和");
+      }
+
+      //更新还款计划状态
+      for (int i = 0; i < currentRepayPlans.size(); i++) {
+        TBizRepayPlan plan = currentRepayPlans.get(i);
+
+        int day = JodaTimeUtil.daysBetween(plan.getBeginDate(), data.getAcctDate()); //计息天数
+        dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
+        // 当前期待还利息 = 待还本金*日利息*天数
+        BigDecimal currentInterest = BigDecimalUtil.mul(dayRate, schdPrin, BigDecimal.valueOf(day));
+        // 计算提前还款罚息 = 当前期应收罚息-已收罚息
+        BigDecimal currentPen = BigDecimalUtil.sub(plan.getCtdPen(), plan.getPaidPen());
+        // 计算提前还款服务费 = 当前期应收服务费-已收服务费
+        BigDecimal currentServFee = BigDecimalUtil.sub(plan.getCtdServFee(), plan.getPaidServFee());
+
+        //设置当前期还款计划信息
+        if (i == 0) {
+          plan.setPaidPrin(BigDecimalUtil.add(plan.getPaidPrin(), currentRepayPrin));
+          plan.setWavAmt(BigDecimalUtil.add(plan.getWavAmt(), currentRepayWav));
+          plan.setCtdInterest(currentInterest);
+        }
+
+        if (plan.getPaidInterest().compareTo(BigDecimal.valueOf(0.00)) > 0) { //考虑到已还款的情况
+          plan.setPaidInterest(currentInterest);
+        }
+
+        plan.setStatus(RepayStatusEnum.REPAID.getValue());
+        plan.setDdDate(data.getAcctDate());
+        plan.setAcctDate(data.getAcctDate());
+        plan.setPaidServFee(BigDecimalUtil.add(plan.getPaidServFee(), currentServFee));
+        plan.setPaidPen(BigDecimalUtil.add(plan.getPaidPen(), currentPen));
+        plan.setDdNum((long) day);
+      }
+
+      upAfterRepayPlan(data, afterPayRecords);
+
+      /**
+       * 借据部分处理
+       */
+      result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));
+      result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), currentRepayWav));
+      result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), repayInterest, backAmt));
+      result.setTotPaidPen(BigDecimalUtil.add(data.getTotPaidPen(), repayPen));
+      result.setTotPaidServFee(BigDecimalUtil.add(data.getTotPaidServFee(), repayServFee));
+      result.setStatus(LoanStatusFactory.getNextStatus(data.getStatus() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue()).getValue());
+
+    } else { //部分还款 ---只还本金
+
+      backAmt = BigDecimal.valueOf(0.00); //退款金额 --重新计算
+
+      BigDecimal remainderPrin = BigDecimalUtil.sub(result.getSchdPrin(), result.getTotPaidPrin(), currentRepayPrin); //待还本金
+      BigDecimal difference = BigDecimal.valueOf(0.00); // 存下差额
+      //更新还款计划状态
+      for (int i = 0; i < currentRepayPlans.size(); i++) {
+        TBizRepayPlan plan = currentRepayPlans.get(i);
+        if (plan.getCtdInterest().compareTo(BigDecimal.valueOf(0.00)) != 0) {
+
+          int day = JodaTimeUtil.daysBetween(plan.getBeginDate(), data.getAcctDate()); //计息天数
+          //应还利息 = 原待还利息-减少的利息（还款的本金*日利息*剩余计息天数）
+          //减少的利息
+          BigDecimal lowerInterest = BigDecimalUtil.mul(currentRepayPrin, dayRate, BigDecimal.valueOf(data.getProduct().getCycleInterval() - day));
+          difference = BigDecimalUtil.add(difference, lowerInterest);
+          plan.setCtdInterest(BigDecimalUtil.sub(plan.getCtdInterest(), lowerInterest));
+          plan.setAcctDate(data.getAcctDate());
+
+          if (plan.getPaidInterest().compareTo(BigDecimal.valueOf(0.00)) > 0) { //考虑到已还款的情况
+            plan.setPaidInterest(BigDecimalUtil.sub(plan.getPaidInterest(), lowerInterest)); //修改已还金额，退款已在上面记录
+            backAmt = BigDecimalUtil.add(lowerInterest.negate());
+          }
+
+        }
+      }
+
+      if (afterPayRecords != null) {
+        //更新还款计划状态
+        for (int i = 0; i < afterPayRecords.size(); i++) {
+          TBizRepayPlan plan = afterPayRecords.get(i);
+
+          //应还利息 = 待还本金*月利息
+          monthRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN);
+          BigDecimal remainderInterest = BigDecimalUtil.mul(remainderPrin, monthRate);
+          difference = BigDecimalUtil.add(difference, BigDecimalUtil.sub(plan.getCtdInterest(), remainderInterest));
+          plan.setCtdInterest(remainderInterest);
+          plan.setAcctDate(data.getAcctDate());
+          if (i == afterPayRecords.size() - 1) {
+            plan.setCtdPrin(remainderPrin);
+          }
+        }
+      }
+
+      /**
+       * 借据部分处理
+       */
+      result.setBackAmt(backAmt);
+      result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), backAmt)); //会有退款
+      result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));
+      result.setStatus(LoanStatusFactory.getNextStatus(data.getStatus() + "_" + LoanBizTypeEnum.PART_REPAYMENT.getValue()).getValue());
+      result.setSchdInterest(BigDecimalUtil.sub(result.getSchdInterest(), difference));
+    }
+
+    log.info("提前还款试算--先息后本--试算结果为：" + result);
     return result;
   }
 

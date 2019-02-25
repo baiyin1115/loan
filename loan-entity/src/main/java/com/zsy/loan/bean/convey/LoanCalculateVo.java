@@ -238,6 +238,7 @@ public class LoanCalculateVo {
   @ApiModelProperty(value = "计算提前还款服务费")
   private BigDecimal repayServFee;
 
-
+  @ApiModelProperty(value = "退回金额")
+  private BigDecimal backAmt;
 
 }

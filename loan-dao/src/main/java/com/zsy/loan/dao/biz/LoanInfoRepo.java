@@ -35,4 +35,13 @@ public interface LoanInfoRepo extends PagingAndSortingRepository<TBizLoanInfo, L
       @Param("endDate") Date endDate, @Param("schdInterest") BigDecimal schdInterest,
       @Param("acctDate") Date acctDate, @Param("extensionNo") Long extensionNo,
       @Param("extensionRate") BigDecimal extensionRate);
+
+  @Modifying
+  @Query(nativeQuery = true, value = "update t_biz_loan_info t set status=:status,remark=:remark,acct_date=:acctDate,"
+      + "schd_interest=:schdInterest,tot_paid_prin=:totPaidPrin,tot_paid_interest=:totPaidInterest,tot_paid_serv_fee=:totPaidServFee,"
+      + "tot_paid_pen=:totPaidPen,tot_wav_amt=:totWavAmt where t.id =:id ")
+  void prepay(@Param("id") Long id, @Param("status") Long status, @Param("remark") String remark, @Param("acctDate") Date acctDate,
+      @Param("totPaidPrin") BigDecimal totPaidPrin, @Param("totPaidInterest") BigDecimal totPaidInterest, @Param("totPaidPen") BigDecimal
+      totPaidPen, @Param("totPaidServFee") BigDecimal totPaidServFee, @Param("totWavAmt") BigDecimal totWavAmt,
+      @Param("schdInterest") BigDecimal schdInterest);
 }

@@ -16,6 +16,7 @@ import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.biz.RepayPlanRepo;
+import com.zsy.loan.service.factory.LoanStatusFactory;
 import com.zsy.loan.service.factory.LoanTrialCalculateFactory;
 import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.system.ISystemService;
@@ -322,7 +323,66 @@ public class LoanServiceImpl {
   /**
    * 提前还款
    */
+  @Transactional
   public void prepay(@Valid LoanPrepayVo loan, boolean b) {
+
+    /**
+     * 锁记录
+     */
+    TBizLoanInfo old = repository.lockRecordByIdStatus(loan.getId(), loan.getStatus());
+    if (old == null) {
+      throw new LoanException(BizExceptionEnum.NOT_EXISTED_ING,
+          loan.getId() + "_" + loan.getStatus());
+    }
+
+    /**
+     * 试算
+     */
+    LoanCalculateVo calculateRequest = LoanCalculateVo.builder().build();
+    BeanKit.copyProperties(loan, calculateRequest);
+
+    //借据状态校验
+    if (loan.getCurrentRepayPrin()
+        .compareTo(BigDecimalUtil.sub(loan.getRepayAmt(), loan.getRepayInterest(), loan.getRepayPen(), loan.getRepayServFee())) == 0) { //提前结清
+      calculateRequest.setLoanBizType(LoanBizTypeEnum.PREPAYMENT.getValue()); //设置业务类型
+    } else {
+      calculateRequest.setLoanBizType(LoanBizTypeEnum.PART_REPAYMENT.getValue()); //设置业务类型
+    }
+
+
+    LoanCalculateVo result = prepayCalculate(calculateRequest); //试算结果
+
+    /**
+     * 比较试算结果是否与传入的一致
+     */
+    if (!loan.getTermNo().equals(result.getTermNo())) {
+      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "期数不一致");
+    }
+
+    /**
+     * 调整还款计划
+     */
+    //更新当前期
+    List<TBizRepayPlan> currentRepayPlans = result.getCurrentRepayPlans();
+    repayPlanRepo.saveAll(currentRepayPlans);
+
+    //更新当前期后续还款还款计划
+    List<TBizRepayPlan> subList = result.getAfterPayRecords();
+    repayPlanRepo.saveAll(subList);
+
+    /**
+     * 修改凭证信息
+     */
+    repository.prepay(old.getId(), result.getStatus(), loan.getRemark().trim(),
+        systemService.getSysAcctDate(),result.getTotPaidPrin(),result.getTotPaidInterest(),result.getTotPaidPen(),result.getTotPaidServFee(),
+        result.getTotWavAmt(),result.getSchdInterest());
+
+    /**
+     * 调用账户模块记账
+     */
+    //TODO
+    result.getBackAmt(); //注意这个  需要回退的金额
+
   }
 
   /**

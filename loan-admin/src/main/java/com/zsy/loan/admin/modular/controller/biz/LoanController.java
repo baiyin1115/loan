@@ -266,6 +266,8 @@ public class LoanController extends BaseController {
 
     TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
 
+    LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PUT.getValue());
+
     //设置中文信息
     setLoanNameMsg(loan);
 
@@ -383,6 +385,8 @@ public class LoanController extends BaseController {
   public String loanDelay(@PathVariable Long loanId, Model model) {
 
     TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
+
+    LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.DELAY.getValue());
 
     //设置中文信息
     setLoanNameMsg(loan);
@@ -517,6 +521,8 @@ public class LoanController extends BaseController {
 
     LoanCalculateVo loan = loanService.getPrepayInfo(loanId);
 
+    LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue());
+
     //设置中文信息
     setLoanNameMsg(loan);
 
@@ -542,6 +548,11 @@ public class LoanController extends BaseController {
     exportErr(error);
 
     /**
+     * 处理error
+     */
+    exportErr(error);
+
+    /**
      * 校验
      */
     if (loan.getId() == null) {
@@ -553,13 +564,13 @@ public class LoanController extends BaseController {
       throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
     }
 
-    //放款日期必须在开始日期之后
-    if (!DateUtil.compareDate(loan.getBeginDate(), loan.getLendingDate())) {
-      throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
-    }
-
     //借据状态校验
-    LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue());
+    if (loan.getCurrentRepayPrin()
+        .compareTo(BigDecimalUtil.sub(loan.getRepayAmt(), loan.getRepayInterest(), loan.getRepayPen(), loan.getRepayServFee())) == 0) { //提前结清
+      LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PREPAYMENT.getValue());
+    } else {
+      LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PART_REPAYMENT.getValue());
+    }
 
     loanService.prepay(loan, true);
 
@@ -610,6 +621,7 @@ public class LoanController extends BaseController {
     tmp.append(",应还利息：" + BigDecimalUtil.formatAmt(calculateVo.getSchdInterest()));
     tmp.append(",应收服务费：" + BigDecimalUtil.formatAmt(calculateVo.getSchdServFee()));
     tmp.append(",应收罚息：" + BigDecimalUtil.formatAmt(calculateVo.getSchdPen()));
+    tmp.append(",退回金额：" + BigDecimalUtil.formatAmt(calculateVo.getBackAmt()));
     tmp.append("<BR>");
 
     tmp.append("已还本金累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidPrin()));
