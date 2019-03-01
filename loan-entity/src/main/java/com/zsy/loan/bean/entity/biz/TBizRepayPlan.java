@@ -11,10 +11,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections.functors.ConstantFactory;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -134,6 +136,21 @@ public class TBizRepayPlan {
 
   @Column(name = "status")
   private Long status;
+
+  @Transient
+  private String orgName;
+
+  @Transient
+  private String productName;
+
+  @Transient
+  private String custName;
+
+  @Transient
+  private String inAcctName;
+
+  @Transient
+  private String statusName;
 
   /**
    * 创建人

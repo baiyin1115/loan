@@ -8,6 +8,7 @@ import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.convey.LoanDelayVo;
 import com.zsy.loan.bean.convey.LoanPrepayVo;
 import com.zsy.loan.bean.convey.LoanPutVo;
+import com.zsy.loan.bean.convey.LoanRepayPlanVo;
 import com.zsy.loan.bean.convey.LoanVo;
 import com.zsy.loan.bean.dictmap.biz.LoanDict;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
@@ -20,8 +21,10 @@ import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.LoanVoucherInfoRepo;
+import com.zsy.loan.dao.biz.RepayPlanRepo;
 import com.zsy.loan.service.biz.impl.LoanServiceImpl;
 import com.zsy.loan.service.factory.LoanStatusFactory;
+import com.zsy.loan.service.factory.RepayPlanStatusFactory;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.warpper.biz.LoanWarpper;
@@ -66,6 +69,9 @@ public class LoanController extends BaseController {
 
   @Resource
   LoanVoucherInfoRepo loanVoucherInfoRepo;
+
+  @Resource
+  RepayPlanRepo repayPlanRepo;
 
   /**
    * 跳转到贷款管理首页
@@ -765,14 +771,18 @@ public class LoanController extends BaseController {
    */
   @Permission
   @RequestMapping("/to_loan_repay/{loanId}")
-  public String toLoanRepay(@PathVariable Long loanId, Model model) {
-    List<TBizLoanVoucherInfo> vouchers = loanVoucherInfoRepo.findByLoanNo(loanId).get();
+  public String toLoanRepay(@PathVariable Long id, Model model) {
+    TBizRepayPlan plan = repayPlanRepo.findById(id).get();
 
-//    loan.setRemark(loan.getRemark().trim());
-//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
-//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+    RepayPlanStatusFactory.checkCurrentStatus(plan.getStatus() + "_" + LoanBizTypeEnum.REPAY.getValue());
 
-    model.addAttribute("vouchers", vouchers);
+    plan.setRemark(plan.getRemark().trim());
+    plan.setOrgName(ConstantFactory.me().getDeptName(plan.getOrgNo().intValue()));
+    plan.setStatusName(ConstantFactory.me().getRepayStatusName(plan.getStatus()));
+    plan.setCustName(ConstantFactory.me().getCustomerName(plan.getCustNo()));
+    plan.setInAcctName(ConstantFactory.me().getAcctName(plan.getInAcctNo()));
+
+    model.addAttribute("plan", plan);
     return PREFIX + "loan_repay.html";
 
   }
@@ -786,21 +796,23 @@ public class LoanController extends BaseController {
   @ResponseBody
   @OpLog
   @ApiOperation(value = "还款", notes = "还款")
-  public Object repay(@Valid @RequestBody LoanVo loan, BindingResult error) {
+  public Object repay(@Valid @RequestBody LoanRepayPlanVo plan, BindingResult error) {
     /**
      * 处理error
      */
     exportErr(error);
 
-    if (loan.getId() == null) {
+    if (plan.getId() == null) {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
+
+    RepayPlanStatusFactory.checkCurrentStatus(plan.getStatus() + "_" + LoanBizTypeEnum.REPAY.getValue());
 
     /**
      * 修改校验
      */
 
-    loanService.repay(loan, true);
+    loanService.repay(plan, true);
     return SUCCESS_TIP;
   }
 
@@ -844,7 +856,7 @@ public class LoanController extends BaseController {
      * 修改校验
      */
 
-    loanService.repay(loan, true);
+//    loanService.repay(loan, true);
     return SUCCESS_TIP;
   }
 

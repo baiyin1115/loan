@@ -3,6 +3,7 @@
  */
 var LoanDlg = {
   loanInfoData: {},
+  repayPlanData: {},
   productTreeInstance: null,
   lendingAcctTreeInstance: null,
   custLayerIndex: null,
@@ -36,92 +37,26 @@ var LoanDlg = {
     // status:{validators:{notEmpty:{message:'借据状态'}}}
   },
   validatePutFields: {
-    // orgNo: {validators: {notEmpty: {message: '公司编号'}}},
-    // productNo: {validators: {notEmpty: {message: '产品编号'}}},
-    // custNo: {validators: {notEmpty: {message: '客户编号'}}},
-    // contrNo:{validators:{notEmpty:{message:'原始合同编号'}}},
-    // acctDate: {validators: {notEmpty: {message: '业务日期'}}},
-    // beginDate: {validators: {notEmpty: {message: '借款开始日期'}}},
-    // endDate: {validators: {notEmpty: {message: '借款结束日期'}}},
-    // prin: {validators: {notEmpty: {message: '本金'}}},
-    // serviceFee:{validators:{notEmpty:{message:'服务费'}}},
-    // receiveBigint:{validators:{notEmpty:{message:'应收利息'}}},
-    // termNo:{validators:{notEmpty:{message:'期数'}}},
-    // externalAcct:{validators:{notEmpty:{message:'收款账户'}}},
-    // loanType: {validators: {notEmpty: {message: '贷款类型'}}},
-    // rate: {validators: {notEmpty: {message: '利率'}}},
-    // serviceFeeScale: {validators: {notEmpty: {message: '服务费比例'}}},
-    // serviceFeeType: {validators: {notEmpty: {message: '服务费收取方式'}}},
-    // repayType: {validators: {notEmpty: {message: '还款方式'}}},
-    //isPen:{validators:{notEmpty:{message:'是否罚息'}}},
-    //penRate:{validators:{notEmpty:{message:'罚息利率'}}},
-    //penNumber:{validators:{notEmpty:{message:'罚息基数'}}}
-    // ddDate:{validators:{notEmpty:{message:'约定还款日'}}}
-    // extensionNo:{validators:{notEmpty:{message:'展期期数'}}},
-    // extensionRate:{validators:{notEmpty:{message:'展期利率'}}},
-    // status:{validators:{notEmpty:{message:'借据状态'}}}
     lendingDate: {validators: {notEmpty: {message: '放款日期'}}},
     lendingAmt: {validators: {notEmpty: {message: '放款金额'}}},
     lendingAcct: {validators: {notEmpty: {message: '放款账户'}}}
   },
   validateDelayFields: {
-    // orgNo: {validators: {notEmpty: {message: '公司编号'}}},
-    // productNo: {validators: {notEmpty: {message: '产品编号'}}},
-    // custNo: {validators: {notEmpty: {message: '客户编号'}}},
-    // contrNo:{validators:{notEmpty:{message:'原始合同编号'}}},
-    // acctDate: {validators: {notEmpty: {message: '业务日期'}}},
-    // beginDate: {validators: {notEmpty: {message: '借款开始日期'}}},
-    // endDate: {validators: {notEmpty: {message: '借款结束日期'}}},
-    // prin: {validators: {notEmpty: {message: '本金'}}},
-    // serviceFee:{validators:{notEmpty:{message:'服务费'}}},
-    // receiveBigint:{validators:{notEmpty:{message:'应收利息'}}},
-    // termNo:{validators:{notEmpty:{message:'期数'}}},
-    // lendingDate:{validators:{notEmpty:{message:'放款日期'}}},
-    // lendingAmt:{validators:{notEmpty:{message:'放款金额'}}},
-    // lendingAcct: {validators: {notEmpty: {message: '放款账户'}}},
-    // externalAcct:{validators:{notEmpty:{message:'收款账户'}}},
-    // loanType: {validators: {notEmpty: {message: '贷款类型'}}},
-    // rate: {validators: {notEmpty: {message: '利率'}}},
-    // serviceFeeScale: {validators: {notEmpty: {message: '服务费比例'}}},
-    // serviceFeeType: {validators: {notEmpty: {message: '服务费收取方式'}}},
-    // repayType: {validators: {notEmpty: {message: '还款方式'}}},
-    //isPen:{validators:{notEmpty:{message:'是否罚息'}}},
-    //penRate:{validators:{notEmpty:{message:'罚息利率'}}},
-    //penNumber:{validators:{notEmpty:{message:'罚息基数'}}}
-    // ddDate:{validators:{notEmpty:{message:'约定还款日'}}}
-    // status:{validators:{notEmpty:{message:'借据状态'}}}
     currentExtensionNo: {validators: {notEmpty: {message: '展期期数'}}},
     extensionRate: {validators: {notEmpty: {message: '展期利率'}}}
   },
   validatePrepayFields: {
-    // orgNo: {validators: {notEmpty: {message: '公司编号'}}},
-    // productNo: {validators: {notEmpty: {message: '产品编号'}}},
-    // custNo: {validators: {notEmpty: {message: '客户编号'}}},
-    // contrNo:{validators:{notEmpty:{message:'原始合同编号'}}},
-    // acctDate: {validators: {notEmpty: {message: '业务日期'}}},
-    // beginDate: {validators: {notEmpty: {message: '借款开始日期'}}},
-    // endDate: {validators: {notEmpty: {message: '借款结束日期'}}},
-    // prin: {validators: {notEmpty: {message: '本金'}}},
-    // serviceFee:{validators:{notEmpty:{message:'服务费'}}},
-    // receiveBigint:{validators:{notEmpty:{message:'应收利息'}}},
-    // termNo:{validators:{notEmpty:{message:'期数'}}},
-    // lendingDate:{validators:{notEmpty:{message:'放款日期'}}},
-    // lendingAmt:{validators:{notEmpty:{message:'放款金额'}}},
-    // lendingAcct: {validators: {notEmpty: {message: '放款账户'}}},
-    // externalAcct:{validators:{notEmpty:{message:'收款账户'}}},
-    // loanType: {validators: {notEmpty: {message: '贷款类型'}}},
-    // rate: {validators: {notEmpty: {message: '利率'}}},
-    // serviceFeeScale: {validators: {notEmpty: {message: '服务费比例'}}},
-    // serviceFeeType: {validators: {notEmpty: {message: '服务费收取方式'}}},
-    // repayType: {validators: {notEmpty: {message: '还款方式'}}},
-    //isPen:{validators:{notEmpty:{message:'是否罚息'}}},
-    //penRate:{validators:{notEmpty:{message:'罚息利率'}}},
-    //penNumber:{validators:{notEmpty:{message:'罚息基数'}}}
-    // ddDate:{validators:{notEmpty:{message:'约定还款日'}}}
-    // status:{validators:{notEmpty:{message:'借据状态'}}}
     currentRepayPrin: {validators: {notEmpty: {message: '本金'}}},
     currentRepayFee: {validators: {notEmpty: {message: '费用'}}},
     currentRepayWav: {validators: {notEmpty: {message: '减免'}}}
+  },
+  validatePrepayFields: {
+    currentPrin: {validators: {notEmpty: {message: '本金'}}},
+    currentInterest: {validators: {notEmpty: {message: '利息'}}},
+    currentPen: {validators: {notEmpty: {message: '罚息'}}},
+    currentWav: {validators: {notEmpty: {message: '减免'}}},
+    currentServFee: {validators: {notEmpty: {message: '服务费'}}}
+
   }
 };
 
@@ -220,7 +155,7 @@ LoanDlg.validate = function (ob) {
 };
 
 /**
- * 提交添加账户
+ * 提交
  */
 LoanDlg.addSubmit = function () {
 
@@ -471,6 +406,118 @@ LoanDlg.prepayCalculate = function () {
   ajax.start();
 };
 
+//--------------------还款计划
+/**
+ * 清除数据
+ */
+LoanDlg.repayClearData = function () {
+  this.repayPlanData = {};
+};
+
+/**
+ * 收集数据
+ */
+LoanDlg.repayCollectData = function () {
+  this.setPlan('id')
+  .setPlan('loanNo')
+  .setPlan('orgNo')
+  .setPlan('productNo')
+  .setPlan('custNo')
+  .setPlan('acctDate')
+  .setPlan('termNo')
+  .setPlan('rate')
+  .setPlan('beginDate')
+  .setPlan('endDate')
+  .setPlan('ddNum')
+  .setPlan('ddDate')
+  .setPlan('externalAcct')
+  .setPlan('inAcctNo')
+  .setPlan('ctdPrin')
+  .setPlan('ctdInterest')
+  .setPlan('ctdServFee')
+  .setPlan('ctdPen')
+  .setPlan('paidPrin')
+  .setPlan('paidInterest')
+  .setPlan('paidServFee')
+  .setPlan('paidPen')
+  .setPlan('wavAmt')
+  .setPlan('status')
+  .setPlan('currentPrin')
+  .setPlan('currentInterest')
+  .setPlan('currentPen')
+  .setPlan('currentWav')
+  .setPlan('currentServFee')
+  .setPlan('remark');
+};
+
+/**
+ * 设置对话框中的数据
+ *
+ * @param key 数据的名称
+ * @param val 数据的具体值
+ */
+LoanDlg.setPlan = function (key, val) {
+
+  if ($("#" + key).attr("id") == "currentPrin" ||
+      $("#" + key).attr("id") == "currentInterest" ||
+      $("#" + key).attr("id") == "currentPen" ||
+      $("#" + key).attr("id") == "currentWav" ||
+
+      $("#" + key).attr("id") == "ctdPrin" ||
+      $("#" + key).attr("id") == "ctdInterest" ||
+      $("#" + key).attr("id") == "ctdServFee" ||
+      $("#" + key).attr("id") == "ctdPen" ||
+      $("#" + key).attr("id") == "paidPrin" ||
+      $("#" + key).attr("id") == "paidInterest" ||
+      $("#" + key).attr("id") == "paidServFee" ||
+      $("#" + key).attr("id") == "paidPen" ||
+      $("#" + key).attr("id") == "wavAmt" ||
+      $("#" + key).attr("id") == "currentServFee"
+
+  ) {
+    this.repayPlanData[key] = (typeof value == "undefined") ? Feng.parseMoney(
+        $("#" + key).val()) : value;
+  } else {
+    this.repayPlanData[key] = (typeof value == "undefined") ? $("#" + key).val()
+        : value;
+  }
+
+  //alert($("#" + key).val())
+  return this;
+};
+
+/**
+ * 还款
+ */
+LoanDlg.repaySubmit = function () {
+
+  if (!this.validate($('#repayPlanInfoForm'))) {
+    return;
+  }
+
+  var operation = function () {
+
+    LoanDlg.repayClearData();
+    LoanDlg.repayCollectData();
+
+    //提交信息
+    var ajax = new $ax(Feng.ctxPath + "/loan/repay", function (data) {
+      Feng.success("还款成功!");
+      window.parent.Loan.refreshLoanPlan();
+      window.parent.Loan.table.refresh();
+      LoanDlg.close();
+    }, function (data) {
+      Feng.error("还款失败!" + data.responseJSON.message + "!");
+    });
+    ajax.set(LoanDlg.repayPlanData);
+    ajax.setContentType("application/json")
+    ajax.start();
+  };
+
+  Feng.confirm("是否还款?", operation);
+
+};
+
 /**
  * 初始化
  */
@@ -479,6 +526,7 @@ $(function () {
   Feng.initValidator("loanPutInfoForm", LoanDlg.validatePutFields);
   Feng.initValidator("loanDelayInfoForm", LoanDlg.validateDelayFields);
   Feng.initValidator("loanPrepayInfoForm", LoanDlg.validatePrepayFields);
+  Feng.initValidator("repayPlanInfoForm", LoanDlg.validateRepayFields);
 
   //初始化
   $("#orgNo").val($("#orgNoValue").val());
@@ -563,6 +611,23 @@ $(function () {
   });
   $('#backAmt').bind('blur', function () {
     Feng.formatAmt($('#backAmt'));
+  });
+
+  //---还款计划部分
+  $('#currentPrin').bind('blur', function () {
+    Feng.formatAmt($('#currentPrin'));
+  });
+  $('#currentInterest').bind('blur', function () {
+    Feng.formatAmt($('#currentInterest'));
+  });
+  $('#currentPen').bind('blur', function () {
+    Feng.formatAmt($('#currentPen'));
+  });
+  $('#currentWav').bind('blur', function () {
+    Feng.formatAmt($('#currentWav'));
+  });
+  $('#currentServFee').bind('blur', function () {
+    Feng.formatAmt($('#currentServFee'));
   });
 
   //alert(Feng.formatMoney(0.00,2));

@@ -4,6 +4,7 @@ import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.convey.LoanDelayVo;
 import com.zsy.loan.bean.convey.LoanPrepayVo;
 import com.zsy.loan.bean.convey.LoanPutVo;
+import com.zsy.loan.bean.convey.LoanRepayPlanVo;
 import com.zsy.loan.bean.convey.LoanVo;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
@@ -16,7 +17,6 @@ import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.biz.RepayPlanRepo;
-import com.zsy.loan.service.factory.LoanStatusFactory;
 import com.zsy.loan.service.factory.LoanTrialCalculateFactory;
 import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.system.ISystemService;
@@ -349,7 +349,6 @@ public class LoanServiceImpl {
       calculateRequest.setLoanBizType(LoanBizTypeEnum.PART_REPAYMENT.getValue()); //设置业务类型
     }
 
-
     LoanCalculateVo result = prepayCalculate(calculateRequest); //试算结果
 
     /**
@@ -374,8 +373,8 @@ public class LoanServiceImpl {
      * 修改凭证信息
      */
     repository.prepay(old.getId(), result.getStatus(), loan.getRemark().trim(),
-        systemService.getSysAcctDate(),result.getTotPaidPrin(),result.getTotPaidInterest(),result.getTotPaidPen(),result.getTotPaidServFee(),
-        result.getTotWavAmt(),result.getSchdInterest());
+        systemService.getSysAcctDate(), result.getTotPaidPrin(), result.getTotPaidInterest(), result.getTotPaidPen(), result.getTotPaidServFee(),
+        result.getTotWavAmt(), result.getSchdInterest());
 
     /**
      * 调用账户模块记账
@@ -441,7 +440,27 @@ public class LoanServiceImpl {
    * 还款
    */
   @Transactional
-  public void repay(LoanVo loan, boolean b) {
+  public void repay(LoanRepayPlanVo plan, boolean b) {
+
+    BigDecimal currentPrin = plan.getCurrentPrin();        // 录入本金
+    BigDecimal currentInterest = plan.getCurrentInterest();    // 录入利息
+    BigDecimal currentPen = plan.getCurrentPen();         // 录入罚息
+    BigDecimal currentWav = plan.getCurrentWav();         // 录入减免
+    BigDecimal currentServFee = plan.getCurrentServFee();         // 录入服务费
+
+    BigDecimal ctdPrin = plan.getCtdPrin();                // 本期应还本金
+    BigDecimal ctdInterest = plan.getCtdInterest();        // 本期应还利息
+    BigDecimal ctdServFee = plan.getCtdServFee();          // 本期应收服务费
+    BigDecimal ctdPen = plan.getCtdPen();                  // 本期应收罚息
+    BigDecimal paidPrin = plan.getPaidPrin();              // 本期已还本金
+    BigDecimal paidInterest = plan.getPaidInterest();      // 本期已还利息
+    BigDecimal paidServFee = plan.getPaidServFee();        // 本期已收服务费
+    BigDecimal paidPen = plan.getPaidPen();                // 本期已收罚息
+    BigDecimal wavAmt = plan.getWavAmt();                  // 本期减免
+
+
+
+
   }
 
   public void breach(LoanVo loan, boolean b) {

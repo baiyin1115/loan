@@ -1,0 +1,93 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="repayPlanInfoForm">
+
+            <input type="hidden" id="id" value="${plan.id}">
+            <input type="hidden" id="loanNo" value="${plan.loanNo}">
+            <input type="hidden" id="orgNo" value="${plan.orgNo}">
+            <input type="hidden" id="productNo" value="${plan.productNo}">
+            <input type="hidden" id="custNo" value="${plan.custNo}">
+            <input type="hidden" id="acctDate" value="${plan.acctDate}">
+
+            <div class="row">
+
+                <div class="col-sm-3">
+
+                    <#input id="currentPrin" name="本金" underline="false" value=""  />
+
+                    <#input id="currentInterest" name="利息" underline="false" value="" />
+
+                    <#input id="currentServFee" name="服务费" underline="false" value="" />
+
+                    <#input id="currentPen" name="罚息" underline="false" value="" />
+
+                    <#input id="currentWav" name="减免" underline="false" value="0.00" />
+
+                    <#input id="externalAcct" name="还款账户" underline="false" value="${plan.externalAcct}" />
+
+                    <#TimeInput id="beginDate" name="本期开始日期" isTime="false" pattern="YYYY-MM-DD" value="${plan.beginDate}" readonly="readonly" />
+
+                    <#TimeInput id="endDate" name="本期结束日期" isTime="false" pattern="YYYY-MM-DD" value="${plan.endDate}" readonly="readonly" />
+
+                    <#TimeInput id="ddDate" name="还款日期" isTime="false" pattern="YYYY-MM-DD" value="${plan.ddDate}" readonly="readonly" />
+
+                </div>
+
+                <div class="col-sm-3">
+
+                    <#input id="ctdPrin" name="应还本金" underline="false" value="${plan.ctdPrin}"  readonly="readonly"/>
+
+                    <#input id="ctdInterest" name="应还利息" underline="false" value="${plan.ctdInterest}" readonly="readonly" />
+
+                    <#input id="ctdServFee" name="应收服务费" underline="false" value="${plan.ctdServFee}" readonly="readonly" />
+
+                    <#input id="ctdPen" name="应收罚息累计" underline="false" value="${plan.ctdPen}" readonly="readonly" />
+
+                    <#input id="termNo" name="本期期数" underline="false" value="${plan.termNo}"  readonly="readonly"/>
+
+                    <#input id="rate" name="本期利率" underline="false" value="${plan.rate}" readonly="readonly" />
+
+                    <#input id="inAcctName" name="入账账户" underline="false" value="${plan.inAcctName}" hiddenValue="${plan.inAcctNo}"
+                        hidden="inAcctNo" readonly="readonly" />
+
+                </div>
+
+                <div class="col-sm-3">
+
+                    <#input id="paidPrin" name="本期已还本金" underline="false" value="${plan.paidPrin}" readonly="readonly" />
+
+                    <#input id="paidInterest" name="本期已还利息" underline="false" value="${plan.paidInterest}" readonly="readonly" />
+
+                    <#input id="paidServFee" name="本期已收服务费" underline="false" value="${plan.paidServFee}" readonly="readonly" />
+
+                    <#input id="paidPen" name="本期已收罚息" underline="false" value="${plan.paidPen}" readonly="readonly" />
+
+                    <#input id="wavAmt" name="本期减免" underline="false" value="${plan.wavAmt}" readonly="readonly" />
+
+                    <#input id="ddNum" name="计息天数" underline="false" value="${plan.ddNum}" readonly="readonly" />
+                    
+                    <#input id="statusName" name="状态" underline="false" value="${plan.statusName}" hiddenValue="${plan.status}"
+                        hidden="status" readonly="readonly" />
+                </div>
+
+            </div>
+
+            <div class="row" >
+                <div class="col-sm-9">
+                    <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50" value="${plan.remark}"/>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="LoanDlg.repaySubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="LoanDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/loan/loan_info.js"></script>
+@}
