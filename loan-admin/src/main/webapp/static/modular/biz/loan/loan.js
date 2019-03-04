@@ -397,7 +397,7 @@ LoanPlan.openRepayLoan = function () {
     var index = layer.open({
       type: 2,
       title: '还款',
-      area: ['1280px', '750px'], //宽高
+      area: ['1000px', '750px'], //宽高
       fix: false, //不固定
       maxmin: true,
       content: Feng.ctxPath + '/loan/to_loan_repay/' + LoanPlan.seItem.id

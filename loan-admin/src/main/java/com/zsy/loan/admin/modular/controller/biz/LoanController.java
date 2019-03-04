@@ -27,6 +27,7 @@ import com.zsy.loan.service.factory.LoanStatusFactory;
 import com.zsy.loan.service.factory.RepayPlanStatusFactory;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
+import com.zsy.loan.service.system.impl.SystemServiceImpl;
 import com.zsy.loan.service.warpper.biz.LoanWarpper;
 import com.zsy.loan.service.warpper.biz.RepayPlanWarpper;
 import com.zsy.loan.utils.BeanUtil;
@@ -771,8 +772,8 @@ public class LoanController extends BaseController {
    */
   @Permission
   @RequestMapping("/to_loan_repay/{loanId}")
-  public String toLoanRepay(@PathVariable Long id, Model model) {
-    TBizRepayPlan plan = repayPlanRepo.findById(id).get();
+  public String toLoanRepay(@PathVariable Long loanId, Model model) {
+    TBizRepayPlan plan = repayPlanRepo.findById(loanId).get();
 
     RepayPlanStatusFactory.checkCurrentStatus(plan.getStatus() + "_" + LoanBizTypeEnum.REPAY.getValue());
 
@@ -806,7 +807,16 @@ public class LoanController extends BaseController {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
+    //还款日期必须在当前账务日期之前
+    if (!DateUtil.compareDate(plan.getDdDate(), SystemServiceImpl.me().getSysAcctDate())) {
+      throw new LoanException(BizExceptionEnum.LOAN_DD_DATE, "");
+    }
+
     RepayPlanStatusFactory.checkCurrentStatus(plan.getStatus() + "_" + LoanBizTypeEnum.REPAY.getValue());
+
+//    if(1==1) {
+//      return SUCCESS_TIP;
+//    }
 
     /**
      * 修改校验

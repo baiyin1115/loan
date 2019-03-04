@@ -50,7 +50,7 @@ var LoanDlg = {
     currentRepayFee: {validators: {notEmpty: {message: '费用'}}},
     currentRepayWav: {validators: {notEmpty: {message: '减免'}}}
   },
-  validatePrepayFields: {
+  validateRepayFields: {
     currentPrin: {validators: {notEmpty: {message: '本金'}}},
     currentInterest: {validators: {notEmpty: {message: '利息'}}},
     currentPen: {validators: {notEmpty: {message: '罚息'}}},
@@ -505,7 +505,7 @@ LoanDlg.repaySubmit = function () {
       Feng.success("还款成功!");
       window.parent.Loan.refreshLoanPlan();
       window.parent.Loan.table.refresh();
-      LoanDlg.close();
+      parent.layer.close(window.parent.LoanPlan.layerIndex);
     }, function (data) {
       Feng.error("还款失败!" + data.responseJSON.message + "!");
     });

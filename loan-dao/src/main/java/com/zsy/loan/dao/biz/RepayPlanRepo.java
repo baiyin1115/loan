@@ -1,6 +1,7 @@
 
 package com.zsy.loan.dao.biz;
 
+import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import java.util.Date;
 import java.util.List;
@@ -42,5 +43,8 @@ public interface RepayPlanRepo extends PagingAndSortingRepository<TBizRepayPlan,
 
   @Query(nativeQuery = true, value = "select * from t_biz_repay_plan where loan_no=:loanNo and term_no > :currentTermNo order by id asc ")
   List<TBizRepayPlan> findAfterPayRecord(@Param("loanNo") Long loanNo,@Param("currentTermNo") Long currentTermNo);
+
+  @Query(nativeQuery = true, value = "SELECT * FROM t_biz_repay_plan WHERE id=?1 AND status=?2 FOR UPDATE ")
+  TBizRepayPlan lockRecordByIdStatus(Long id, Long status);
 
 }

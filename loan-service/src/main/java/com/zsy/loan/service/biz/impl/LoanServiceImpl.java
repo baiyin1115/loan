@@ -442,24 +442,80 @@ public class LoanServiceImpl {
   @Transactional
   public void repay(LoanRepayPlanVo plan, boolean b) {
 
+    /**
+     * 锁记录
+     */
+    TBizRepayPlan old = repayPlanRepo.lockRecordByIdStatus(plan.getId(), plan.getStatus());
+    if (old == null) {
+      throw new LoanException(BizExceptionEnum.NOT_EXISTED_ING,
+          plan.getId() + "_" + plan.getStatus());
+    }
+
     BigDecimal currentPrin = plan.getCurrentPrin();        // 录入本金
     BigDecimal currentInterest = plan.getCurrentInterest();    // 录入利息
     BigDecimal currentPen = plan.getCurrentPen();         // 录入罚息
     BigDecimal currentWav = plan.getCurrentWav();         // 录入减免
     BigDecimal currentServFee = plan.getCurrentServFee();         // 录入服务费
 
-    BigDecimal ctdPrin = plan.getCtdPrin();                // 本期应还本金
-    BigDecimal ctdInterest = plan.getCtdInterest();        // 本期应还利息
-    BigDecimal ctdServFee = plan.getCtdServFee();          // 本期应收服务费
-    BigDecimal ctdPen = plan.getCtdPen();                  // 本期应收罚息
-    BigDecimal paidPrin = plan.getPaidPrin();              // 本期已还本金
-    BigDecimal paidInterest = plan.getPaidInterest();      // 本期已还利息
-    BigDecimal paidServFee = plan.getPaidServFee();        // 本期已收服务费
-    BigDecimal paidPen = plan.getPaidPen();                // 本期已收罚息
-    BigDecimal wavAmt = plan.getWavAmt();                  // 本期减免
+    BigDecimal ctdPrin = old.getCtdPrin();                // 本期应还本金
+    BigDecimal ctdInterest = old.getCtdInterest();        // 本期应还利息
+    BigDecimal ctdServFee = old.getCtdServFee();          // 本期应收服务费
+    BigDecimal ctdPen = old.getCtdPen();                  // 本期应收罚息
+    BigDecimal paidPrin = old.getPaidPrin();              // 本期已还本金
+    BigDecimal paidInterest = old.getPaidInterest();      // 本期已还利息
+    BigDecimal paidServFee = old.getPaidServFee();        // 本期已收服务费
+    BigDecimal paidPen = old.getPaidPen();                // 本期已收罚息
+    BigDecimal wavAmt = old.getWavAmt();                  // 本期减免
 
+    BigDecimal current = BigDecimalUtil.add(currentInterest, currentServFee, currentPen); //费用
+    BigDecimal schdPrin = BigDecimalUtil.sub(ctdPrin, paidPrin); //应还本金=本期应还本金-本期已还本金
+    BigDecimal sctdInterest = BigDecimalUtil.sub(ctdInterest, paidInterest); //应还利息=本期应还利息-本期已还利息
+    BigDecimal sctdServFee = BigDecimalUtil.sub(ctdServFee, paidServFee); //应收服务费=本期应收服务费-本期已收服务费
+    BigDecimal sctdPen = BigDecimalUtil.sub(ctdPen, paidPen); //应收罚息=本期应收罚息-本期已收罚息
 
+    if (currentPrin.compareTo(schdPrin) != 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "当前用户录入本金需要等于待还的本金");
+    }
 
+    if (current.compareTo(BigDecimalUtil.add(sctdInterest, sctdServFee, sctdPen)) < 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "费用>=应还相关项的和");
+    }
+    if (currentWav.compareTo(BigDecimalUtil.add(sctdInterest, sctdServFee, sctdPen)) > 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "减免<=应还相关项的和");
+    }
+
+    /**
+     * 调用记账接口记账
+     */
+    // todo 注意减免
+
+    /**
+     * 更新还款计划
+     */
+    TBizRepayPlan upInfo = TBizRepayPlan.builder().build();
+    BeanKit.copyProperties(old, upInfo);
+
+    upInfo.setPaidPrin(BigDecimalUtil.add(paidPrin, currentPrin));
+    upInfo.setPaidInterest(BigDecimalUtil.add(paidInterest, currentInterest));
+    upInfo.setPaidServFee(BigDecimalUtil.add(paidServFee, currentServFee));
+    upInfo.setPaidPen(BigDecimalUtil.add(paidPen, currentPen));
+    upInfo.setWavAmt(BigDecimalUtil.add(wavAmt, currentWav));
+    upInfo.setAcctDate(systemService.getSysAcctDate());
+    upInfo.setStatus(RepayStatusEnum.REPAID.getValue());
+
+    repayPlanRepo.save(upInfo);
+
+    /**
+     * 更新凭证信息
+     */
+    TBizLoanInfo loan = repository.getOne(old.getLoanNo());
+    Long status;
+    if (loan.getExtensionNo() + loan.getTermNo() == old.getTermNo()) { //最后一期
+      status = LoanStatusEnum.SETTLE.getValue();
+    } else {
+      status = LoanStatusEnum.REPAY_IND.getValue();
+    }
+    repository.repay(plan.getLoanNo(), systemService.getSysAcctDate(), status, currentPrin, currentInterest, currentPen, currentServFee, currentWav);
 
   }
 
