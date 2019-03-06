@@ -4,6 +4,7 @@ import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
+import com.zsy.loan.bean.convey.LoanBreachVo;
 import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.convey.LoanDelayVo;
 import com.zsy.loan.bean.convey.LoanPrepayVo;
@@ -650,7 +651,7 @@ public class LoanController extends BaseController {
       tmp.append(",本期已还本金：" + BigDecimalUtil.formatAmt(plan.getPaidPrin()));
       tmp.append(",本期已还利息：" + BigDecimalUtil.formatAmt(plan.getPaidInterest()));
       tmp.append(",本期已收服务费：" + BigDecimalUtil.formatAmt(plan.getPaidServFee()));
-      tmp.append(",本期已收罚息：" + BigDecimalUtil.formatAmt(plan.getCtdPen()));
+      tmp.append(",本期已收罚息：" + BigDecimalUtil.formatAmt(plan.getPaidPen()));
       tmp.append(",本期减免：" + BigDecimalUtil.formatAmt(plan.getWavAmt()));
       tmp.append(",计息天数：" + plan.getDdNum());
       tmp.append(",状态：" + ConstantFactory.me().getRepayStatusName(plan.getStatus()));
@@ -667,7 +668,7 @@ public class LoanController extends BaseController {
       tmp.append(",本期已还本金：" + BigDecimalUtil.formatAmt(plan.getPaidPrin()));
       tmp.append(",本期已还利息：" + BigDecimalUtil.formatAmt(plan.getPaidInterest()));
       tmp.append(",本期已收服务费：" + BigDecimalUtil.formatAmt(plan.getPaidServFee()));
-      tmp.append(",本期已收罚息：" + BigDecimalUtil.formatAmt(plan.getCtdPen()));
+      tmp.append(",本期已收罚息：" + BigDecimalUtil.formatAmt(plan.getPaidPen()));
       tmp.append(",本期减免：" + BigDecimalUtil.formatAmt(plan.getWavAmt()));
       tmp.append(",计息天数：" + plan.getDdNum());
       tmp.append(",状态：" + ConstantFactory.me().getRepayStatusName(plan.getStatus()));
@@ -684,14 +685,16 @@ public class LoanController extends BaseController {
   @Permission
   @RequestMapping("/to_loan_breach/{loanId}")
   public String loanBreach(@PathVariable Long loanId, Model model) {
+
     TBizLoanInfo loan = loanInfoRepo.findById(loanId).get();
 
-//    loan.setRemark(loan.getRemark().trim());
-//    loan.setAcctTypeName(ConstantFactory.me().getAcctTypeName(loan.getAcctType()));
-//    loan.setStatusName(ConstantFactory.me().getAcctStatusName(loan.getStatus()));
+//    LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.COMPENSATION.getValue());
+
+    //设置中文信息
+    setLoanNameMsg(loan);
 
     model.addAttribute("loan", loan);
-    LogObjectHolder.me().set(loan);
+
     return PREFIX + "loan_breach.html";
 
   }
@@ -705,7 +708,7 @@ public class LoanController extends BaseController {
   @ResponseBody
   @OpLog
   @ApiOperation(value = "违约还款", notes = "违约还款")
-  public Object breach(@Valid @RequestBody LoanVo loan, BindingResult error) {
+  public Object breach(@Valid @RequestBody LoanBreachVo loan, BindingResult error) {
     /**
      * 处理error
      */
@@ -718,6 +721,7 @@ public class LoanController extends BaseController {
     /**
      * 修改校验
      */
+    //LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.COMPENSATION.getValue());
 
     loanService.breach(loan, true);
     return SUCCESS_TIP;
@@ -871,13 +875,12 @@ public class LoanController extends BaseController {
   }
 
   /**
-   * 跳转到客户管理首页
+   * 跳转到客户选择页面
    */
   @RequestMapping("/loan_cust_list")
   public String loanCustList() {
     return PREFIX + "loan_customer.html";
   }
-
 
   private void setLoanNameMsg(TBizLoanInfo loan) {
 

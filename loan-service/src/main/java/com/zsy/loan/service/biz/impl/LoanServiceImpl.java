@@ -1,5 +1,6 @@
 package com.zsy.loan.service.biz.impl;
 
+import com.zsy.loan.bean.convey.LoanBreachVo;
 import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.convey.LoanDelayVo;
 import com.zsy.loan.bean.convey.LoanPrepayVo;
@@ -515,11 +516,73 @@ public class LoanServiceImpl {
     } else {
       status = LoanStatusEnum.REPAY_IND.getValue();
     }
-    repository.repay(plan.getLoanNo(), systemService.getSysAcctDate(), status, currentPrin, currentInterest, currentPen, currentServFee, currentWav);
+    repository.repay(plan.getLoanNo(), systemService.getSysAcctDate(), status, currentPrin, currentInterest, currentPen, currentServFee,
+        currentWav,plan.getRemark());
 
   }
 
-  public void breach(LoanVo loan, boolean b) {
+  /**
+   * 违约还款
+   */
+  @Transactional
+  public void breach(LoanBreachVo loan, boolean b) {
+
+    /**
+     * 锁记录
+     */
+    TBizLoanInfo old = repository.lockRecordByIdStatus(loan.getId(), loan.getStatus());
+    if (old == null) {
+      throw new LoanException(BizExceptionEnum.NOT_EXISTED_ING,
+          loan.getId() + "_" + loan.getStatus());
+    }
+
+    BigDecimal currentBreachPrin = loan.getCurrentBreachPrin();        // 录入本金
+    BigDecimal currentBreachFee = loan.getCurrentBreachFee();    // 录入费用
+    String compensationAcct = loan.getCompensationAcct();         // 代偿账户
+
+    BigDecimal schdPrin = BigDecimalUtil.sub(old.getSchdPrin(),old.getTotPaidPrin());
+
+    if (currentBreachPrin.compareTo(schdPrin) > 0) {
+      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "当前用户录入本金不能大于待还的本金");
+    }
+
+    /**
+     * 调用记账接口记账
+     */
+    // todo
+
+    /**
+     * 更新还款计划
+     */
+    //当前期以前未还的还款计划 5:待还，4:已逾期
+    List<Long> status = new ArrayList<>(2);
+    status.add(RepayStatusEnum.NOT_REPAY.getValue());
+    status.add(RepayStatusEnum.OVERDUE.getValue());
+    List<TBizRepayPlan> notPayRecords = repayPlanRepo.findNotPayRecord(loan.getId(), status);
+    if (notPayRecords == null || notPayRecords.size()== 0) {
+      throw new LoanException(BizExceptionEnum.NOT_FOUND, "未查询到还款计划");
+    }
+
+    for (int i = 0; i < notPayRecords.size(); i++) {
+      TBizRepayPlan upInfo = notPayRecords.get(i);
+      if (i == 0) {
+        upInfo.setPaidPrin(BigDecimalUtil.add(upInfo.getPaidPrin(), currentBreachPrin));
+        upInfo.setPaidPen(BigDecimalUtil.add(upInfo.getPaidPen(), currentBreachFee));
+        upInfo.setExternalAcct(compensationAcct); //设置为代偿账户
+      }
+      upInfo.setAcctDate(systemService.getSysAcctDate());
+      upInfo.setStatus(RepayStatusEnum.COMPENSATION.getValue());
+    }
+
+    repayPlanRepo.saveAll(notPayRecords);
+
+    /**
+     * 更新凭证信息
+     */
+    repository.repay(old.getId(), systemService.getSysAcctDate(), LoanStatusEnum.COMPENSATION.getValue(), currentBreachPrin, BigDecimal.valueOf(0.00),
+        currentBreachFee,
+        BigDecimal.valueOf(0.00),
+        BigDecimal.valueOf(0.00),loan.getRemark());
   }
 
   public void updateVoucher(LoanVo loan, boolean b) {

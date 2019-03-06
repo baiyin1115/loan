@@ -21,6 +21,7 @@ import com.zsy.loan.service.warpper.biz.AcctWarpper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.factory.Page;
 import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -246,15 +247,37 @@ public class AccountController extends BaseController {
   }
 
   /**
-   * 获取产品列表
+   * 获取放款账户列表
    */
   @RequestMapping(value = "/selectLendingAcctTreeList")
   @ResponseBody
   public List<ZTreeNode> selectLendingAcctTreeList() {
-    List<ZTreeNode> treeList = acctService.getLendingAcctTreeList();
+
+    List para  =  new ArrayList(1);
+    para.add(AcctTypeEnum.COMPANY.getValue());
+
+    List<ZTreeNode> treeList = acctService.getAcctTreeList(para);
 //    roleTreeList.add(ZTreeNode.createParent());
     return treeList;
 
   }
+
+  /**
+   * 获取违约账户列表
+   */
+  @RequestMapping(value = "/selectCompensationAcctTreeList")
+  @ResponseBody
+  public List<ZTreeNode> selectCompensationAcctTreeList() {
+
+    List para  =  new ArrayList(1);
+    para.add(AcctTypeEnum.REPLACE.getValue());
+
+    List<ZTreeNode> treeList = acctService.getAcctTreeList(para);
+//    roleTreeList.add(ZTreeNode.createParent());
+    return treeList;
+
+  }
+
+
 
 }

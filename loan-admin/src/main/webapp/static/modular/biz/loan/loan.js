@@ -180,6 +180,23 @@ Loan.openPrepayLoan = function () {
 };
 
 /**
+ * 打开违约还款界面
+ */
+Loan.openBreachLoan = function () {
+  if (this.check()) {
+    var index = layer.open({
+      type: 2,
+      title: '违约还款',
+      area: ['1280px', '750px'], //宽高
+      fix: false, //不固定
+      maxmin: true,
+      content: Feng.ctxPath + '/loan/to_loan_breach/' + Loan.seItem.id
+    });
+    this.layerIndex = index;
+  }
+};
+
+/**
  * 删除借据
  */
 Loan.delete = function () {
@@ -275,7 +292,6 @@ Loan.openCustList = function () {
   });
   this.custLayerIndex = index;
 };
-
 
 //还款计划部分-------------------------------------------------------------------------------------
 /**

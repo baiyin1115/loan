@@ -1,0 +1,118 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="loanBreachInfoForm">
+
+            <input type="hidden" id="id" value="${loan.id}">
+
+
+            <input type="hidden" id="orgNoValue" value="${loan.orgNo}">
+            <input type="hidden" id="serviceFeeTypeValue" value="${loan.serviceFeeType}">
+            <input type="hidden" id="isPenValue" value="${loan.isPen}">
+            <input type="hidden" id="penNumberValue" value="${loan.penNumber}">
+            <input type="hidden" id="repayTypeValue" value="${loan.repayType}">
+            <input type="hidden" id="loanTypeValue" value="${loan.loanType}">
+            <input type="hidden" id="status" value="${loan.status}">
+            <input type="hidden" id="productNo" value="${loan.productNo}">
+
+            <div class="row">
+
+                <div class="col-sm-3">
+
+                    <#input id="currentBreachPrin" name="本金" underline="false" value=""  />
+
+                    <#input id="currentBreachFee" name="费用" underline="false" value="" />
+
+                    <#input id="compensationAcctName" name="代偿账户" underline="false"
+                        hidden="compensationAcct" readonly="readonly"
+                        clickFun="LoanDlg.showCompensationAcctSelectTree(); return false;"
+                        style="background-color: #ffffff !important;"
+                        selectFlag="true" selectId="compensationAcctDiv" selectTreeId="compensationAcctTree" selectStyle="width:244px !important;"/>
+
+                    <#input id="schdPrin" name="应还本金" underline="false" value="${loan.schdPrin}"  readonly="readonly"/>
+
+                    <#input id="schdInterest" name="应还利息" underline="false" value="${loan.schdInterest}" readonly="readonly" />
+
+                    <#input id="schdServFee" name="应收服务费" underline="false" value="${loan.schdServFee}" readonly="readonly" />
+
+                    <#input id="schdPen" name="应收罚息累计" underline="false" value="${loan.schdPen}" readonly="readonly" />
+
+                </div>
+
+                <div class="col-sm-3">
+
+                    <#input id="totPaidPrin" name="已还本金" underline="false" value="${loan.totPaidPrin}" readonly="readonly" />
+
+                    <#input id="totPaidInterest" name="已还利息" underline="false" value="${loan.totPaidInterest}" readonly="readonly" />
+
+                    <#input id="totPaidServFee" name="已收服务费" underline="false" value="${loan.totPaidServFee}" readonly="readonly" />
+
+                    <#input id="totPaidPen" name="已还罚息" underline="false" value="${loan.totPaidPen}" readonly="readonly" />
+
+                    <#input id="totWavAmt" name="减免金额" underline="false" value="${loan.totWavAmt}" readonly="readonly" />
+
+                    <#input id="lendingAmt" name="放款金额" underline="false" value="${loan.lendingAmt}" readonly="readonly"/>
+
+                    <#input id="prin" name="本金" underline="false" value="${loan.prin}" readonly="readonly"/>
+                </div>
+
+                <div class="col-sm-3">
+
+                    <#input id="statusName" name="借据状态" underline="false" value="${loan.statusName}" hiddenValue="${loan.status}"
+                        hidden="status" readonly="readonly" />
+
+                    <#input id="lendingAcctName" name="放款账户" underline="false" value="${loan.lendingAcctName}" hiddenValue="${loan.lendingAcct}"
+                        hidden="lendingAcct" readonly="readonly" />
+
+                    <#input id="termNo" name="期数" underline="false" value="${loan.termNo}" readonly="readonly" />
+
+                    <#input id="extensionNo" name="已展期数" underline="false" value="${loan.extensionNo}" readonly="readonly" />
+
+                    <#input id="lastExtensionRate" name="上次展期利率" underline="false" value="${loan.extensionRate}" readonly="readonly" />
+
+                    <#TimeInput id="beginDate" name="开始日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.beginDate}" readonly="readonly" />
+
+                    <#TimeInput id="endDate" name="结束日期" isTime="false" pattern="YYYY-MM-DD" value="${loan.endDate}" readonly="readonly" />
+
+                </div>
+
+                <div class="col-sm-3">
+
+                    <#input id="rate" name="利率" underline="false" value="${loan.rate}" readonly="readonly" />
+
+                    <#input id="serviceFeeScale" name="服务费比例" underline="false" value="${loan.serviceFeeScale}" readonly="readonly" />
+
+                    <#input id="serviceFeeTypeName" name="服务费收取方式" underline="false" value="${loan.serviceFeeTypeName}" hiddenValue="${loan.serviceFeeType}"
+                        hidden="serviceFeeType" readonly="readonly" />
+
+                    <#input id="repayTypeName" name="还款方式" underline="false" value="${loan.repayTypeName}" hiddenValue="${loan.repayType}"
+                        hidden="repayType" readonly="readonly" />
+
+                    <#input id="isPenName" name="是否罚息" underline="false" value="${loan.isPenName}" hiddenValue="${loan.isPen}"
+                        hidden="isPen" readonly="readonly" />
+
+                    <#input id="penRate" name="罚息利率" underline="false" value="${loan.penRate}" readonly="readonly" />
+
+                    <#input id="penNumberName" name="罚息基数" underline="false" value="${loan.penNumberName}" hiddenValue="${loan.penNumber}"
+                        hidden="penNumber" readonly="readonly" />
+                </div>
+            </div>
+
+            <div class="row" >
+                <div class="col-sm-9">
+                    <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50" value="${loan.remark}"/>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="LoanDlg.breachSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="LoanDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/loan/loan_info.js"></script>
+@}

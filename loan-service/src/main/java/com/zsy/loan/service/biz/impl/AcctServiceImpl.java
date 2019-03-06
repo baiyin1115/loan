@@ -193,10 +193,7 @@ public class AcctServiceImpl {
     return true;
   }
 
-  public List<ZTreeNode> getLendingAcctTreeList() {
-
-    List para  =  new ArrayList(1);
-    para.add(AcctTypeEnum.COMPANY.getValue());
+  public List<ZTreeNode> getAcctTreeList(List para) {
 
     List list = repository.getTreeList(para);
 

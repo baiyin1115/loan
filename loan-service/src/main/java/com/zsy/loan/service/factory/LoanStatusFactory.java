@@ -104,6 +104,15 @@ public class LoanStatusFactory {
             .nextStatus(LoanStatusEnum.DELAY)
             .bizType(LoanBizTypeEnum.PART_REPAYMENT).build());
 
+    /**
+     * 违约还款
+     */
+    maps.put(LoanStatusEnum.OVERDUE.getValue() + "_" + LoanBizTypeEnum.COMPENSATION.getValue(),//已逾期-代偿
+        LoanStatusVo.builder()
+            .currentStatus(LoanStatusEnum.OVERDUE)
+            .nextStatus(LoanStatusEnum.COMPENSATION)
+            .bizType(LoanBizTypeEnum.COMPENSATION).build());
+
   }
 
   /**

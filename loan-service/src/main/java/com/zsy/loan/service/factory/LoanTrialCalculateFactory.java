@@ -1129,6 +1129,10 @@ public class LoanTrialCalculateFactory {
             backAmt = BigDecimalUtil.add(lowerInterest.negate());
           }
         }
+
+        if (plan.getId().equals(currentRepayPlan.getId())) { //当前期
+          plan.setPaidPrin(BigDecimalUtil.add(plan.getPaidPrin(), currentRepayPrin)); //已还本金
+        }
       }
 
       if (afterPayRecords != null) {

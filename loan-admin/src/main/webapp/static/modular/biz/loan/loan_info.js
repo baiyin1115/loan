@@ -6,6 +6,7 @@ var LoanDlg = {
   repayPlanData: {},
   productTreeInstance: null,
   lendingAcctTreeInstance: null,
+  compensationAcctTreeInstance: null,
   custLayerIndex: null,
   validateFields: {
     orgNo: {validators: {notEmpty: {message: '公司编号'}}},
@@ -57,6 +58,12 @@ var LoanDlg = {
     currentWav: {validators: {notEmpty: {message: '减免'}}},
     currentServFee: {validators: {notEmpty: {message: '服务费'}}}
 
+  },
+  validateBreachFields: {
+    currentBreachPrin: {validators: {notEmpty: {message: '本金'}}},
+    currentBreachFee: {validators: {notEmpty: {message: '费用'}}},
+    compensationAcct: {validators: {notEmpty: {message: '代偿账户'}}},
+
   }
 };
 
@@ -89,7 +96,9 @@ LoanDlg.set = function (key, val) {
       $("#" + key).attr("id") == "repayInterest" ||
       $("#" + key).attr("id") == "repayPen" ||
       $("#" + key).attr("id") == "repayServFee" ||
-      $("#" + key).attr("id") == "backAmt"
+      $("#" + key).attr("id") == "backAmt" ||
+      $("#" + key).attr("id") == "currentBreachPrin" ||
+      $("#" + key).attr("id") == "currentBreachFee"
 
   ) {
     this.loanInfoData[key] = (typeof value == "undefined") ? Feng.parseMoney(
@@ -118,6 +127,7 @@ LoanDlg.get = function (key) {
  */
 LoanDlg.close = function () {
   parent.layer.close(window.parent.Loan.layerIndex);
+  parent.layer.close(window.parent.LoanPlan.layerIndex);
 };
 
 /**
@@ -140,7 +150,10 @@ LoanDlg.collectData = function () {
 
   .set("currentRepayPrin").set("currentRepayFee").set("currentRepayWav")
   .set("repayAmt").set("repayInterest").set("repayPen").set("repayServFee")
-  .set("backAmt");
+  .set("backAmt")
+
+  .set("currentBreachPrin").set("currentBreachFee").set("compensationAcct")
+  ;
 
 };
 
@@ -406,6 +419,38 @@ LoanDlg.prepayCalculate = function () {
   ajax.start();
 };
 
+/**
+ * 违约还款
+ */
+LoanDlg.breachSubmit = function () {
+
+  if (!this.validate($('#loanBreachInfoForm'))) {
+    return;
+  }
+
+  var operation = function () {
+
+    LoanDlg.clearData();
+    LoanDlg.collectData();
+
+    //提交信息
+    var ajax = new $ax(Feng.ctxPath + "/loan/breach", function (data) {
+      Feng.success("违约还款成功!");
+      window.parent.Loan.refreshLoanPlan();
+      window.parent.Loan.table.refresh();
+      LoanDlg.close();
+    }, function (data) {
+      Feng.error("违约还款失败!" + data.responseJSON.message + "!");
+    });
+    ajax.set(LoanDlg.loanInfoData);
+    ajax.setContentType("application/json")
+    ajax.start();
+  };
+
+  Feng.confirm("是否违约还款?", operation);
+
+};
+
 //--------------------还款计划
 /**
  * 清除数据
@@ -527,6 +572,7 @@ $(function () {
   Feng.initValidator("loanDelayInfoForm", LoanDlg.validateDelayFields);
   Feng.initValidator("loanPrepayInfoForm", LoanDlg.validatePrepayFields);
   Feng.initValidator("repayPlanInfoForm", LoanDlg.validateRepayFields);
+  Feng.initValidator("loanBreachInfoForm", LoanDlg.validateBreachFields);
 
   //初始化
   $("#orgNo").val($("#orgNoValue").val());
@@ -543,15 +589,16 @@ $(function () {
   $("#schdPrin").val(Feng.formatMoney($("#schdPrin").val(), 2));
   $("#schdInterest").val(Feng.formatMoney($("#schdInterest").val(), 2));
   $("#schdServFee").val(Feng.formatMoney($("#schdServFee").val(), 2));
-  $("#currentRepayPrin").val(Feng.formatMoney($("#currentRepayPrin").val(), 2));
-  $("#currentRepayFee").val(Feng.formatMoney($("#currentRepayFee").val(), 2));
-  $("#currentRepayWav").val(Feng.formatMoney($("#currentRepayWav").val(), 2));
 
+  //提前还款
+  // $("#currentRepayPrin").val(Feng.formatMoney($("#currentRepayPrin").val(), 2));
+  // $("#currentRepayFee").val(Feng.formatMoney($("#currentRepayFee").val(), 2));
+  // $("#currentRepayWav").val(Feng.formatMoney($("#currentRepayWav").val(), 2));
   $("#repayAmt").val(Feng.formatMoney($("#repayAmt").val(), 2));
   $("#repayInterest").val(Feng.formatMoney($("#repayInterest").val(), 2));
   $("#repayPen").val(Feng.formatMoney($("#repayPen").val(), 2));
   $("#repayServFee").val(Feng.formatMoney($("#repayServFee").val(), 2));
-  $("#backAmt").val(Feng.formatMoney($("#backAmt").val(), 2));
+  // $("#backAmt").val(Feng.formatMoney($("#backAmt").val(), 2));
 
   //产品树
   var tree = new $ZTree("productTree", "/product/selectProductTreeList");
@@ -565,6 +612,13 @@ $(function () {
   tree.bindOnClick(LoanDlg.onClickLendingAcct);
   tree.init();
   LoanDlg.lendingAcctTreeInstance = tree;
+
+  //违约账户树
+  var tree = new $ZTree("compensationAcctTree",
+      "/account/selectCompensationAcctTreeList");
+  tree.bindOnClick(LoanDlg.onClickCompensationAcct);
+  tree.init();
+  LoanDlg.compensationAcctTreeInstance = tree;
 
   //绑定格式化事件
   $('#prin').bind('blur', function () {
@@ -613,6 +667,14 @@ $(function () {
     Feng.formatAmt($('#backAmt'));
   });
 
+  //违约还款
+  $('#currentBreachPrin').bind('blur', function () {
+    Feng.formatAmt($('#currentBreachPrin'));
+  });
+  $('#currentBreachFee').bind('blur', function () {
+    Feng.formatAmt($('#currentBreachFee'));
+  });
+
   //---还款计划部分
   $('#currentPrin').bind('blur', function () {
     Feng.formatAmt($('#currentPrin'));
@@ -636,10 +698,17 @@ $(function () {
 
 //账户部分---------------------------------------------------------------------------------
 /**
- * 显示父级菜单选择的树
+ * 显示父级菜单选择的树--放款账户
  */
 LoanDlg.showLendingAcctSelectTree = function () {
   Feng.showInputTree("lendingAcctName", "lendingAcctTreeDiv", 15, 34);
+};
+
+/**
+ * 显示父级菜单选择的树--代偿账户
+ */
+LoanDlg.showCompensationAcctSelectTree = function () {
+  Feng.showInputTree("compensationAcctName", "compensationAcctDiv", 15, 34);
 };
 
 /**
@@ -650,6 +719,16 @@ LoanDlg.onClickLendingAcct = function (e, treeId, treeNode) {
       LoanDlg.lendingAcctTreeInstance.getSelectedVal());
   $("#lendingAcct").attr("value", treeNode.id);
 };
+
+/**
+ * 点击父级编号input框时
+ */
+LoanDlg.onClickCompensationAcct = function (e, treeId, treeNode) {
+  $("#compensationAcctName").attr("value",
+      LoanDlg.compensationAcctTreeInstance.getSelectedVal());
+  $("#compensationAcct").attr("value", treeNode.id);
+};
+
 
 //产品部分---------------------------------------------------------------------------------
 /**

@@ -47,7 +47,7 @@
                                 <#button name="展期" icon="fa-expand" clickFun="Loan.openDelayLoan()" space="true"/>
                             @}
                             @if(shiro.hasPermission("/loan/prepay")){
-                            <#button name="提前还款" icon="fa-recycle" clickFun="Loan.openPrepayLoan()" space="true"/>
+                                <#button name="提前还款" icon="fa-recycle" clickFun="Loan.openPrepayLoan()" space="true"/>
                             @}
                             @if(shiro.hasPermission("/loan/breach")){
                                 <#button name="违约还款" icon="fa-recycle" clickFun="Loan.openBreachLoan()" space="true"/>
@@ -59,7 +59,7 @@
                                 <#button name="打印" icon="fa-print" clickFun="Loan.openPrintLoan()" space="true"/>
                             @}
                             @if(shiro.hasPermission("/loan/repay")){
-                            <#button name="刷新还款计划" icon="fa-refresh" clickFun="Loan.refreshLoanPlan()" space="true"/>
+                                <#button name="刷新还款计划" icon="fa-refresh" clickFun="Loan.refreshLoanPlan()" space="true"/>
                             @}
                         </div>
                         <#table id="LoanTable"/>
