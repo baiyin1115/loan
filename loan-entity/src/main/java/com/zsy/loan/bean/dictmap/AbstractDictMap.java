@@ -11,7 +11,7 @@ import java.util.HashMap;
 public abstract class AbstractDictMap {
 
   protected HashMap<String, String> dictory = new HashMap<>();
-  protected HashMap<String, String> fieldWarpperDictory = new HashMap<>();
+  protected HashMap<String, String> fieldWrapperDictory = new HashMap<>();
 
   public AbstractDictMap() {
     put("id", "主键id");
@@ -43,11 +43,11 @@ public abstract class AbstractDictMap {
     this.dictory.put(key, value);
   }
 
-  public String getFieldWarpperMethodName(String key) {
-    return this.fieldWarpperDictory.get(key);
+  public String getFieldWrapperMethodName(String key) {
+    return this.fieldWrapperDictory.get(key);
   }
 
   public void putFieldWrapperMethodName(String key, String methodName) {
-    this.fieldWarpperDictory.put(key, methodName);
+    this.fieldWrapperDictory.put(key, methodName);
   }
 }

@@ -13,7 +13,7 @@ import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.RoleService;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.system.RoleWarpper;
+import com.zsy.loan.service.wrapper.system.RoleWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.bean.entity.system.Role;
@@ -117,7 +117,7 @@ public class RoleController extends BaseController {
     } else {
       roles = roleRepository.findByName(roleName);
     }
-    return super.warpObject(new RoleWarpper(BeanUtil.objectsToMaps(roles)));
+    return super.wrapObject(new RoleWrapper(BeanUtil.objectsToMaps(roles)));
   }
 
   /**

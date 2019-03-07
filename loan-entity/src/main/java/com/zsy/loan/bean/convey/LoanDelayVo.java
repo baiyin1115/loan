@@ -28,7 +28,7 @@ public class LoanDelayVo {
 
   @NotNull(message = "[公司编号]不能为空！")
   @ApiModelProperty(value = "公司编号 ")
-  private Long orgNo;
+  private Integer orgNo;
 
   @NotNull(message = "[产品编号]不能为空！")
   @ApiModelProperty(value = "产品编号")

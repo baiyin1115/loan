@@ -1,7 +1,7 @@
 package com.zsy.loan.bean.entity.biz;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Timestamp;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -39,19 +39,19 @@ public class TBizInvestInfo {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
 
   @Column(name = "org_no")
-  private long orgNo;
+  private Integer orgNo;
 
 
   @Column(name = "user_no")
-  private long userNo;
+  private Long userNo;
 
 
   @Column(name = "in_acct_no")
-  private long inAcctNo;
+  private Long inAcctNo;
 
 
   @Column(name = "external_acct")
@@ -83,11 +83,11 @@ public class TBizInvestInfo {
 
 
   @Column(name = "cycle_interval")
-  private long cycleInterval;
+  private Long cycleInterval;
 
 
   @Column(name = "status")
-  private long status;
+  private Long status;
 
 
   @Column(name = "dd_date")
@@ -102,16 +102,16 @@ public class TBizInvestInfo {
   private BigDecimal extensionRate;
 
 
-  @Column(name = "tot_schd_bigint")
-  private BigDecimal totSchdBigint;
+  @Column(name = "tot_schd_interest")
+  private BigDecimal totSchdInterest;
 
 
   @Column(name = "tot_paid_prin")
   private BigDecimal totPaidPrin;
 
 
-  @Column(name = "tot_paid_bigint")
-  private BigDecimal totPaidBigint;
+  @Column(name = "tot_paid_interest")
+  private BigDecimal totPaidInterest;
 
 
   @Column(name = "tot_wav_amt")
@@ -210,15 +210,15 @@ public class TBizInvestInfo {
         : that.extensionRate != null) {
       return false;
     }
-    if (totSchdBigint != null ? !totSchdBigint.equals(that.totSchdBigint)
-        : that.totSchdBigint != null) {
+    if (totSchdInterest != null ? !totSchdInterest.equals(that.totSchdInterest)
+        : that.totSchdInterest != null) {
       return false;
     }
     if (totPaidPrin != null ? !totPaidPrin.equals(that.totPaidPrin) : that.totPaidPrin != null) {
       return false;
     }
-    if (totPaidBigint != null ? !totPaidBigint.equals(that.totPaidBigint)
-        : that.totPaidBigint != null) {
+    if (totPaidInterest != null ? !totPaidInterest.equals(that.totPaidInterest)
+        : that.totPaidInterest != null) {
       return false;
     }
     if (totWavAmt != null ? !totWavAmt.equals(that.totWavAmt) : that.totWavAmt != null) {
@@ -252,9 +252,9 @@ public class TBizInvestInfo {
     result = 31 * result + (ddDate != null ? ddDate.hashCode() : 0);
     result = 31 * result + (extensionNo != null ? extensionNo.hashCode() : 0);
     result = 31 * result + (extensionRate != null ? extensionRate.hashCode() : 0);
-    result = 31 * result + (totSchdBigint != null ? totSchdBigint.hashCode() : 0);
+    result = 31 * result + (totSchdInterest != null ? totSchdInterest.hashCode() : 0);
     result = 31 * result + (totPaidPrin != null ? totPaidPrin.hashCode() : 0);
-    result = 31 * result + (totPaidBigint != null ? totPaidBigint.hashCode() : 0);
+    result = 31 * result + (totPaidInterest != null ? totPaidInterest.hashCode() : 0);
     result = 31 * result + (totWavAmt != null ? totWavAmt.hashCode() : 0);
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);

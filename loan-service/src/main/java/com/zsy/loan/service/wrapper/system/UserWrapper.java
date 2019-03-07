@@ -1,8 +1,8 @@
-package com.zsy.loan.service.warpper.system;
+package com.zsy.loan.service.wrapper.system;
 
 
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.BaseControllerWarpper;
+import com.zsy.loan.service.wrapper.BaseControllerWrapper;
 import com.zsy.loan.utils.StringUtils;
 
 import java.util.List;
@@ -14,14 +14,14 @@ import java.util.Map;
  * @author fengshuonan
  * @date 2017年2月13日 下午10:47:03
  */
-public class UserWarpper extends BaseControllerWarpper {
+public class UserWrapper extends BaseControllerWrapper {
 
-  public UserWarpper(List<Map<String, Object>> list) {
+  public UserWrapper(List<Map<String, Object>> list) {
     super(list);
   }
 
   @Override
-  public void warpTheMap(Map<String, Object> map) {
+  public void wrapTheMap(Map<String, Object> map) {
     map.put("sexName", ConstantFactory.me().getSexName((Integer) map.get("sex")));
     if (StringUtils.isNotNullOrEmpty(map.get("roleid"))) {
       map.put("roleName", ConstantFactory.me().getRoleName((String) map.get("roleid")));

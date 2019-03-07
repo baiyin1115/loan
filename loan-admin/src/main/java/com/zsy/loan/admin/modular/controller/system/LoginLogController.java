@@ -6,7 +6,7 @@ import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.constant.Const;
 import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.service.system.LoginLogService;
-import com.zsy.loan.service.warpper.system.LogWarpper;
+import com.zsy.loan.service.wrapper.system.LogWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.entity.system.LoginLog;
 import com.zsy.loan.dao.system.LoginLogRepository;
@@ -58,7 +58,7 @@ public class LoginLogController extends BaseController {
 
     page = loginlogService.getLoginLogs(page, beginTime, endTime, logName);
     page.setRecords(
-        (List<LoginLog>) new LogWarpper(BeanUtil.objectsToMaps(page.getRecords())).warp());
+        (List<LoginLog>) new LogWrapper(BeanUtil.objectsToMaps(page.getRecords())).wrap());
     return super.packForBT(page);
 
   }

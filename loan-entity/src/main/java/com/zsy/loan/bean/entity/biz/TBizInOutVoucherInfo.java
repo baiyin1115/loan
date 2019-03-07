@@ -40,6 +40,8 @@ public class TBizInOutVoucherInfo {
   @Column(name = "id")
   private long id;
 
+  @Column(name = "org_no")
+  private Integer orgNo;
 
   @Column(name = "acct_no")
   private long acctNo;

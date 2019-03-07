@@ -12,6 +12,7 @@ import com.zsy.loan.bean.convey.LoanPutVo;
 import com.zsy.loan.bean.convey.LoanRepayPlanVo;
 import com.zsy.loan.bean.convey.LoanVo;
 import com.zsy.loan.bean.dictmap.biz.LoanDict;
+import com.zsy.loan.bean.dictmap.biz.LoanRepayPlanDict;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizLoanVoucherInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
@@ -29,8 +30,8 @@ import com.zsy.loan.service.factory.RepayPlanStatusFactory;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.system.impl.SystemServiceImpl;
-import com.zsy.loan.service.warpper.biz.LoanWarpper;
-import com.zsy.loan.service.warpper.biz.RepayPlanWarpper;
+import com.zsy.loan.service.wrapper.biz.LoanWrapper;
+import com.zsy.loan.service.wrapper.biz.RepayPlanWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.DateTimeKit;
@@ -97,8 +98,8 @@ public class LoanController extends BaseController {
 
     page = loanService.getTBLoanPages(page, condition);
     page.setRecords(
-        (List<TBizLoanInfo>) new LoanWarpper(BeanUtil.objectsToMaps(page.getRecords()))
-            .warp());
+        (List<TBizLoanInfo>) new LoanWrapper(BeanUtil.objectsToMaps(page.getRecords()))
+            .wrap());
     return super.packForBT(page);
   }
 
@@ -116,8 +117,8 @@ public class LoanController extends BaseController {
 
     page = loanService.getPlanPages(page, condition);
     page.setRecords(
-        (List<TBizRepayPlan>) new RepayPlanWarpper(BeanUtil.objectsToMaps(page.getRecords()))
-            .warp());
+        (List<TBizRepayPlan>) new RepayPlanWrapper(BeanUtil.objectsToMaps(page.getRecords()))
+            .wrap());
     return super.packForBT(page);
   }
 
@@ -191,7 +192,7 @@ public class LoanController extends BaseController {
       throw new LoanException(BizExceptionEnum.LOAN_DATE, "");
     }
 
-    loan.setLoanBizType(LoanBizTypeEnum.LOAN_CHECK_IN.getValue()); //设置业务类型
+    loan.setBizType(LoanBizTypeEnum.LOAN_CHECK_IN.getValue()); //设置业务类型
     return loanService.calculate(loan);
   }
 
@@ -356,7 +357,7 @@ public class LoanController extends BaseController {
       throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
     }
 
-    loan.setLoanBizType(LoanBizTypeEnum.PUT.getValue()); //设置业务类型
+    loan.setBizType(LoanBizTypeEnum.PUT.getValue()); //设置业务类型
 
     //借据状态校验
     LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PUT.getValue());
@@ -483,7 +484,7 @@ public class LoanController extends BaseController {
       throw new LoanException(BizExceptionEnum.LOAN_LENDING_DATE, "");
     }
 
-    loan.setLoanBizType(LoanBizTypeEnum.DELAY.getValue()); //设置业务类型
+    loan.setBizType(LoanBizTypeEnum.DELAY.getValue()); //设置业务类型
 
     //借据状态校验
     LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.DELAY.getValue());
@@ -620,7 +621,7 @@ public class LoanController extends BaseController {
       LoanStatusFactory.checkCurrentStatus(loan.getStatus() + "_" + LoanBizTypeEnum.PART_REPAYMENT.getValue());
     }
 
-    loan.setLoanBizType(LoanBizTypeEnum.PREPAYMENT.getValue()); //设置业务类型
+    loan.setBizType(LoanBizTypeEnum.PREPAYMENT.getValue()); //设置业务类型
 
     LoanCalculateVo calculateVo = loanService.prepayCalculate(loan);
 
@@ -795,7 +796,7 @@ public class LoanController extends BaseController {
   /**
    * 还款
    */
-  @BussinessLog(value = "还款", dict = LoanDict.class)
+  @BussinessLog(value = "还款", dict = LoanRepayPlanDict.class)
   @RequestMapping(value = "/repay")
   @Permission
   @ResponseBody

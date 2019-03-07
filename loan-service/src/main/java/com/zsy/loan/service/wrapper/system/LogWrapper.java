@@ -1,8 +1,8 @@
-package com.zsy.loan.service.warpper.system;
+package com.zsy.loan.service.wrapper.system;
 
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.factory.Contrast;
-import com.zsy.loan.service.warpper.BaseControllerWarpper;
+import com.zsy.loan.service.wrapper.BaseControllerWrapper;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.ToolUtil;
 
@@ -15,14 +15,14 @@ import java.util.Map;
  * @author fengshuonan
  * @date 2017年4月5日22:56:24
  */
-public class LogWarpper extends BaseControllerWarpper {
+public class LogWrapper extends BaseControllerWrapper {
 
-  public LogWarpper(Object list) {
+  public LogWrapper(Object list) {
     super(list);
   }
 
   @Override
-  public void warpTheMap(Map<String, Object> map) {
+  public void wrapTheMap(Map<String, Object> map) {
     String message = (String) map.get("message");
 
     Integer userid = Integer.valueOf(map.get("userid").toString());

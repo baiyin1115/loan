@@ -3,7 +3,6 @@ package com.zsy.loan.bean.entity.biz;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -46,7 +45,7 @@ public class TBizLoanInfo {
 
 
   @Column(name = "org_no")
-  private Long orgNo;
+  private Integer orgNo;
 
 
   @Column(name = "product_no")

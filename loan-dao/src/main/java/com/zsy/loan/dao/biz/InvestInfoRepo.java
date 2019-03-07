@@ -2,9 +2,13 @@
 package com.zsy.loan.dao.biz;
 
 import com.zsy.loan.bean.entity.biz. TBizInvestInfo;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 融资信息Repo
@@ -15,4 +19,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface InvestInfoRepo extends PagingAndSortingRepository< TBizInvestInfo, Long>
     , JpaRepository< TBizInvestInfo, Long>, JpaSpecificationExecutor< TBizInvestInfo> {
 
+  @Modifying
+  @Transactional
+  @Query(nativeQuery = true, value="delete t from t_biz_invest_info t where t.id in (?1) ")
+  void deleteByIds(List<Long> investIds);
 }

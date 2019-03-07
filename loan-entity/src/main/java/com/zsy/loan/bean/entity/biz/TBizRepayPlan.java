@@ -51,7 +51,7 @@ public class TBizRepayPlan {
 
 
   @Column(name = "org_no")
-  private Long orgNo;
+  private Integer orgNo;
 
 
   @Column(name = "product_no")

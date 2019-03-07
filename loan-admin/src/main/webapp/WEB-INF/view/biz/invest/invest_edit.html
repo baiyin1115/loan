@@ -1,0 +1,81 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="productInfoForm">
+
+            <input type="hidden" id="id" value="${product.id}">
+            <input type="hidden" id="orgNoValue" value="${product.orgNo}">
+            <input type="hidden" id="serviceFeeTypeValue" value="${product.serviceFeeType}">
+            <input type="hidden" id="isPenValue" value="${product.isPen}">
+            <input type="hidden" id="penNumberValue" value="${product.penNumber}">
+            <input type="hidden" id="repayTypeValue" value="${product.repayType}">
+            <input type="hidden" id="loanTypeValue" value="${product.loanType}">
+            <input type="hidden" id="serviceFeeScaleH" value="${product.rate,numberFormat=',###.000%'}">
+
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <#select id="orgNo" name="公司" underline="false">
+                        @for(dict in constant.getDicts('公司')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#input id="productName" name="产品名称" underline="false" value="${product.productName}"/>
+
+                    <#input id="rate" name="产品利率" underline="false" value="${product.rate}"/>
+
+                    <#input id="serviceFeeScale" name="服务费比例" underline="false" value="${product.serviceFeeScale}"/>
+
+                    <#select id="serviceFeeType" name="服务费收取方式" underline="false">
+                        @for(dict in constant.getDicts('服务费收取方式')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#input id="penRate" name="罚息利率" underline="false" value="${product.penRate}" />
+
+
+                </div>
+                <div class="col-sm-6">
+                    <#select id="isPen" name="是否罚息" underline="false">
+                        @for(dict in constant.getDicts('是否')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#select id="penNumber" name="罚息基数" underline="false">
+                        @for(dict in constant.getDicts('罚息基数')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#select id="repayType" name="产品还款方式" underline="false">
+                        @for(dict in constant.getDicts('还款方式')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#select id="loanType" name="贷款类型" underline="false">
+                        @for(dict in constant.getDicts('贷款类型')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#input id="cycleInterval" name="周期间隔" underline="false" value="${product.cycleInterval}"/>
+
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="ProductInfoDlg.editSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="ProductInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/product/product_info.js"></script>
+@}

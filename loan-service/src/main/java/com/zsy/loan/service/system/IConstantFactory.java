@@ -140,6 +140,8 @@ public interface IConstantFactory {
   /**
    * 获取子部门id
    */
+//  List<Integer> getSubDeptId(Integer deptid);
+
   List<Integer> getSubDeptId(Integer deptid);
 
   /**

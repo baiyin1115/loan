@@ -7,7 +7,7 @@ import com.zsy.loan.bean.constant.Const;
 import com.zsy.loan.bean.enumeration.BizLogTypeEnum;
 import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.service.system.OperationLogService;
-import com.zsy.loan.service.warpper.system.LogWarpper;
+import com.zsy.loan.service.wrapper.system.LogWrapper;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.entity.system.OperationLog;
@@ -65,7 +65,7 @@ public class LogController extends BaseController {
     page = operationLogService
         .getOperationLogs(page, beginTime, endTime, logName, BizLogTypeEnum.valueOf(logType));
     page.setRecords(
-        (List<OperationLog>) new LogWarpper(BeanUtil.objectsToMaps(page.getRecords())).warp());
+        (List<OperationLog>) new LogWrapper(BeanUtil.objectsToMaps(page.getRecords())).wrap());
     return super.packForBT(page);
   }
 
@@ -78,7 +78,7 @@ public class LogController extends BaseController {
   public Object detail(@PathVariable Integer id) {
     OperationLog operationLog = operationLogRepository.findById(id).get();
     Map<String, Object> stringObjectMap = BeanKit.beanToMap(operationLog);
-    return super.warpObject(new LogWarpper(stringObjectMap));
+    return super.wrapObject(new LogWrapper(stringObjectMap));
   }
 
   /**

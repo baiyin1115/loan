@@ -4,7 +4,7 @@ import com.zsy.loan.admin.core.base.tips.SuccessTip;
 import com.zsy.loan.admin.core.util.FileUtil;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.service.warpper.BaseControllerWarpper;
+import com.zsy.loan.service.wrapper.BaseControllerWrapper;
 import com.zsy.loan.utils.HttpKit;
 import com.zsy.loan.utils.factory.Page;
 import com.zsy.loan.admin.core.page.PageInfoBT;
@@ -71,8 +71,8 @@ public class BaseController {
   /**
    * 包装一个list，让list增加额外属性
    */
-  protected Object warpObject(BaseControllerWarpper warpper) {
-    return warpper.warp();
+  protected Object wrapObject(BaseControllerWrapper wrapper) {
+    return wrapper.wrap();
   }
 
   /**

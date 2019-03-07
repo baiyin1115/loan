@@ -1,9 +1,8 @@
 package com.zsy.loan.bean.entity.biz;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Timestamp;
-import javax.persistence.Basic;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -39,23 +38,23 @@ public class TBizInvestPlan {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
 
   @Column(name = "invest_no")
-  private long investNo;
+  private Long investNo;
 
 
   @Column(name = "org_no")
-  private long orgNo;
+  private Integer orgNo;
 
 
   @Column(name = "user_no")
-  private long userNo;
+  private Long userNo;
 
 
   @Column(name = "term_no")
-  private long termNo;
+  private Long termNo;
 
 
   @Column(name = "dd_date")
@@ -75,23 +74,23 @@ public class TBizInvestPlan {
 
 
   @Column(name = "dd_num")
-  private long ddNum;
+  private Long ddNum;
 
 
   @Column(name = "dd_prin")
   private BigDecimal ddPrin;
 
 
-  @Column(name = "chd_bigint")
-  private BigDecimal chdBigint;
+  @Column(name = "chd_interest")
+  private BigDecimal chdInterest;
 
 
-  @Column(name = "paid_bigint")
-  private BigDecimal paidBigint;
+  @Column(name = "paid_interest")
+  private BigDecimal paidInterest;
 
 
   @Column(name = "status")
-  private long status;
+  private Long status;
 
   /**
    * 创建人
@@ -172,10 +171,10 @@ public class TBizInvestPlan {
     if (ddPrin != null ? !ddPrin.equals(that.ddPrin) : that.ddPrin != null) {
       return false;
     }
-    if (chdBigint != null ? !chdBigint.equals(that.chdBigint) : that.chdBigint != null) {
+    if (chdInterest != null ? !chdInterest.equals(that.chdInterest) : that.chdInterest != null) {
       return false;
     }
-    if (paidBigint != null ? !paidBigint.equals(that.paidBigint) : that.paidBigint != null) {
+    if (paidInterest != null ? !paidInterest.equals(that.paidInterest) : that.paidInterest != null) {
       return false;
     }
     if (createAt != null ? !createAt.equals(that.createAt) : that.createAt != null) {
@@ -201,8 +200,8 @@ public class TBizInvestPlan {
     result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
     result = 31 * result + (int) (ddNum ^ (ddNum >>> 32));
     result = 31 * result + (ddPrin != null ? ddPrin.hashCode() : 0);
-    result = 31 * result + (chdBigint != null ? chdBigint.hashCode() : 0);
-    result = 31 * result + (paidBigint != null ? paidBigint.hashCode() : 0);
+    result = 31 * result + (chdInterest != null ? chdInterest.hashCode() : 0);
+    result = 31 * result + (paidInterest != null ? paidInterest.hashCode() : 0);
     result = 31 * result + (int) (status ^ (status >>> 32));
     result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
     result = 31 * result + (updateAt != null ? updateAt.hashCode() : 0);

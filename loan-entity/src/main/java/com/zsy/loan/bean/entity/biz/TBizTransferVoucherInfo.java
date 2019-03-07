@@ -42,6 +42,8 @@ public class TBizTransferVoucherInfo {
   @Column(name = "id")
   private long id;
 
+  @Column(name = "org_no")
+  private Integer orgNo;
 
   @Column(name = "in_acct_no")
   private long inAcctNo;

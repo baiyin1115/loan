@@ -39,31 +39,31 @@ public class TBizAcctRecord {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
 
   @Column(name = "group_no")
-  private long groupNo;
+  private Long groupNo;
 
 
   @Column(name = "org_no")
-  private long orgNo;
+  private Integer orgNo;
 
 
   @Column(name = "voucher_no")
-  private long voucherNo;
+  private Long voucherNo;
 
 
   @Column(name = "acct_no")
-  private long acctNo;
+  private Long acctNo;
 
 
   @Column(name = "type")
-  private long type;
+  private Long type;
 
 
   @Column(name = "amt_type")
-  private long amtType;
+  private Long amtType;
 
 
   @Column(name = "acct_date")
@@ -79,7 +79,7 @@ public class TBizAcctRecord {
 
 
   @Column(name = "status")
-  private long status;
+  private Long status;
 
   /**
    * 创建人

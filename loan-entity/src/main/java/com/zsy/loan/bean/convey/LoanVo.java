@@ -27,7 +27,7 @@ public class LoanVo {
 
   @NotNull(message = "[公司编号]不能为空！")
   @ApiModelProperty(value = "公司编号 ")
-  private Long orgNo;
+  private Integer orgNo;
 
   @NotNull(message = "[产品编号]不能为空！")
   @ApiModelProperty(value = "产品编号")
@@ -44,7 +44,6 @@ public class LoanVo {
   @ApiModelProperty(value = "贷款类型")
   private Long loanType;
 
-  @NotNull(message = "[业务日期]不能为空！")
   @ApiModelProperty(value = "业务日期")
   private Date acctDate;
 

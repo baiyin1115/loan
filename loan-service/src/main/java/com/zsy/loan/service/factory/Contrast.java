@@ -96,13 +96,13 @@ public class Contrast {
             str += separator;
           }
           String fieldName = dictMap.get(field.getName());
-          String fieldWarpperMethodName = dictMap.getFieldWarpperMethodName(field.getName());
-          if (fieldWarpperMethodName != null) {
-            Object o1Warpper = DictFieldWarpperFactory
-                .createFieldWarpper(o1, fieldWarpperMethodName);
-            Object o2Warpper = DictFieldWarpperFactory
-                .createFieldWarpper(o2, fieldWarpperMethodName);
-            str += "字段名称:" + fieldName + ",旧值:" + o1Warpper + ",新值:" + o2Warpper;
+          String fieldWrapperMethodName = dictMap.getFieldWrapperMethodName(field.getName());
+          if (fieldWrapperMethodName != null) {
+            Object o1Wrapper = DictFieldWrapperFactory
+                .createFieldWrapper(o1, fieldWrapperMethodName);
+            Object o2Wrapper = DictFieldWrapperFactory
+                .createFieldWrapper(o2, fieldWrapperMethodName);
+            str += "字段名称:" + fieldName + ",旧值:" + o1Wrapper + ",新值:" + o2Wrapper;
           } else {
             str += "字段名称:" + fieldName + ",旧值:" + o1 + ",新值:" + o2;
           }
@@ -164,13 +164,13 @@ public class Contrast {
             str += separator;
           }
           String fieldName = dictMap.get(field.getName());
-          String fieldWarpperMethodName = dictMap.getFieldWarpperMethodName(field.getName());
-          if (fieldWarpperMethodName != null) {
-            Object o1Warpper = DictFieldWarpperFactory
-                .createFieldWarpper(o1, fieldWarpperMethodName);
-            Object o2Warpper = DictFieldWarpperFactory
-                .createFieldWarpper(o2, fieldWarpperMethodName);
-            str += "字段名称:" + fieldName + ",旧值:" + o1Warpper + ",新值:" + o2Warpper;
+          String fieldWrapperMethodName = dictMap.getFieldWrapperMethodName(field.getName());
+          if (fieldWrapperMethodName != null) {
+            Object o1Wrapper = DictFieldWrapperFactory
+                .createFieldWrapper(o1, fieldWrapperMethodName);
+            Object o2Wrapper = DictFieldWrapperFactory
+                .createFieldWrapper(o2, fieldWrapperMethodName);
+            str += "字段名称:" + fieldName + ",旧值:" + o1Wrapper + ",新值:" + o2Wrapper;
           } else {
             str += "字段名称:" + fieldName + ",旧值:" + o1 + ",新值:" + o2;
           }
@@ -195,24 +195,24 @@ public class Contrast {
     if (key.indexOf(",") != -1) {
       String[] keys = key.split(",");
       for (String item : keys) {
-        String fieldWarpperMethodName = dictMap.getFieldWarpperMethodName(item);
+        String fieldWrapperMethodName = dictMap.getFieldWrapperMethodName(item);
         String value = requests.get(item);
-        if (fieldWarpperMethodName != null) {
-          Object valueWarpper = DictFieldWarpperFactory
-              .createFieldWarpper(value, fieldWarpperMethodName);
-          sb.append(dictMap.get(item) + "=" + valueWarpper + ",");
+        if (fieldWrapperMethodName != null) {
+          Object valueWrapper = DictFieldWrapperFactory
+              .createFieldWrapper(value, fieldWrapperMethodName);
+          sb.append(dictMap.get(item) + "=" + valueWrapper + ",");
         } else {
           sb.append(dictMap.get(item) + "=" + value + ",");
         }
       }
       return StrKit.removeSuffix(sb.toString(), ",");
     } else {
-      String fieldWarpperMethodName = dictMap.getFieldWarpperMethodName(key);
+      String fieldWrapperMethodName = dictMap.getFieldWrapperMethodName(key);
       String value = requests.get(key);
-      if (fieldWarpperMethodName != null) {
-        Object valueWarpper = DictFieldWarpperFactory
-            .createFieldWarpper(value, fieldWarpperMethodName);
-        sb.append(dictMap.get(key) + "=" + valueWarpper);
+      if (fieldWrapperMethodName != null) {
+        Object valueWrapper = DictFieldWrapperFactory
+            .createFieldWrapper(value, fieldWrapperMethodName);
+        sb.append(dictMap.get(key) + "=" + valueWrapper);
       } else {
         sb.append(dictMap.get(key) + "=" + value);
       }

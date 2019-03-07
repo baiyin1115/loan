@@ -899,7 +899,7 @@ public class LoanTrialCalculateFactory {
 
     //判断两次结果是否一致
     if (repayAmt.compareTo(data.getRepayAmt()) != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "计算提前还清金额");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "计算提前还清金额");
     }
 
     /**
@@ -1036,7 +1036,7 @@ public class LoanTrialCalculateFactory {
 
     //判断两次结果是否一致
     if (repayAmt.compareTo(data.getRepayAmt()) != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "计算提前还清金额");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "计算提前还清金额");
     }
 
     /**
@@ -1249,7 +1249,7 @@ public class LoanTrialCalculateFactory {
 
     //判断两次结果是否一致
     if (repayAmt.compareTo(data.getRepayAmt()) != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "计算提前还清金额");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "计算提前还清金额");
     }
 
     /**

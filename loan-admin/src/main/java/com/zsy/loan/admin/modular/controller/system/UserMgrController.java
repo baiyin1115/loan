@@ -16,7 +16,7 @@ import com.zsy.loan.service.system.UserService;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.factory.UserFactory;
 import com.zsy.loan.service.shiro.ShiroKit;
-import com.zsy.loan.service.warpper.system.UserWarpper;
+import com.zsy.loan.service.wrapper.system.UserWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.enumeration.ManagerStatusEnum;
 import com.zsy.loan.bean.entity.system.User;
@@ -201,12 +201,12 @@ public class UserMgrController extends BaseController {
       }
 
       List<User> users = userService.findAll(params);
-      return new UserWarpper(BeanUtil.objectsToMaps(users)).warp();
+      return new UserWrapper(BeanUtil.objectsToMaps(users)).wrap();
     } else {
       params.put("deptid", deptid);
       List<User> users = userService.findAll(params);
 
-      return new UserWarpper(BeanUtil.objectsToMaps(users)).warp();
+      return new UserWrapper(BeanUtil.objectsToMaps(users)).wrap();
     }
   }
 

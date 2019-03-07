@@ -27,7 +27,7 @@ public class ProductInfoVo {
 
   @ApiModelProperty( value = "公司编号")
   @NotNull(message = "[公司编号]不能为空！")
-  private Long orgNo;
+  private Integer orgNo;
 
   @ApiModelProperty( value = "产品名称")
   @NotNull(message = "[产品名称]不能为空！")

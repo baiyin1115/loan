@@ -1,7 +1,7 @@
-package com.zsy.loan.service.warpper.biz;
+package com.zsy.loan.service.wrapper.biz;
 
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.BaseControllerWarpper;
+import com.zsy.loan.service.wrapper.BaseControllerWrapper;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.DateUtil;
 import java.math.BigDecimal;
@@ -15,17 +15,17 @@ import java.util.Optional;
  * @author fengshuonan
  * @date 2017年4月25日 18:10:31
  */
-public class LoanWarpper extends BaseControllerWarpper {
+public class LoanWrapper extends BaseControllerWrapper {
 
-  public LoanWarpper(Object list) {
+  public LoanWrapper(Object list) {
     super(list);
   }
 
   @Override
-  public void warpTheMap(Map<String, Object> map) {
+  public void wrapTheMap(Map<String, Object> map) {
 
     //获取名称
-    map.put("orgName", ConstantFactory.me().getDeptName(((Long) map.get("orgNo")).intValue()));
+    map.put("orgName", ConstantFactory.me().getDeptName(((Integer) map.get("orgNo")).intValue()));
     map.put("productName", ConstantFactory.me().getProductName(((Long) map.get("productNo"))));
     map.put("custName", ConstantFactory.me().getCustomerName(((Long) map.get("custNo"))));
     map.put("lendingAcctName", ConstantFactory.me().getAcctName(((Long) map.get("lendingAcct"))));

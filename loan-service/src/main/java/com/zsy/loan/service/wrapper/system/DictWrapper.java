@@ -1,8 +1,8 @@
-package com.zsy.loan.service.warpper.system;
+package com.zsy.loan.service.wrapper.system;
 
 import com.zsy.loan.bean.entity.system.Dict;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.BaseControllerWarpper;
+import com.zsy.loan.service.wrapper.BaseControllerWrapper;
 import com.zsy.loan.utils.ToolUtil;
 
 import java.util.List;
@@ -14,14 +14,14 @@ import java.util.Map;
  * @author fengshuonan
  * @date 2017年4月25日 18:10:31
  */
-public class DictWarpper extends BaseControllerWarpper {
+public class DictWrapper extends BaseControllerWrapper {
 
-  public DictWarpper(Object list) {
+  public DictWrapper(Object list) {
     super(list);
   }
 
   @Override
-  public void warpTheMap(Map<String, Object> map) {
+  public void wrapTheMap(Map<String, Object> map) {
     StringBuffer detail = new StringBuffer();
     Integer id = (Integer) map.get("id");
     List<Dict> dicts = ConstantFactory.me().findInDict(id);

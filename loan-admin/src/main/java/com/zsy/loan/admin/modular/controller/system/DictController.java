@@ -11,7 +11,7 @@ import com.zsy.loan.dao.system.DictRepository;
 import com.zsy.loan.service.system.DictService;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.system.DictWarpper;
+import com.zsy.loan.service.wrapper.system.DictWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.ToolUtil;
 import com.zsy.loan.bean.entity.system.Dict;
@@ -99,7 +99,7 @@ public class DictController extends BaseController {
   @ResponseBody
   public Object list(String condition) {
     List<Dict> list = dictRepository.findByPid(0);
-    return super.warpObject(new DictWarpper(BeanUtil.objectsToMaps(list)));
+    return super.wrapObject(new DictWrapper(BeanUtil.objectsToMaps(list)));
   }
 
   /**

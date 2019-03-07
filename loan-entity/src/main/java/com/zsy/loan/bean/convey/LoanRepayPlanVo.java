@@ -30,7 +30,7 @@ public class LoanRepayPlanVo {
 
 
   @ApiModelProperty(value = "公司编号 ")
-  private Long orgNo;
+  private Integer orgNo;
 
 
   @ApiModelProperty(value = "产品编号")

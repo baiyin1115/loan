@@ -17,7 +17,7 @@ import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.service.biz.impl.AcctServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.biz.AcctWarpper;
+import com.zsy.loan.service.wrapper.biz.AcctWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.factory.Page;
 import io.swagger.annotations.ApiOperation;
@@ -138,8 +138,8 @@ public class AccountController extends BaseController {
 
     page = acctService.getTBizAccounts(page, condition);
     page.setRecords(
-        (List<TBizAcct>) new AcctWarpper(BeanUtil.objectsToMaps(page.getRecords()))
-            .warp());
+        (List<TBizAcct>) new AcctWrapper(BeanUtil.objectsToMaps(page.getRecords()))
+            .wrap());
     return super.packForBT(page);
   }
 

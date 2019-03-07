@@ -14,7 +14,7 @@ import com.zsy.loan.dao.biz.CustomerInfoRepo;
 import com.zsy.loan.service.biz.impl.CustomerServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.biz.CustomerWarpper;
+import com.zsy.loan.service.wrapper.biz.CustomerWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.factory.Page;
 import io.swagger.annotations.ApiOperation;
@@ -118,8 +118,8 @@ public class CustomerController extends BaseController {
 
     page = customerService.getTBizCustomers(page, condition);
     page.setRecords(
-        (List<TBizCustomerInfo>) new CustomerWarpper(BeanUtil.objectsToMaps(page.getRecords()))
-            .warp());
+        (List<TBizCustomerInfo>) new CustomerWrapper(BeanUtil.objectsToMaps(page.getRecords()))
+            .wrap());
     return super.packForBT(page);
   }
 

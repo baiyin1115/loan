@@ -8,7 +8,7 @@ import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.shiro.ShiroKit;
-import com.zsy.loan.service.warpper.system.NoticeWrapper;
+import com.zsy.loan.service.wrapper.system.NoticeWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.entity.system.Notice;
 import com.zsy.loan.dao.system.SysNoticeRepository;
@@ -90,7 +90,7 @@ public class NoticeController extends BaseController {
     } else {
       list = sysNoticeRepository.findByTitleLike("%" + condition + "%");
     }
-    return super.warpObject(new NoticeWrapper(BeanUtil.objectsToMaps(list)));
+    return super.wrapObject(new NoticeWrapper(BeanUtil.objectsToMaps(list)));
   }
 
   /**

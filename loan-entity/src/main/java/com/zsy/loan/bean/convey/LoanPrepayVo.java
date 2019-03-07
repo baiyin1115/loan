@@ -27,7 +27,7 @@ public class LoanPrepayVo {
   private Long id;
 
   @ApiModelProperty(value = "[公司编号]")
-  private Long orgNo;
+  private Integer orgNo;
 
   @ApiModelProperty(value = "[产品编号]")
   private Long productNo;

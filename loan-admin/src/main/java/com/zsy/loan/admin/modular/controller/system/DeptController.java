@@ -12,7 +12,7 @@ import com.zsy.loan.dao.system.UserRepository;
 import com.zsy.loan.service.system.DeptService;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.system.DeptWarpper;
+import com.zsy.loan.service.wrapper.system.DeptWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.bean.entity.system.Dept;
@@ -114,7 +114,7 @@ public class DeptController extends BaseController {
   @ResponseBody
   public Object list(String condition) {
     List<Dept> list = this.deptService.query(condition);
-    return super.warpObject(new DeptWarpper(BeanUtil.objectsToMaps(list)));
+    return super.wrapObject(new DeptWrapper(BeanUtil.objectsToMaps(list)));
   }
 
   /**

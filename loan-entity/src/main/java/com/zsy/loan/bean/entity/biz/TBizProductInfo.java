@@ -41,7 +41,7 @@ public class TBizProductInfo {
 
 
   @Column(name = "org_no")
-  private Long orgNo;
+  private Integer orgNo;
 
 
   @Column(name = "product_name")

@@ -2,18 +2,14 @@ package com.zsy.loan.service.aop;
 
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.core.ShiroUser;
-import com.zsy.loan.bean.dictmap.AbstractDictMap;
 import com.zsy.loan.bean.vo.SpringContextHolder;
 import com.zsy.loan.dao.cache.impl.SessionCache;
-import com.zsy.loan.service.system.LogObjectHolder;
-import com.zsy.loan.service.factory.Contrast;
 import com.zsy.loan.service.platform.log.LogManager;
 import com.zsy.loan.service.platform.log.LogTaskFactory;
 import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.utils.HttpKit;
 import com.zsy.loan.utils.StringUtils;
 import java.lang.reflect.Method;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;

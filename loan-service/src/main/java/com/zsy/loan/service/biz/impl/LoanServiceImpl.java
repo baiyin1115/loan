@@ -52,7 +52,7 @@ import org.springframework.util.ObjectUtils;
  * @Date 2019-01-18  12:27
  */
 @Service
-public class LoanServiceImpl {
+public class LoanServiceImpl extends BaseServiceImpl {
 
   @Autowired
   private LoanInfoRepo repository;
@@ -65,59 +65,6 @@ public class LoanServiceImpl {
 
   @Autowired
   private ISystemService systemService;
-
-
-  public Page<TBizLoanInfo> getTBLoanPages(Page<TBizLoanInfo> page, TBizLoanInfo condition) {
-
-    Pageable pageable = null;
-    if (page.isOpenSort()) {
-      pageable = PageRequest.of(page.getCurrent() - 1, page.getSize(),
-          page.isAsc() ? Sort.Direction.ASC : Sort.Direction.DESC, page.getOrderByField());
-    } else {
-
-      List<Order> orders = new ArrayList<Order>();
-      orders.add(Order.desc("status"));
-      orders.add(Order.desc("id"));
-
-      pageable = PageRequest.of(page.getCurrent() - 1, page.getSize(), Sort.by(orders));
-    }
-
-    org.springframework.data.domain.Page<TBizLoanInfo> page1 = repository
-        .findAll(new Specification<TBizLoanInfo>() {
-
-          @Override
-          public Predicate toPredicate(Root<TBizLoanInfo> root, CriteriaQuery<?> criteriaQuery,
-              CriteriaBuilder criteriaBuilder) {
-
-            List<Predicate> list = new ArrayList<Predicate>();
-
-            // 设置有权限的公司
-            setOrgList(condition.getOrgNo(), root.get("orgNo"), criteriaBuilder, list);
-
-            if (!ObjectUtils.isEmpty(condition.getCustNo())) {
-              list.add(criteriaBuilder.equal(root.get("custNo"), condition.getCustNo()));
-            }
-            if (StringUtils.isNotEmpty(condition.getContrNo())) {
-              list.add(criteriaBuilder
-                  .like(root.get("contrNo").as(String.class), condition.getContrNo().trim() + "%"));
-            }
-
-            if (!ShiroKit.isAdmin()) { //如果不是管理员，只能查询到自己有权限公司的数据信息
-              List<Integer> orgList = ShiroKit.getDeptDataScope();
-              CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("orgNo"));
-              in.value(orgList);
-              list.add(in);
-            }
-
-            Predicate[] p = new Predicate[list.size()];
-            return criteriaBuilder.and(list.toArray(p));
-          }
-        }, pageable);
-
-    page.setTotal(Integer.valueOf(page1.getTotalElements() + ""));
-    page.setRecords(page1.getContent());
-    return page;
-  }
 
   public Boolean save(LoanVo loan, boolean b) {
 
@@ -136,20 +83,20 @@ public class LoanServiceImpl {
      */
     LoanCalculateVo calculateRequest = LoanCalculateVo.builder().build();
     BeanKit.copyProperties(loan, calculateRequest);
-    calculateRequest.setLoanBizType(LoanBizTypeEnum.LOAN_CHECK_IN.getValue()); //设置业务类型
+    calculateRequest.setBizType(LoanBizTypeEnum.LOAN_CHECK_IN.getValue()); //设置业务类型
     LoanCalculateVo result = calculate(calculateRequest); //试算结果
 
     /**
      * 比较试算结果是否与传入的一致
      */
     if (!loan.getTermNo().equals(result.getTermNo())) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "期数不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "期数不一致");
     }
     if (loan.getReceiveInterest().compareTo(result.getReceiveInterest()) != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
     }
     if (loan.getServiceFee().compareTo(result.getServiceFee()) != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "服务费不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "服务费不一致");
     }
 
     TBizLoanInfo info = TBizLoanInfo.builder().build();
@@ -217,20 +164,20 @@ public class LoanServiceImpl {
      */
     LoanCalculateVo calculateRequest = LoanCalculateVo.builder().build();
     BeanKit.copyProperties(loan, calculateRequest);
-    calculateRequest.setLoanBizType(LoanBizTypeEnum.PUT.getValue()); //设置业务类型
+    calculateRequest.setBizType(LoanBizTypeEnum.PUT.getValue()); //设置业务类型
     LoanCalculateVo result = calculate(calculateRequest); //试算结果
 
     /**
      * 比较试算结果是否与传入的一致
      */
     if (!loan.getTermNo().equals(result.getTermNo())) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "期数不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "期数不一致");
     }
     if (loan.getReceiveInterest().compareTo(result.getReceiveInterest()) != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
     }
     if (loan.getServiceFee().compareTo(result.getServiceFee()) != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "服务费不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "服务费不一致");
     }
 
     TBizLoanInfo info = TBizLoanInfo.builder().build();
@@ -279,20 +226,20 @@ public class LoanServiceImpl {
      */
     LoanCalculateVo calculateRequest = LoanCalculateVo.builder().build();
     BeanKit.copyProperties(loan, calculateRequest);
-    calculateRequest.setLoanBizType(LoanBizTypeEnum.DELAY.getValue()); //设置业务类型
+    calculateRequest.setBizType(LoanBizTypeEnum.DELAY.getValue()); //设置业务类型
     LoanCalculateVo result = calculate(calculateRequest); //试算结果
 
     /**
      * 比较试算结果是否与传入的一致
      */
     if (!loan.getTermNo().equals(result.getTermNo())) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "期数不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "期数不一致");
     }
     if (loan.getReceiveInterest().compareTo(result.getReceiveInterest()) != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
     }
     if (loan.getServiceFee().compareTo(result.getServiceFee()) != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "服务费不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "服务费不一致");
     }
 
     /**
@@ -345,9 +292,9 @@ public class LoanServiceImpl {
     //借据状态校验
     if (loan.getCurrentRepayPrin()
         .compareTo(BigDecimalUtil.sub(loan.getRepayAmt(), loan.getRepayInterest(), loan.getRepayPen(), loan.getRepayServFee())) == 0) { //提前结清
-      calculateRequest.setLoanBizType(LoanBizTypeEnum.PREPAYMENT.getValue()); //设置业务类型
+      calculateRequest.setBizType(LoanBizTypeEnum.PREPAYMENT.getValue()); //设置业务类型
     } else {
-      calculateRequest.setLoanBizType(LoanBizTypeEnum.PART_REPAYMENT.getValue()); //设置业务类型
+      calculateRequest.setBizType(LoanBizTypeEnum.PART_REPAYMENT.getValue()); //设置业务类型
     }
 
     LoanCalculateVo result = prepayCalculate(calculateRequest); //试算结果
@@ -356,7 +303,7 @@ public class LoanServiceImpl {
      * 比较试算结果是否与传入的一致
      */
     if (!loan.getTermNo().equals(result.getTermNo())) {
-      throw new LoanException(BizExceptionEnum.LOAN_CALCULATE_REQ_NOT_MATCH, "期数不一致");
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "期数不一致");
     }
 
     /**
@@ -431,7 +378,7 @@ public class LoanServiceImpl {
      */
     LoanCalculateVo calculateRequest = LoanCalculateVo.builder().build();
     BeanKit.copyProperties(loan, calculateRequest);
-    calculateRequest.setLoanBizType(LoanBizTypeEnum.PREPAYMENT.getValue()); //设置业务类型
+    calculateRequest.setBizType(LoanBizTypeEnum.PREPAYMENT.getValue()); //设置业务类型
     LoanCalculateVo result = prepayCalculate(calculateRequest); //试算结果
 
     return result;
@@ -588,69 +535,6 @@ public class LoanServiceImpl {
   public void updateVoucher(LoanVo loan, boolean b) {
   }
 
-  public Page<TBizRepayPlan> getPlanPages(Page<TBizRepayPlan> page, TBizRepayPlan condition) {
-    Pageable pageable = null;
-    if (page.isOpenSort()) {
-      pageable = PageRequest.of(page.getCurrent() - 1, page.getSize(),
-          page.isAsc() ? Sort.Direction.ASC : Sort.Direction.DESC, page.getOrderByField());
-    } else {
-      List<Order> orders = new ArrayList<Order>();
-      orders.add(Order.desc("status"));
-      orders.add(Order.asc("ddDate"));
-      orders.add(Order.asc("id"));
-
-      pageable = PageRequest.of(page.getCurrent() - 1, page.getSize(), Sort.by(orders));
-    }
-
-    org.springframework.data.domain.Page<TBizRepayPlan> page1 = repayPlanRepo
-        .findAll(new Specification<TBizRepayPlan>() {
-
-
-          @Override
-          public Predicate toPredicate(Root<TBizRepayPlan> root, CriteriaQuery<?> criteriaQuery,
-              CriteriaBuilder criteriaBuilder) {
-
-            List<Predicate> list = new ArrayList<Predicate>();
-
-            //设置借据编号
-            if (!ObjectUtils.isEmpty(condition.getLoanNo())) {
-              list.add(criteriaBuilder.equal(root.get("loanNo"), condition.getLoanNo()));
-            }
-
-            if (!ShiroKit.isAdmin()) { //如果不是管理员，只能查询到自己有权限公司的数据信息
-              List<Integer> orgList = ShiroKit.getDeptDataScope();
-              CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("orgNo"));
-              in.value(orgList);
-              list.add(in);
-            }
-
-            Predicate[] p = new Predicate[list.size()];
-            return criteriaBuilder.and(list.toArray(p));
-          }
-        }, pageable);
-
-    page.setTotal(Integer.valueOf(page1.getTotalElements() + ""));
-    page.setRecords(page1.getContent());
-    return page;
-  }
-
-  private void setOrgList(Long orgNo, Path path, CriteriaBuilder criteriaBuilder,
-      List<Predicate> list) {
-    if (!ObjectUtils.isEmpty(orgNo)) {
-      list.add(criteriaBuilder.equal(path, orgNo));
-    } else {
-
-      if (!ShiroKit.isAdmin()) {
-        // 只能查当前登录用户拥有查询权限的
-        List<Integer> orgList = ShiroKit.getDeptDataScope();
-
-        CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
-        in.in(orgList);
-        list.add(in);
-      }
-    }
-  }
-
   /**
    * 试算--登记、放款、展期试算
    */
@@ -709,10 +593,95 @@ public class LoanServiceImpl {
 
     LoanCalculateVo result = LoanTrialCalculateFactory.maps
         .get(RepayTypeEnum.getEnumByKey(loan.getRepayType()) + "_" + LoanBizTypeEnum
-            .getEnumByKey(loan.getLoanBizType())).apply(loan);
+            .getEnumByKey(loan.getBizType())).apply(loan);
 
     return result;
   }
 
 
+  /**
+   * 查询借据list
+   * @param page
+   * @param condition
+   * @return
+   */
+  public Page<TBizLoanInfo> getTBLoanPages(Page<TBizLoanInfo> page, TBizLoanInfo condition) {
+
+    List<Order> orders = new ArrayList<Order>();
+    orders.add(Order.desc("status"));
+    orders.add(Order.desc("id"));
+    Pageable pageable = getPageable(page, orders);
+
+    org.springframework.data.domain.Page<TBizLoanInfo> page1 = repository
+        .findAll(new Specification<TBizLoanInfo>() {
+
+          @Override
+          public Predicate toPredicate(Root<TBizLoanInfo> root, CriteriaQuery<?> criteriaQuery,
+              CriteriaBuilder criteriaBuilder) {
+
+            List<Predicate> list = new ArrayList<Predicate>();
+
+            // 设置有权限的公司
+            setOrgList(condition.getOrgNo(), root.get("orgNo"), criteriaBuilder, list);
+
+            if (!ObjectUtils.isEmpty(condition.getCustNo())) {
+              list.add(criteriaBuilder.equal(root.get("custNo"), condition.getCustNo()));
+            }
+            if (StringUtils.isNotEmpty(condition.getContrNo())) {
+              list.add(criteriaBuilder
+                  .like(root.get("contrNo").as(String.class), condition.getContrNo().trim() + "%"));
+            }
+
+            Predicate[] p = new Predicate[list.size()];
+            return criteriaBuilder.and(list.toArray(p));
+          }
+        }, pageable);
+
+    page.setTotal(Integer.valueOf(page1.getTotalElements() + ""));
+    page.setRecords(page1.getContent());
+    return page;
+  }
+
+
+  /**
+   * 查询还款计划list
+   * @param page
+   * @param condition
+   * @return
+   */
+  public Page<TBizRepayPlan> getPlanPages(Page<TBizRepayPlan> page, TBizRepayPlan condition) {
+
+    List<Order> orders = new ArrayList<Order>();
+    orders.add(Order.desc("status"));
+    orders.add(Order.asc("ddDate"));
+    orders.add(Order.asc("id"));
+    Pageable pageable = getPageable(page, orders);
+
+    org.springframework.data.domain.Page<TBizRepayPlan> page1 = repayPlanRepo
+        .findAll(new Specification<TBizRepayPlan>() {
+
+
+          @Override
+          public Predicate toPredicate(Root<TBizRepayPlan> root, CriteriaQuery<?> criteriaQuery,
+              CriteriaBuilder criteriaBuilder) {
+
+            List<Predicate> list = new ArrayList<Predicate>();
+
+            // 设置有权限的公司
+            setOrgList(condition.getOrgNo(), root.get("orgNo"), criteriaBuilder, list);
+
+            //设置借据编号
+            if (!ObjectUtils.isEmpty(condition.getLoanNo())) {
+              list.add(criteriaBuilder.equal(root.get("loanNo"), condition.getLoanNo()));
+            }
+
+            Predicate[] p = new Predicate[list.size()];
+            return criteriaBuilder.and(list.toArray(p));
+          }
+        }, pageable);
+
+    page.setTotal(Integer.valueOf(page1.getTotalElements() + ""));
+    page.setRecords(page1.getContent());
+    return page;
+  }
 }

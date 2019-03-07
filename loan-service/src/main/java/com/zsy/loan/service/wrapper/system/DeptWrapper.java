@@ -1,7 +1,7 @@
-package com.zsy.loan.service.warpper.system;
+package com.zsy.loan.service.wrapper.system;
 
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.BaseControllerWarpper;
+import com.zsy.loan.service.wrapper.BaseControllerWrapper;
 import com.zsy.loan.utils.ToolUtil;
 import java.util.Map;
 
@@ -11,14 +11,14 @@ import java.util.Map;
  * @author fengshuonan
  * @date 2017年4月25日 18:10:31
  */
-public class DeptWarpper extends BaseControllerWarpper {
+public class DeptWrapper extends BaseControllerWrapper {
 
-  public DeptWarpper(Object list) {
+  public DeptWrapper(Object list) {
     super(list);
   }
 
   @Override
-  public void warpTheMap(Map<String, Object> map) {
+  public void wrapTheMap(Map<String, Object> map) {
 
     Integer pid = (Integer) map.get("pid");
 

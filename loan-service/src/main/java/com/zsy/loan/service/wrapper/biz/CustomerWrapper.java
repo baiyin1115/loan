@@ -1,7 +1,7 @@
-package com.zsy.loan.service.warpper.biz;
+package com.zsy.loan.service.wrapper.biz;
 
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.BaseControllerWarpper;
+import com.zsy.loan.service.wrapper.BaseControllerWrapper;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,14 +11,14 @@ import java.util.Optional;
  * @author fengshuonan
  * @date 2017年4月25日 18:10:31
  */
-public class CustomerWarpper extends BaseControllerWarpper {
+public class CustomerWrapper extends BaseControllerWrapper {
 
-  public CustomerWarpper(Object list) {
+  public CustomerWrapper(Object list) {
     super(list);
   }
 
   @Override
-  public void warpTheMap(Map<String, Object> map) {
+  public void wrapTheMap(Map<String, Object> map) {
 
     Optional<Object> sex = Optional.ofNullable(map.get("sex"));
     map.put("sexName", ConstantFactory.me().getSexName(Integer.valueOf(sex.orElse(-1L).toString())));

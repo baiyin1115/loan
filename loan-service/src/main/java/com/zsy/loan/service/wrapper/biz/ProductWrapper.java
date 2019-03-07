@@ -1,7 +1,7 @@
-package com.zsy.loan.service.warpper.biz;
+package com.zsy.loan.service.wrapper.biz;
 
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.BaseControllerWarpper;
+import com.zsy.loan.service.wrapper.BaseControllerWrapper;
 import com.zsy.loan.utils.BigDecimalUtil;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -12,16 +12,16 @@ import java.util.Map;
  * @author fengshuonan
  * @date 2017年4月25日 18:10:31
  */
-public class ProductWarpper extends BaseControllerWarpper {
+public class ProductWrapper extends BaseControllerWrapper {
 
-  public ProductWarpper(Object list) {
+  public ProductWrapper(Object list) {
     super(list);
   }
 
   @Override
-  public void warpTheMap(Map<String, Object> map) {
+  public void wrapTheMap(Map<String, Object> map) {
 
-    map.put("orgNoName", ConstantFactory.me().getDeptName(((Long) map.get("orgNo")).intValue()));
+    map.put("orgNoName", ConstantFactory.me().getDeptName(((Integer) map.get("orgNo")).intValue()));
     map.put("serviceFeeTypeName", ConstantFactory.me().getServiceFeeTypeName((Long) map.get("serviceFeeType")));
     map.put("isPenName", ConstantFactory.me().getIsPenName((Long) map.get("isPen")));
     map.put("penNumberName", ConstantFactory.me().getPenNumberName((Long) map.get("penNumber")));

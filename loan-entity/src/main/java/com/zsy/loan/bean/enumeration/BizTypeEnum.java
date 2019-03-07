@@ -476,6 +476,43 @@ public class BizTypeEnum {
   }
 
   /**
+   * 融资方式
+   */
+  public enum InvestTypeEnum {
+    /**
+     * 1:小贷普通
+     */
+    COMMON(1);
+
+    private long value;
+
+    private InvestTypeEnum(long value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public long getValue() {
+      return value;
+    }
+
+    public void setValue(long value) {
+      this.value = value;
+    }
+
+    @JsonCreator
+    public static InvestTypeEnum getEnumByKey(long key) {
+      InvestTypeEnum[] array = InvestTypeEnum.values();
+      for (InvestTypeEnum item : array) {
+        if (item.getValue() == key) {
+          return item;
+        }
+      }
+      return null;
+    }
+
+  }
+
+  /**
    * 处理状态
    */
   public enum ProcessStatusEnum {

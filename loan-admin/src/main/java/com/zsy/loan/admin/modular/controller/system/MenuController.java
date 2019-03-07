@@ -13,7 +13,7 @@ import com.zsy.loan.dao.system.MenuRepository;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.MenuService;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.system.MenuWarpper;
+import com.zsy.loan.service.wrapper.system.MenuWrapper;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.ToolUtil;
 import com.zsy.loan.utils.BeanUtil;
@@ -140,7 +140,7 @@ public class MenuController extends BaseController {
       menus = this.menuRepository.findByLevels(Integer.valueOf(level));
     }
 
-    return super.warpObject(new MenuWarpper(BeanUtil.objectsToMaps(menus)));
+    return super.wrapObject(new MenuWrapper(BeanUtil.objectsToMaps(menus)));
   }
 
   /**

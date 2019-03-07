@@ -1,7 +1,7 @@
-package com.zsy.loan.service.warpper.system;
+package com.zsy.loan.service.wrapper.system;
 
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.warpper.BaseControllerWarpper;
+import com.zsy.loan.service.wrapper.BaseControllerWrapper;
 import java.util.List;
 import java.util.Map;
 
@@ -11,14 +11,14 @@ import java.util.Map;
  * @author fengshuonan
  * @date 2017年2月19日10:59:02
  */
-public class RoleWarpper extends BaseControllerWarpper {
+public class RoleWrapper extends BaseControllerWrapper {
 
-  public RoleWarpper(List<Map<String, Object>> list) {
+  public RoleWrapper(List<Map<String, Object>> list) {
     super(list);
   }
 
   @Override
-  public void warpTheMap(Map<String, Object> map) {
+  public void wrapTheMap(Map<String, Object> map) {
     map.put("pName", ConstantFactory.me().getSingleRoleName((Integer) map.get("pid")));
 //    map.putToken("deptName", ConstantFactory.me().getDeptName((Integer) map.getToken("deptid")));
   }

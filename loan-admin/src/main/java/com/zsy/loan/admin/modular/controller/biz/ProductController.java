@@ -14,7 +14,7 @@ import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.service.biz.impl.ProductServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
-import com.zsy.loan.service.warpper.biz.ProductWarpper;
+import com.zsy.loan.service.wrapper.biz.ProductWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.factory.Page;
 import java.util.List;
@@ -55,7 +55,7 @@ public class ProductController extends BaseController {
    */
   @RequestMapping("")
   public String index() {
-    return PREFIX + "product.html";
+    return PREFIX + "invest.html";
   }
 
   /**
@@ -63,7 +63,7 @@ public class ProductController extends BaseController {
    */
   @RequestMapping("/product_add")
   public String productAdd() {
-    return PREFIX + "product_add.html";
+    return PREFIX + "invest_add.html";
   }
 
   /**
@@ -78,7 +78,7 @@ public class ProductController extends BaseController {
 
     model.addAttribute("product", product);
     LogObjectHolder.me().set(product);
-    return PREFIX + "product_edit.html";
+    return PREFIX + "invest_edit.html";
 
   }
 
@@ -107,13 +107,13 @@ public class ProductController extends BaseController {
   @ResponseBody
   public Object list(String condition) {
 //    List<TBizProductInfo> list = productService.query(condition);
-//    return super.warpObject(new ProductWarpper(BeanUtil.objectsToMaps(list)));
+//    return super.wrapObject(new ProductWrapper(BeanUtil.objectsToMaps(list)));
     Page<TBizProductInfo> page = new PageFactory<TBizProductInfo>().defaultPage();
 
     page = productService.getTBizProducts(page, condition);
     page.setRecords(
-        (List<TBizProductInfo>) new ProductWarpper(BeanUtil.objectsToMaps(page.getRecords()))
-            .warp());
+        (List<TBizProductInfo>) new ProductWrapper(BeanUtil.objectsToMaps(page.getRecords()))
+            .wrap());
     return super.packForBT(page);
   }
 

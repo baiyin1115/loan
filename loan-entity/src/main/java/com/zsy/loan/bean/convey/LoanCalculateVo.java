@@ -31,7 +31,7 @@ public class LoanCalculateVo {
   private Long id;
 
   @ApiModelProperty(value = "公司编号 ")
-  private Long orgNo;
+  private Integer orgNo;
 
   @ApiModelProperty(value = "产品编号")
   private Long productNo;
@@ -171,7 +171,7 @@ public class LoanCalculateVo {
   private List<TBizRepayPlan> repayPlanList;
 
   @ApiModelProperty(value = "业务类型",hidden=true)
-  private Long loanBizType;
+  private Long bizType;
 
   @ApiModelProperty(value = "计算详情",hidden=true)
   private String resultMsg;
