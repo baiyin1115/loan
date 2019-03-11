@@ -1,13 +1,10 @@
 package com.zsy.loan.bean.convey;
 
-import com.zsy.loan.bean.entity.biz.TBizProductInfo;
-import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,7 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 融资请求
+ * 融资确认请求
  *
  * @Author zhangxh
  * @Date 2019-01-18  12:30
@@ -25,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvestInfoVo implements Serializable {
+public class InvestConfirmInfoVo implements Serializable {
 
 
   private static final long serialVersionUID = -5536799045685150901L;
@@ -73,10 +70,11 @@ public class InvestInfoVo implements Serializable {
   @ApiModelProperty(value = "利率")
   private BigDecimal rate;
 
+  @NotNull(message = "[期数]不能为空！")
   @ApiModelProperty(value = "期数")
   private Long termNo;
 
-
+  @NotNull(message = "[周期间隔]不能为空！")
   @ApiModelProperty(value = "周期间隔")
   private Long cycleInterval;
 

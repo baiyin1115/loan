@@ -162,7 +162,7 @@ public class CustomerServiceImpl {
       /**
        * 校验账户是否有余额
        */
-      TBizAcct bizAcct = acctRepository.findByUserNo(id).get();
+      TBizAcct bizAcct = acctRepository.findByCustNo(id).get();
       BigDecimal balance = BigDecimalUtil
           .add(bizAcct.getAvailableBalance(), bizAcct.getFreezeBalance());
       if (balance.compareTo(BigDecimal.ZERO) > 0) {
@@ -206,7 +206,7 @@ public class CustomerServiceImpl {
       /**
        * 冻结账户信息
        */
-      TBizAcct bizAcct = acctRepository.findByUserNo(id).get();
+      TBizAcct bizAcct = acctRepository.findByCustNo(id).get();
       if (bizAcct != null) {
         acctRepository.UpStatusById(bizAcct.getId(), AcctStatusEnum.FREEZE.getValue());
       }
@@ -239,7 +239,7 @@ public class CustomerServiceImpl {
       /**
        * 取消冻结账户信息
        */
-      TBizAcct bizAcct = acctRepository.findByUserNo(id).get();
+      TBizAcct bizAcct = acctRepository.findByCustNo(id).get();
       if (bizAcct != null) {
         acctRepository.UpStatusById(bizAcct.getId(), AcctStatusEnum.VALID.getValue());
       }

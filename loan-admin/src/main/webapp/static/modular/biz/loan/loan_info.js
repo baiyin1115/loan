@@ -1,5 +1,5 @@
 /**
- * 初始化账户详情对话框
+ * 初始化借据详情对话框
  */
 var LoanDlg = {
   loanInfoData: {},
@@ -13,7 +13,7 @@ var LoanDlg = {
     productNo: {validators: {notEmpty: {message: '产品编号'}}},
     custNo: {validators: {notEmpty: {message: '客户编号'}}},
     // contrNo:{validators:{notEmpty:{message:'原始合同编号'}}},
-    acctDate: {validators: {notEmpty: {message: '业务日期'}}},
+    // acctDate: {validators: {notEmpty: {message: '业务日期'}}},
     beginDate: {validators: {notEmpty: {message: '借款开始日期'}}},
     endDate: {validators: {notEmpty: {message: '借款结束日期'}}},
     prin: {validators: {notEmpty: {message: '本金'}}},

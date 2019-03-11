@@ -221,4 +221,12 @@ public class CustomerController extends BaseController {
     return SUCCESS_TIP;
   }
 
+  /**
+   * 跳转到客户选择页面
+   */
+  @RequestMapping("/popup_cust_list")
+  public String popupCustList() {
+    return PREFIX + "popup_customer.html";
+  }
+
 }

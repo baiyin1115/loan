@@ -37,7 +37,7 @@ public class InvestPlanVo implements Serializable {
 
 
   @ApiModelProperty(value = "客户编号")
-  private Long userNo;
+  private Long custNo;
 
 
   @ApiModelProperty(value = "期数")

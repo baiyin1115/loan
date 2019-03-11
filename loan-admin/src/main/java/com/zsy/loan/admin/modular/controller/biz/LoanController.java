@@ -880,7 +880,7 @@ public class LoanController extends BaseController {
    */
   @RequestMapping("/loan_cust_list")
   public String loanCustList() {
-    return PREFIX + "loan_customer.html";
+    return PREFIX + "popup_customer.html";
   }
 
   private void setLoanNameMsg(TBizLoanInfo loan) {

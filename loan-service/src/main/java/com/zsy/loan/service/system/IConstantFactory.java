@@ -265,6 +265,13 @@ public interface IConstantFactory {
   String getInvestStatusName(Long status);
 
   /**
+   * 获取融资类型名称
+   * @param type
+   * @return
+   */
+  String getInvestTypeName(Long type);
+
+  /**
    * 获取回款状态名称
    * @param status
    * @return

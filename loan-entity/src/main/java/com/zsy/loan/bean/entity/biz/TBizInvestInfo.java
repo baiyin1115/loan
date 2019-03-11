@@ -53,8 +53,9 @@ public class TBizInvestInfo implements Serializable {
   @Column(name = "invest_type")
   private Integer investType;
 
-  @Column(name = "user_no")
-  private Long userNo;
+
+  @Column(name = "cust_no")
+  private Long custNo;
 
 
   @Column(name = "in_acct_no")
@@ -176,7 +177,7 @@ public class TBizInvestInfo implements Serializable {
     if (orgNo != that.orgNo) {
       return false;
     }
-    if (userNo != that.userNo) {
+    if (custNo != that.custNo) {
       return false;
     }
     if (inAcctNo != that.inAcctNo) {
@@ -249,7 +250,7 @@ public class TBizInvestInfo implements Serializable {
   public int hashCode() {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + (int) (orgNo ^ (orgNo >>> 32));
-    result = 31 * result + (int) (userNo ^ (userNo >>> 32));
+    result = 31 * result + (int) (custNo ^ (custNo >>> 32));
     result = 31 * result + (int) (inAcctNo ^ (inAcctNo >>> 32));
     result = 31 * result + (externalAcct != null ? externalAcct.hashCode() : 0);
     result = 31 * result + (prin != null ? prin.hashCode() : 0);

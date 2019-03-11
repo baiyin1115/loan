@@ -84,8 +84,8 @@ public class AcctServiceImpl {
               CriteriaBuilder criteriaBuilder) {
 
             List<Predicate> list = new ArrayList<Predicate>();
-            if (!ObjectUtils.isEmpty(condition.getUserNo())) {
-              list.add(criteriaBuilder.equal(root.get("userNo"), condition.getUserNo()));
+            if (!ObjectUtils.isEmpty(condition.getCustNo())) {
+              list.add(criteriaBuilder.equal(root.get("custNo"), condition.getCustNo()));
             }
             if (!ObjectUtils.isEmpty(condition.getAcctType())) {
               list.add(criteriaBuilder.equal(root.get("acctType"), condition.getAcctType()));
@@ -136,7 +136,7 @@ public class AcctServiceImpl {
        */
       if (bizAcct.getAcctType().equals(AcctTypeEnum.INVEST.getValue()) || bizAcct.getAcctType()
           .equals(AcctTypeEnum.LOAN.getValue())) {
-        TBizCustomerInfo customer = customerInfoRepo.findById(bizAcct.getUserNo()).get();
+        TBizCustomerInfo customer = customerInfoRepo.findById(bizAcct.getCustNo()).get();
         if (customer.getStatus().equals(CustomerStatusEnum.NORMAL.getValue()) || customer
             .getStatus()
             .equals(CustomerStatusEnum.BLACKLIST.getValue())) { //客户处于有效状态

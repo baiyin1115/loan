@@ -7,6 +7,8 @@ import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.convey.InvestInfoVo;
 import com.zsy.loan.bean.dictmap.biz.InvestDict;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
+import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
+import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
@@ -17,9 +19,11 @@ import com.zsy.loan.service.biz.impl.InvestServiceImpl;
 import com.zsy.loan.service.factory.LoanStatusFactory;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.wrapper.biz.InvestWrapper;
+import com.zsy.loan.service.wrapper.biz.RepayPlanWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.factory.Page;
+import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -59,6 +63,50 @@ public class InvestController extends BaseController {
   @RequestMapping("")
   public String index() {
     return PREFIX + "invest.html";
+  }
+
+  /**
+   * 获取所有融资列表
+   */
+  @RequestMapping(value = "/list")
+  @Permission
+  @ResponseBody
+  public Object list(TBizInvestInfo condition) {
+
+    Page<TBizInvestInfo> page = new PageFactory<TBizInvestInfo>().defaultPage();
+
+    page = investService.getTBizInvests(page, condition);
+    page.setRecords(
+        (List<TBizInvestInfo>) new InvestWrapper(BeanUtil.objectsToMaps(page.getRecords()))
+            .wrap());
+    return super.packForBT(page);
+  }
+
+  /**
+   * 获取回款计划列表
+   */
+  @RequestMapping(value = "/invest_plan_list")
+  @Permission
+  @ResponseBody
+  @OpLog
+  @ApiOperation(value = "获取回款计划列表", notes = "获取回款计划列表")
+  public Object investPlanList(TBizInvestPlan condition) {
+
+    Page<TBizInvestPlan> page = new PageFactory<TBizInvestPlan>().defaultPage();
+
+    page = investService.getPlanPages(page, condition);
+    page.setRecords(
+        (List<TBizInvestPlan>) new RepayPlanWrapper(BeanUtil.objectsToMaps(page.getRecords()))
+            .wrap());
+    return super.packForBT(page);
+  }
+
+  /**
+   * 跳转到客户选择页面
+   */
+  @RequestMapping("/loan_cust_list")
+  public String loanCustList() {
+    return PREFIX + "invest_customer.html";
   }
 
   /**
@@ -107,24 +155,6 @@ public class InvestController extends BaseController {
     invest.setBizType(LoanBizTypeEnum.INVEST_CHECK_IN.getValue()); //设置业务类型
 
     return investService.save(invest,false);
-  }
-
-  /**
-   * 获取所有融资列表
-   */
-  @RequestMapping(value = "/list")
-  @Permission
-  @ResponseBody
-  public Object list(TBizInvestInfo condition) {
-//    List<TBizInvestInfo> list = investService.query(condition);
-//    return super.wrapObject(new InvestWrapper(BeanUtil.objectsToMaps(list)));
-    Page<TBizInvestInfo> page = new PageFactory<TBizInvestInfo>().defaultPage();
-
-    page = investService.getTBizInvests(page, condition);
-    page.setRecords(
-        (List<TBizInvestInfo>) new InvestWrapper(BeanUtil.objectsToMaps(page.getRecords()))
-            .wrap());
-    return super.packForBT(page);
   }
 
   /**

@@ -1,8 +1,268 @@
 /**
- * 产品管理初始化
+ * 融资管理初始化
  */
-var Product = {
-  id: "ProductTable",	//表格id
+var Invest = {
+  id: "InvestTable",	//表格id
+  seItem: null,		//选中的条目
+  seItems: null, //批量删除的数组
+  table: null,
+  custLayerIndex: null,
+  layerIndex: -1
+};
+
+/**
+ * 初始化表格的列
+ */
+Invest.initColumn = function () {
+  var sign = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+  return [
+    {field: 'selectItem', radio: false},
+    {title:'融资编号 ',field:'id',align:'center',valign:'middle',sortable:true},
+    {title:'状态',field:'statusName',align:'center',valign:'middle',sortable:true},
+    {title:sign+'公司'+sign,field:'orgName',align:'center',valign:'middle',sortable:true},
+    {title:sign+'融资类型'+sign,field:'investTypeName',align:'center',valign:'middle',sortable:true},
+    {title:'本金',field:'prinFormat',align:'center',valign:'middle',sortable:true},
+    {title:'利率',field:'rateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'期数',field:'termNo',align:'center',valign:'middle',sortable:true},
+    {title:'应收利息累计',field:'totSchdInterestFormat',align:'center',valign:'middle',sortable:true},
+    {title:'计提利息累计',field:'totAccruedInterestFormat',align:'center',valign:'middle',sortable:true},
+    {title:'已提本金累计',field:'totPaidPrinFormat',align:'center',valign:'middle',sortable:true},
+    {title:'已提利息累计',field:'totPaidInterestFormat',align:'center',valign:'middle',sortable:true},
+    {title:'收益调整金额累计',field:'totWavAmtFormat',align:'center',valign:'middle',sortable:true},
+    {title:'客户名称',field:'custName',align:'center',valign:'middle',sortable:true},
+    {title:sign+'入账账户'+sign,field:'inAcctName',align:'center',valign:'middle',sortable:true},
+    {title:'投资人出款账户',field:'externalAcct',align:'center',valign:'middle',sortable:true},
+    {title:'业务日期',field:'acctDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'开始日期',field:'beginDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'结束日期',field:'endDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'周期间隔',field:'cycleInterval',align:'center',valign:'middle',sortable:true},
+    {title:'计息日',field:'ddDate',align:'center',valign:'middle',sortable:true},
+    {title:'延期期数',field:'extensionNo',align:'center',valign:'middle',sortable:true},
+    {title:'延期利率',field:'extensionRateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'操作员',field:'createByName',align:'center',valign:'middle',sortable:true},
+    {title:'修改操作员',field:'modifiedByName',align:'center',valign:'middle',sortable:true},
+    {title:sign+'创建时间'+sign,field:'createAt',align:'center',valign:'middle',sortable:true},
+    {title:sign+'更新时间'+sign,field:'updateAt',align:'center',valign:'middle',sortable:true},
+    {title:sign+'备注'+sign,field:'remark',align:'center',valign:'middle',sortable:true}
+  ];
+};
+
+/**
+ * 检查是否选中
+ */
+Invest.check = function () {
+  var selected = $('#' + this.id).bootstrapTable('getSelections');
+  if (selected.length != 1) {
+    Feng.info("请先选中表格中的某一记录！");
+    return false;
+  } else {
+    Invest.seItem = selected[0];
+    return true;
+  }
+};
+
+Invest.checkAll = function () {
+  var selected = $('#' + this.id).bootstrapTable('getSelections');
+  if (selected.length == 0) {
+    Feng.info("请先选中表格中的记录！");
+    return false;
+  } else {
+
+    Invest.seItems = new Array();
+    for (var i = 0; i < selected.length; i++) {
+      Invest.seItems.push(selected[i].id);
+    }
+
+    return true;
+  }
+};
+
+/**
+ * 点击添加融资凭证
+ */
+Invest.openAddInvest = function () {
+  var index = layer.open({
+    type: 2,
+    title: '登记融资凭证',
+    area: ['1100px', '700px'], //宽高
+    fix: false, //不固定
+    maxmin: true,
+    content: Feng.ctxPath + '/invest/invest_add'
+  });
+  this.layerIndex = index;
+};
+
+/**
+ * 打开查看融资凭证详情
+ */
+Invest.openInvestDetail = function () {
+  if (this.check()) {
+    var index = layer.open({
+      type: 2,
+      title: '融资凭证详情',
+      area: ['1100px', '700px'], //宽高
+      fix: false, //不固定
+      maxmin: true,
+      content: Feng.ctxPath + '/invest/to_invest_update/' + Invest.seItem.id
+    });
+    this.layerIndex = index;
+  }
+};
+
+/**
+ * 打开确认界面
+ */
+Invest.openConfirmInvest = function () {
+  if (this.check()) {
+    var index = layer.open({
+      type: 2,
+      title: '确认',
+      area: ['1280px', '750px'], //宽高
+      fix: false, //不固定
+      maxmin: true,
+      content: Feng.ctxPath + '/invest/to_invest_confirm/' + Invest.seItem.id
+    });
+    this.layerIndex = index;
+  }
+};
+
+/**
+ * 打开延期界面
+ */
+Invest.openDelayInvest = function () {
+  if (this.check()) {
+    var index = layer.open({
+      type: 2,
+      title: '延期',
+      area: ['1280px', '750px'], //宽高
+      fix: false, //不固定
+      maxmin: true,
+      content: Feng.ctxPath + '/invest/to_invest_delay/' + Invest.seItem.id
+    });
+    this.layerIndex = index;
+  }
+};
+
+/**
+ * 打开撤资界面
+ */
+Invest.openDivestment = function () {
+  if (this.check()) {
+    var index = layer.open({
+      type: 2,
+      title: '撤资',
+      area: ['1280px', '750px'], //宽高
+      fix: false, //不固定
+      maxmin: true,
+      content: Feng.ctxPath + '/invest/to_invest_divestment/' + Invest.seItem.id
+    });
+    this.layerIndex = index;
+  }
+};
+
+/**
+ * 删除融资凭证
+ */
+Invest.delete = function () {
+  if (this.checkAll()) {
+
+    var operation = function () {
+      var ajax = new $ax(Feng.ctxPath + "/invest/delete", function () {
+        Feng.success("删除成功!");
+        Invest.table.refresh();
+      }, function (data) {
+        Feng.error("删除失败!" + data.responseJSON.message + "!");
+      });
+      ajax.setData(Invest.seItems);
+      ajax.setContentType("application/json")
+      ajax.start();
+    };
+
+    Feng.confirm("是否刪除该融资凭证?", operation);
+  }
+};
+
+/**
+ * 查询表单提交参数对象
+ * @returns {{}}
+ */
+Invest.formParams = function () {
+  var queryData = {};
+  queryData['orgNo'] = $("#orgNo").val();
+  queryData['custNo'] = $("#custNo").val();
+  return queryData;
+};
+
+/**
+ * 查询融资凭证列表
+ */
+Invest.search = function () {
+  Invest.table.refresh({query: Invest.formParams()});
+};
+
+/**
+ *  重置融资凭证列表
+ */
+Invest.resetSearch = function () {
+  $("#orgNo").val("");
+  $("#custNo").val("");
+
+  Invest.search();
+};
+
+/**
+ * 刷新回款计划
+ */
+Invest.refreshInvestPlan = function () {
+
+  var selected = $('#' + this.id).bootstrapTable('getSelections');
+  if (selected.length >= 1) {
+    Invest.seItem = selected[0];
+  }else {
+    Invest.seItem = null;
+  }
+  InvestPlan.table.refresh({query: InvestPlan.formParams()});
+};
+
+//初始化函数---------------------------------------------------------------------------------------
+$(function () {
+  var defaultColunms = Invest.initColumn();
+  var table = new BSTable(Invest.id, "/invest/list", defaultColunms,500,9,[9, 50, 100]);
+  table.setPaginationType("server");
+  table.setQueryParams(Invest.formParams());
+  table.init();
+  Invest.table = table;
+
+  var defaultColunms = InvestPlan.initColumn();
+  var table = new BSTable(InvestPlan.id, "/invest/invest_plan_list", defaultColunms,500,9,[9, 50, 100]);
+  table.setPaginationType("server");
+  table.setQueryParams(InvestPlan.formParams());
+  table.init();
+  InvestPlan.table = table;
+});
+
+//客户--------------------------------------------------------------------------------------
+/**
+ * 打开查看客户
+ */
+Invest.openCustList = function () {
+  var index = layer.open({
+    type: 2,
+    title: '选择客户',
+    area: ['900px', '600px'], //宽高
+    fix: false, //不固定
+    maxmin: true,
+    content: Feng.ctxPath + '/customer/popup_cust_list'
+  });
+  this.custLayerIndex = index;
+};
+
+//回款计划部分-------------------------------------------------------------------------------------
+/**
+ * 回款计划管理初始化
+ */
+var InvestPlan = {
+  id: "InvestPlanTable",	//表格id
   seItem: null,		//选中的条目
   seItems: null, //批量删除的数组
   table: null,
@@ -12,119 +272,57 @@ var Product = {
 /**
  * 初始化表格的列
  */
-Product.initColumn = function () {
+InvestPlan.initColumn = function () {
+  var sign = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
   return [
     {field: 'selectItem', radio: false},
-    {
-      title: 'id',
-      field: 'id',
-      // visible: false,
-      align: 'center',
-      valign: 'middle'
-    },
-    {
-      title: '公司',
-      field: 'orgNoName',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '产品名称',
-      field: 'productName',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '产品利率',
-      field: 'rateFormat',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '服务费比例',
-      field: 'serviceFeeScaleFormat',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '服务费收取方式',
-      field: 'serviceFeeTypeName',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '罚息利率',
-      field: 'penRateFormat',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '是否罚息',
-      field: 'isPenName',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '罚息基数',
-      field: 'penNumberName',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '还款方式',
-      field: 'repayTypeName',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '贷款类型',
-      field: 'loanTypeName',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    },
-    {
-      title: '周期间隔',
-      field: 'cycleIntervalFormat',
-      align: 'center',
-      valign: 'middle',
-      sortable: true
-    }];
+    {title:'计划编号 ',field:'id',align:'center',valign:'middle',sortable:true},
+    {title:'融资编号',field:'investNo',align:'center',valign:'middle',sortable:true},
+    {title:'回款状态',field:'statusName',align:'center',valign:'middle',sortable:true},
+    {title:'本期计息本金',field:'ddPrinFormat',align:'center',valign:'middle',sortable:true},
+    {title:'本期利息',field:'chdInterestFormat',align:'center',valign:'middle',sortable:true},
+    {title:'本期已提利息',field:'paidInterestFormat',align:'center',valign:'middle',sortable:true},
+    {title:'期数',field:'termNo',align:'center',valign:'middle',sortable:true},
+    {title:'业务日期',field:'acctDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'计息日期',field:'ddDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'利率',field:'rateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'本期开始日期',field:'beginDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'本期结束日期',field:'endDateFormat',align:'center',valign:'middle',sortable:true},
+    {title:'计息天数',field:'ddNum',align:'center',valign:'middle',sortable:true},
+    {title:sign+'公司'+sign,field:'orgName',align:'center',valign:'middle',sortable:true},
+    {title:'客户名称',field:'custName',align:'center',valign:'middle',sortable:true},
+    {title:'操作员',field:'createByName',align:'center',valign:'middle',sortable:true},
+    {title:'修改操作员',field:'modifiedByName',align:'center',valign:'middle',sortable:true},
+    {title:sign+'创建时间'+sign,field:'createAt',align:'center',valign:'middle',sortable:true},
+    {title:sign+'更新时间'+sign,field:'updateAt',align:'center',valign:'middle',sortable:true},
+    {title:sign+'备注'+sign,field:'remark',align:'center',valign:'middle',sortable:true}
+  ];
 };
 
 /**
  * 检查是否选中
  */
-Product.check = function () {
+InvestPlan.check = function () {
   var selected = $('#' + this.id).bootstrapTable('getSelections');
   if (selected.length != 1) {
     Feng.info("请先选中表格中的某一记录！");
     return false;
   } else {
-    Product.seItem = selected[0];
+    InvestPlan.seItem = selected[0];
     return true;
   }
 };
 
-Product.checkAll = function () {
+InvestPlan.checkAll = function () {
   var selected = $('#' + this.id).bootstrapTable('getSelections');
   if (selected.length == 0) {
     Feng.info("请先选中表格中的记录！");
     return false;
   } else {
 
-    Product.seItems = new Array();
+    InvestPlan.seItems = new Array();
     for (var i = 0; i < selected.length; i++) {
-      Product.seItems.push(selected[i].id);
+      InvestPlan.seItems.push(selected[i].id);
     }
 
     return true;
@@ -132,56 +330,19 @@ Product.checkAll = function () {
 };
 
 /**
- * 点击添加产品
+ * 打开查看回款计划详情
  */
-Product.openAddProduct = function () {
-  var index = layer.open({
-    type: 2,
-    title: '添加产品',
-    area: ['800px', '600px'], //宽高
-    fix: false, //不固定
-    maxmin: true,
-    content: Feng.ctxPath + '/product/product_add'
-  });
-  this.layerIndex = index;
-};
-
-/**
- * 打开查看产品详情
- */
-Product.openProductDetail = function () {
+InvestPlan.openInvestDetail = function () {
   if (this.check()) {
     var index = layer.open({
       type: 2,
-      title: '产品详情',
-      area: ['800px', '600px'], //宽高
+      title: '贷款详情',
+      area: ['800px', '480px'], //宽高
       fix: false, //不固定
       maxmin: true,
-      content: Feng.ctxPath + '/product/product_update/' + Product.seItem.id
+      content: Feng.ctxPath + '/invest/invest_update/' + InvestPlan.seItem.id
     });
     this.layerIndex = index;
-  }
-};
-
-/**
- * 删除产品
- */
-Product.delete = function () {
-  if (this.checkAll()) {
-
-    var operation = function () {
-      var ajax = new $ax(Feng.ctxPath + "/product/delete", function () {
-        Feng.success("删除成功!");
-        Product.table.refresh();
-      }, function (data) {
-        Feng.error("删除失败!" + data.responseJSON.message + "!");
-      });
-      ajax.setData(Product.seItems);
-      ajax.setContentType("application/json")
-      ajax.start();
-    };
-
-    Feng.confirm("是否刪除该产品?", operation);
   }
 };
 
@@ -189,24 +350,43 @@ Product.delete = function () {
  * 查询表单提交参数对象
  * @returns {{}}
  */
-Product.formParams = function () {
+InvestPlan.formParams = function () {
   var queryData = {};
-  queryData['condition'] = $("#condition").val();
+  if(Invest.seItem != null){
+    queryData['investNo'] = Invest.seItem.id;
+  }else{
+    queryData['investNo'] = null;
+  }
   return queryData;
-}
-
-/**
- * 查询产品列表
- */
-Product.search = function () {
-  Product.table.refresh({query: Product.formParams()});
 };
 
-$(function () {
-  var defaultColunms = Product.initColumn();
-  var table = new BSTable(Product.id, "/product/list", defaultColunms);
-  table.setPaginationType("server");
-  table.setQueryParams(Product.formParams());
-  table.init();
-  Product.table = table;
-});
+/**
+ * 打开回款界面
+ */
+InvestPlan.openAccrual = function () {
+  if (this.check()) {
+    var index = layer.open({
+      type: 2,
+      title: '回款',
+      area: ['1000px', '750px'], //宽高
+      fix: false, //不固定
+      maxmin: true,
+      content: Feng.ctxPath + '/invest/to_invest_accrual/' + InvestPlan.seItem.id
+    });
+    this.layerIndex = index;
+  }
+};
+
+// /**
+//  * 查询回款计划列表
+//  */
+// InvestPlan.search = function () {
+//   InvestPlan.table.refresh({query: InvestPlan.formParams()});
+// };
+//
+// /**
+//  *  重置回款计划列表
+//  */
+// InvestPlan.resetSearch = function () {
+//   InvestPlan.search();
+// }

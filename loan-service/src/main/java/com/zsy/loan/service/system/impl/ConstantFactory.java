@@ -507,6 +507,11 @@ public class ConstantFactory implements IConstantFactory {
   }
 
   @Override
+  public String getInvestTypeName(Long type) {
+    return getDictsByName("融资类型", String.valueOf(type));
+  }
+
+  @Override
   public String getInvestPlanStatusName(Long status) {
     return getDictsByName("回款状态", String.valueOf(status));
   }
@@ -589,17 +594,15 @@ public class ConstantFactory implements IConstantFactory {
 
   /**
    * 获取账户名称 --账号_户名
-   * @param id
-   * @return
    */
-  public String getAcctName(Long id){
+  public String getAcctName(Long id) {
     String val = get(CacheConstantKey.ACCT_NO_NAME + id);
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
     TBizAcct info = acctRepo.getOne(id);
     if (StringUtils.isNotNullOrEmpty(info) && StringUtils.isNotEmpty(info.getName())) {
-      val = id+"_"+info.getName();
+      val = id + "_" + info.getName();
       set(CacheConstantKey.ACCT_NO_NAME + id, val);
       return val;
     }

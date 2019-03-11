@@ -46,8 +46,8 @@ public class TBizAcct implements Serializable {
   private Long id;
 
 
-  @Column(name = "user_no", nullable = false)
-  private Long userNo;
+  @Column(name = "cust_no", nullable = false)
+  private Long custNo;
 
   @Column(name = "name", nullable = false)
   private String name;
@@ -121,7 +121,7 @@ public class TBizAcct implements Serializable {
     if (id != tBizAcct.id) {
       return false;
     }
-    if (userNo != tBizAcct.userNo) {
+    if (custNo != tBizAcct.custNo) {
       return false;
     }
     if (acctType != tBizAcct.acctType) {
@@ -153,7 +153,7 @@ public class TBizAcct implements Serializable {
   @Override
   public int hashCode() {
     int result = (int) (id ^ (id >>> 32));
-    result = 31 * result + (int) (userNo ^ (userNo >>> 32));
+    result = 31 * result + (int) (custNo ^ (custNo >>> 32));
     result = 31 * result + (availableBalance != null ? availableBalance.hashCode() : 0);
     result = 31 * result + (freezeBalance != null ? freezeBalance.hashCode() : 0);
     result = 31 * result + (int) (acctType ^ (acctType >>> 32));

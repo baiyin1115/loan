@@ -1,74 +1,75 @@
 @layout("/common/_container.html"){
 <div class="ibox float-e-margins">
-    <div class="ibox-content">
-        <div class="form-horizontal" id="productInfoForm">
+  <div class="ibox-content">
+    <div class="form-horizontal" id="investInfoForm">
 
-            <input type="hidden" id="id" value="">
+      <input type="hidden" id="id" value="">
+      <input type="hidden" id="statusValue" value="">
 
-            <div class="row">
-                <div class="col-sm-6">
+      <div class="row">
+        <div class="col-sm-6">
 
-                    <#select id="orgNo" name="公司" underline="false">
-                        @for(dict in constant.getDicts('公司')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
+          <#select id="orgNo" name="公司" underline="false">
+            <option value=""></option>
+            @for(dict in userown.getOrgList()){
+            <option value="${dict.num}">${dict.name}</option>
+            @}
+          </#select>
 
-                    <#input id="productName" name="产品名称" underline="false"/>
+          <#input id="custName" name="客户" underline="false" readonly="readonly" hidden="custNo"
+              clickFun="InvestDlg.openCustList(); return false;"
+          />
 
-                    <#input id="rate" name="产品利率" underline="false"/>
+          <#input id="investTypeName" name="产品类型" underline="false"
+              hidden="investType" readonly="readonly"
+              clickFun="InvestDlg.showInvestTypeSelectTree(); return false;"
+              style="background-color: #ffffff !important;"
+              selectFlag="true" selectId="investTypeTreeDiv" selectTreeId="investTypeTree" selectStyle="width:244px !important;"/>
 
-                    <#input id="serviceFeeScale" name="服务费比例" underline="false"/>
+          <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${system.getSysAcctDate()}" />
 
-                    <#select id="serviceFeeType" name="服务费收取方式" underline="false">
-                        @for(dict in constant.getDicts('服务费收取方式')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
+          <#TimeInput id="beginDate" name="开始日期" isTime="false" pattern="YYYY-MM-DD" value="${system.getSysAcctDate()}" />
 
-                    <#input id="penRate" name="罚息利率" underline="false"/>
+          <#TimeInput id="endDate" name="结束日期" isTime="false" pattern="YYYY-MM-DD" />
 
-
-                </div>
-                <div class="col-sm-6">
-                    <#select id="isPen" name="是否罚息" underline="false">
-                        @for(dict in constant.getDicts('是否')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
-
-                    <#select id="penNumber" name="罚息基数" underline="false">
-                        @for(dict in constant.getDicts('罚息基数')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
-
-                    <#select id="repayType" name="产品还款方式" underline="false">
-                        @for(dict in constant.getDicts('还款方式')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
-
-                    <#select id="loanType" name="贷款类型" underline="false">
-                        @for(dict in constant.getDicts('贷款类型')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
-
-                    <#input id="cycleInterval" name="周期间隔" underline="false"/>
-
-                </div>
-            </div>
-
-            <div class="row btn-group-m-t">
-                <div class="col-sm-10">
-                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="ProductInfoDlg.addSubmit()"/>
-                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="ProductInfoDlg.close()"/>
-                </div>
-            </div>
+          <#input id="inAcctName" name="入账账户" underline="false"
+              hidden="inAcctNo" readonly="readonly"
+              clickFun="InvestDlg.showInAcctSelectTree(); return false;"
+              style="background-color: #ffffff !important;"
+              selectFlag="true" selectId="inAcctTreeDiv" selectTreeId="inAcctTree" selectStyle="width:244px !important;"/>
         </div>
+        <div class="col-sm-6">
 
+          <#input id="externalAcct" name="投资人出款账户" underline="false"/>
+
+          <#input id="prin" name="本金" underline="false"/>
+
+          <#input id="rate" name="利率" underline="false"/>
+
+          <#input id="termNo" name="期数" underline="false"/>
+
+          <#input id="cycleInterval" name="周期间隔" underline="false"/>
+
+          <#input id="ddDate" name="计息日" underline="false"/>
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-11">
+          <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50"/>
+        </div>
+      </div>
+
+      <div class="row btn-group-m-t">
+        <div class="col-sm-10">
+          <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="InvestDlg.calculate()"/>
+          <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="InvestDlg.addSubmit()"/>
+          <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="InvestDlg.close()"/>
+        </div>
+      </div>
     </div>
+
+  </div>
 </div>
-<script src="${ctxPath}/static/modular/biz/product/product_info.js"></script>
+<script src="${ctxPath}/static/modular/biz/invest/invest_info.js"></script>
 @}

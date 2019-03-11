@@ -4,6 +4,7 @@ import com.zsy.loan.bean.convey.InvestCalculateVo;
 import com.zsy.loan.bean.convey.InvestInfoVo;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
+import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestTypeEnum;
@@ -51,6 +52,75 @@ public class InvestServiceImpl extends BaseServiceImpl {
   @Autowired
   private ISystemService systemService;
 
+  /**
+   * 取得凭证list
+   */
+  public Page<TBizInvestInfo> getTBizInvests(Page<TBizInvestInfo> page, TBizInvestInfo condition) {
+
+    List<Order> orders = new ArrayList<Order>();
+    orders.add(Order.desc("status"));
+    orders.add(Order.desc("id"));
+    Pageable pageable = getPageable(page, orders);
+
+    org.springframework.data.domain.Page<TBizInvestInfo> page1 = repository
+        .findAll(new Specification<TBizInvestInfo>() {
+
+          @Override
+          public Predicate toPredicate(Root<TBizInvestInfo> root, CriteriaQuery<?> criteriaQuery,
+              CriteriaBuilder criteriaBuilder) {
+
+            List<Predicate> list = new ArrayList<Predicate>();
+
+            // 设置有权限的公司
+            setOrgList(condition.getOrgNo(), root.get("orgNo"), criteriaBuilder, list);
+
+            if (!ObjectUtils.isEmpty(condition.getCustNo())) {
+              list.add(criteriaBuilder.equal(root.get("custNo"), condition.getCustNo()));
+            }
+
+            Predicate[] p = new Predicate[list.size()];
+            return criteriaBuilder.and(list.toArray(p));
+          }
+        }, pageable);
+
+    page.setTotal(Integer.valueOf(page1.getTotalElements() + ""));
+    page.setRecords(page1.getContent());
+    return page;
+
+  }
+
+  public Page<TBizInvestPlan> getPlanPages(Page<TBizInvestPlan> page, TBizInvestPlan condition) {
+
+    List<Order> orders = new ArrayList<Order>();
+    orders.add(Order.desc("status"));
+    orders.add(Order.desc("id"));
+    Pageable pageable = getPageable(page, orders);
+
+    org.springframework.data.domain.Page<TBizInvestPlan> page1 = investPlanRepo
+        .findAll(new Specification<TBizInvestPlan>() {
+
+          @Override
+          public Predicate toPredicate(Root<TBizInvestPlan> root, CriteriaQuery<?> criteriaQuery,
+              CriteriaBuilder criteriaBuilder) {
+
+            List<Predicate> list = new ArrayList<Predicate>();
+
+            // 设置有权限的公司
+            setOrgList(condition.getOrgNo(), root.get("orgNo"), criteriaBuilder, list);
+
+            if (!ObjectUtils.isEmpty(condition.getInvestNo())) {
+              list.add(criteriaBuilder.equal(root.get("investNo"), condition.getInvestNo()));
+            }
+
+            Predicate[] p = new Predicate[list.size()];
+            return criteriaBuilder.and(list.toArray(p));
+          }
+        }, pageable);
+
+    page.setTotal(Integer.valueOf(page1.getTotalElements() + ""));
+    page.setRecords(page1.getContent());
+    return page;
+  }
 
   /**
    * 保存
@@ -157,44 +227,11 @@ public class InvestServiceImpl extends BaseServiceImpl {
     return result;
   }
 
-  /**
-   * 取得凭证list
-   */
-  public Page<TBizInvestInfo> getTBizInvests(Page<TBizInvestInfo> page, TBizInvestInfo condition) {
 
-    List<Order> orders = new ArrayList<Order>();
-    orders.add(Order.desc("status"));
-    orders.add(Order.desc("id"));
-    Pageable pageable = getPageable(page, orders);
-
-    org.springframework.data.domain.Page<TBizInvestInfo> page1 = repository
-        .findAll(new Specification<TBizInvestInfo>() {
-
-          @Override
-          public Predicate toPredicate(Root<TBizInvestInfo> root, CriteriaQuery<?> criteriaQuery,
-              CriteriaBuilder criteriaBuilder) {
-
-            List<Predicate> list = new ArrayList<Predicate>();
-
-            // 设置有权限的公司
-            setOrgList(condition.getOrgNo(), root.get("orgNo"), criteriaBuilder, list);
-
-            if (!ObjectUtils.isEmpty(condition.getUserNo())) {
-              list.add(criteriaBuilder.equal(root.get("userNo"), condition.getUserNo()));
-            }
-
-            Predicate[] p = new Predicate[list.size()];
-            return criteriaBuilder.and(list.toArray(p));
-          }
-        }, pageable);
-
-    page.setTotal(Integer.valueOf(page1.getTotalElements() + ""));
-    page.setRecords(page1.getContent());
-    return page;
-
-  }
 
   public List<ZTreeNode> getTreeList() {
     return null;
   }
+
+
 }

@@ -3,36 +3,79 @@
     <div class="col-sm-12">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <h5>产品管理</h5>
+                <h5>融资管理</h5>
             </div>
             <div class="ibox-content">
                 <div class="row row-lg">
                     <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-3">
-                                <#NameCon id="condition" name="名称" />
+                                <#SelectCon id="orgNo" name="公司" underline="false">
+                                    <option value=""></option>
+                                    @for(dict in userown.getOrgList()){
+                                    <option value="${dict.num}">${dict.name}</option>
+                                    @}
+                                </#SelectCon>
                             </div>
                             <div class="col-sm-3">
-                                <#button name="搜索" icon="fa-search" clickFun="Product.search()"/>
+                                <#NameCon id="custName" name="客户" underline="false" readonly="readonly" hidden="custNo"
+                                    clickFun="Invest.openCustList(); return false;"
+                                />
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="Invest.search()"/>
+                                <#button name="重置" icon="fa-trash" clickFun="Invest.resetSearch()" space="true"/>
                             </div>
                         </div>
-                        <div class="hidden-xs" id="ProductTableToolbar" role="group">
-                            @if(shiro.hasPermission("/product/add")){
-                                <#button name="添加" icon="fa-plus" clickFun="Product.openAddProduct()"/>
+                        <div class="hidden-xs" id="InvestTableToolbar" role="group">
+                            @if(shiro.hasPermission("/invest/add")){
+                                <#button name="登记" icon="fa-plus" clickFun="Invest.openAddInvest()"/>
                             @}
-                            @if(shiro.hasPermission("/product/update")){
-                                <#button name="修改" icon="fa-edit" clickFun="Product.openProductDetail()" space="true"/>
+                            @if(shiro.hasPermission("/invest/update")){
+                                <#button name="修改" icon="fa-edit" clickFun="Invest.openInvestDetail()" space="true"/>
                             @}
-                            @if(shiro.hasPermission("/product/delete")){
-                                <#button name="删除" icon="fa-remove" clickFun="Product.delete()" space="true"/>
+                            @if(shiro.hasPermission("/invest/delete")){
+                                <#button name="删除" icon="fa-remove" clickFun="Invest.delete()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/invest/confirm")){
+                                <#button name="确认" icon="fa-forward" clickFun="Invest.openConfirmInvest()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/invest/delay")){
+                                <#button name="延期" icon="fa-expand" clickFun="Invest.openDelayInvest()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/invest/divestment")){
+                                <#button name="撤资" icon="fa-recycle" clickFun="Invest.openDivestment()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/invest/print")){
+                                <#button name="打印" icon="fa-print" clickFun="Invest.openPrintInvest()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/invest/repay")){
+                                <#button name="刷新回款计划" icon="fa-refresh" clickFun="Invest.refreshInvestPlan()" space="true"/>
                             @}
                         </div>
-                        <#table id="ProductTable"/>
+                        <#table id="InvestTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>回款计划管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="hidden-xs" id="InvestPlanTableToolbar" role="group">
+                            @if(shiro.hasPermission("/invest/accrual")){
+                            <#button name="计提" icon="fa-recycle" clickFun="InvestPlan.openAccrual()"/>
+                            @}
+                        </div>
+                        <#table id="InvestPlanTable"/>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script src="${ctxPath}/static/modular/biz/product/product.js"></script>
+<script src="${ctxPath}/static/modular/biz/invest/invest.js"></script>
 @}
