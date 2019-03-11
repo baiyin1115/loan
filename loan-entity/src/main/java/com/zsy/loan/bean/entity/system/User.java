@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.entity.system;
 
+import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
 import lombok.AllArgsConstructor;
@@ -18,8 +19,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "t_sys_user")
-public class User {
+public class User implements Serializable {
 
+  private static final long serialVersionUID = 8184666206226593170L;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")

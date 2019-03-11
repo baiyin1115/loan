@@ -3,14 +3,13 @@ package com.zsy.loan.bean.convey;
 import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Transient;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,8 +25,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanCalculateVo {
+public class LoanCalculateVo implements Serializable {
 
+  private static final long serialVersionUID = -1166079815427120087L;
   private Long id;
 
   @ApiModelProperty(value = "公司编号 ")
@@ -85,7 +85,7 @@ public class LoanCalculateVo {
   @ApiModelProperty(value = "服务费")
   private BigDecimal serviceFee;
 
-  @ApiModelProperty( value = "服务费比例")
+  @ApiModelProperty(value = "服务费比例")
   @DecimalMax(value = "1.00", message = "[服务费比例]不能超过1.00")
   private BigDecimal serviceFeeScale;
 
@@ -99,7 +99,7 @@ public class LoanCalculateVo {
   @ApiModelProperty(value = "是否罚息")
   private Long isPen;
 
-  @ApiModelProperty( value = "罚息利率")
+  @ApiModelProperty(value = "罚息利率")
   private BigDecimal penRate;
 
   @ApiModelProperty(value = "罚息基数")
@@ -157,44 +157,44 @@ public class LoanCalculateVo {
   @ApiModelProperty(value = "备注")
   private String remark;
 
-  @ApiModelProperty(value = "日利息",hidden=true)
+  @ApiModelProperty(value = "日利息", hidden = true)
   private BigDecimal dayRate;
-  @ApiModelProperty(value = "月利息",hidden=true)
+  @ApiModelProperty(value = "月利息", hidden = true)
   private BigDecimal monthRate;
-  @ApiModelProperty(value = "相差天数",hidden=true)
+  @ApiModelProperty(value = "相差天数", hidden = true)
   private int day;
-  @ApiModelProperty(value = "相差月数",hidden=true)
+  @ApiModelProperty(value = "相差月数", hidden = true)
   private int month;
-  @ApiModelProperty(value = "产品信息",hidden=true)
+  @ApiModelProperty(value = "产品信息", hidden = true)
   private TBizProductInfo product;
-  @ApiModelProperty(value = "还款计划",hidden=true)
+  @ApiModelProperty(value = "还款计划", hidden = true)
   private List<TBizRepayPlan> repayPlanList;
 
-  @ApiModelProperty(value = "业务类型",hidden=true)
+  @ApiModelProperty(value = "业务类型", hidden = true)
   private Long bizType;
 
-  @ApiModelProperty(value = "计算详情",hidden=true)
+  @ApiModelProperty(value = "计算详情", hidden = true)
   private String resultMsg;
 
-  @ApiModelProperty(value = "展期日利息",hidden=true)
+  @ApiModelProperty(value = "展期日利息", hidden = true)
   private BigDecimal delayDayRate;
-  @ApiModelProperty(value = "展期月利息",hidden=true)
+  @ApiModelProperty(value = "展期月利息", hidden = true)
   private BigDecimal delayMonthRate;
 
-  @ApiModelProperty(value = "罚息日利息",hidden=true)
+  @ApiModelProperty(value = "罚息日利息", hidden = true)
   private BigDecimal penDayRate;
-  @ApiModelProperty(value = "罚息月利息",hidden=true)
+  @ApiModelProperty(value = "罚息月利息", hidden = true)
   private BigDecimal penMonthRate;
   @ApiModelProperty(value = "当前展期期数")
   private Long currentExtensionNo;
 
-  @ApiModelProperty(value = "当前期还款计划")
+  @ApiModelProperty(value = "当前期还款计划", hidden = true)
   List<TBizRepayPlan> currentRepayPlans;
 
-  @ApiModelProperty(value = "当前期以前的未还还款计划")
+  @ApiModelProperty(value = "当前期以前的未还还款计划", hidden = true)
   List<TBizRepayPlan> notPayRecords;
 
-  @ApiModelProperty(value = "当前期以后的还款计划")
+  @ApiModelProperty(value = "当前期以后的还款计划", hidden = true)
   List<TBizRepayPlan> afterPayRecords;
 
   private String orgName;

@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.entity.system;
 
+import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
 
@@ -10,8 +11,9 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "t_sys_notice")
-public class Notice {
+public class Notice implements Serializable {
 
+  private static final long serialVersionUID = 7996835542461087017L;
   private Integer id;
   private String title;
   private Integer type;

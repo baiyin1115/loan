@@ -942,6 +942,8 @@ public class LoanTrialCalculateFactory {
     /**
      * 借据部分处理
      */
+    result.setCurrentRepayPlans(currentRepayPlans);
+    result.setAfterPayRecords(afterPayRecords);
     result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));
     result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), currentRepayWav));
     result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), repayInterest));
@@ -1097,6 +1099,8 @@ public class LoanTrialCalculateFactory {
       /**
        * 借据部分处理
        */
+      result.setCurrentRepayPlans(currentRepayPlans);
+      result.setAfterPayRecords(afterPayRecords);
       result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));
       result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), currentRepayWav));
       result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), repayInterest, backAmt)); //会有退款
@@ -1156,6 +1160,8 @@ public class LoanTrialCalculateFactory {
       /**
        * 借据部分处理
        */
+      result.setCurrentRepayPlans(currentRepayPlans);
+      result.setAfterPayRecords(afterPayRecords);
       result.setBackAmt(backAmt);
       result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), backAmt)); //会有退款
       result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));
@@ -1308,6 +1314,8 @@ public class LoanTrialCalculateFactory {
       /**
        * 借据部分处理
        */
+      result.setCurrentRepayPlans(currentRepayPlans);
+      result.setAfterPayRecords(afterPayRecords);
       result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));
       result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), currentRepayWav));
       result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), repayInterest, backAmt));
@@ -1362,6 +1370,8 @@ public class LoanTrialCalculateFactory {
       /**
        * 借据部分处理
        */
+      result.setCurrentRepayPlans(currentRepayPlans);
+      result.setAfterPayRecords(afterPayRecords);
       result.setBackAmt(backAmt);
       result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), backAmt)); //会有退款
       result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), currentRepayPrin));

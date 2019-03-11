@@ -480,9 +480,9 @@ public class BizTypeEnum {
    */
   public enum InvestTypeEnum {
     /**
-     * 1:小贷普通
+     * 1:半年结转,2:到期结算
      */
-    COMMON(1);
+    HALF_YEAR_SETTLEMENT(1),EXPIRATION_SETTLEMENT(2);
 
     private long value;
 

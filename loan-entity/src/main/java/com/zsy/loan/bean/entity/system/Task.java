@@ -1,6 +1,7 @@
 package com.zsy.loan.bean.entity.system;
 
 
+import java.io.Serializable;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,8 +10,9 @@ import java.util.Date;
 @Table(name = "t_sys_task")
 @Entity
 @Data
-public class Task {
+public class Task implements Serializable {
 
+  private static final long serialVersionUID = -4679885754628711955L;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")

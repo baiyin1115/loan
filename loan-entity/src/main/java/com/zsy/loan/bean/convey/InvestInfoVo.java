@@ -3,6 +3,7 @@ package com.zsy.loan.bean.convey;
 import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -24,9 +25,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvestInfoVo {
+public class InvestInfoVo implements Serializable {
 
 
+  private static final long serialVersionUID = -5536799045685150901L;
   @ApiModelProperty(value = "融资编号")
   private Long id;
 
@@ -37,6 +39,10 @@ public class InvestInfoVo {
   @NotNull(message = "[客户编号]不能为空！")
   @ApiModelProperty(value = "客户编号")
   private Long userNo;
+
+  @NotNull(message = "[产品类型]不能为空！")
+  @ApiModelProperty(value = "产品类型")
+  private Integer investType;
 
   @NotNull(message = "[入账账户]不能为空！")
   @ApiModelProperty(value = "入账账户")
@@ -94,6 +100,10 @@ public class InvestInfoVo {
 
   @ApiModelProperty(value = "应回利息累计")
   private BigDecimal totSchdInterest;
+
+
+  @ApiModelProperty(value = "计提利息累计") //tot_accrued_interest
+  private BigDecimal totAccruedInterest;
 
 
   @ApiModelProperty(value = "已提本金累计")

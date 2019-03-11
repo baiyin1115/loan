@@ -1,6 +1,7 @@
 package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import javax.validation.constraints.DecimalMax;
@@ -21,8 +22,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductInfoVo {
+public class ProductInfoVo implements Serializable {
 
+  private static final long serialVersionUID = -9013753931082030479L;
   private Long id;
 
   @ApiModelProperty( value = "公司编号")

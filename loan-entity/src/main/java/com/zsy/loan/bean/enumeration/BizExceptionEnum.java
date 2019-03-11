@@ -72,6 +72,7 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
    * 融资问题
    */
   INVEST_DATE(401, "结束日期必须在开始日期之后"),
+  INVEST_AMT(401, "金额错误"),
 
   /**
    * 客户问题

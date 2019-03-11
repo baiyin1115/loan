@@ -1,6 +1,7 @@
 package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,8 +19,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerInfoVo {
+public class CustomerInfoVo implements Serializable {
 
+  private static final long serialVersionUID = -2725687370299941691L;
   private Long id;
 
   @ApiModelProperty( value = "证件号码")

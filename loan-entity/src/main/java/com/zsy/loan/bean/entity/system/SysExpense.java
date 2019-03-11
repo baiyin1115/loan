@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.entity.system;
 
+import java.io.Serializable;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -11,8 +12,9 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "t_sys_expense")
-public class SysExpense {
+public class SysExpense implements Serializable {
 
+  private static final long serialVersionUID = -3951256202971655125L;
   private Integer id;
   private BigDecimal money;
   private String desc;

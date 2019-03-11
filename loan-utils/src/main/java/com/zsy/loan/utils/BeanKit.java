@@ -1,9 +1,22 @@
 package com.zsy.loan.utils;
 
 import com.zsy.loan.utils.exception.ToolBoxException;
-import java.beans.*;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -380,7 +393,16 @@ public class BeanKit {
           if (readMethod != null && ClassKit
               .isAssignable(writeMethod.getParameterTypes()[0], readMethod.getReturnType())) {
             try {
-              Object value = ClassKit.setAccessible(readMethod).invoke(source);
+              Object sourceValue = ClassKit.setAccessible(readMethod).invoke(source);
+              Object value = null;
+              if (sourceValue instanceof List) {
+                value = clone((List) sourceValue);
+              } else  if (sourceValue instanceof Map) {
+                value = clone((Map) sourceValue);
+              }else {
+                value = sourceValue;
+              }
+
               if (null != value || false == copyOptions.isIgnoreNullValue) {
                 ClassKit.setAccessible(writeMethod).invoke(target, value);
               }
@@ -392,6 +414,27 @@ public class BeanKit {
         }
       }
     }
+  }
+
+  public static <T extends Serializable> T clone(Object obj) {
+
+    T clonedObj = null;
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      ObjectOutputStream oos = new ObjectOutputStream(baos);
+      oos.writeObject(obj);
+      oos.close();
+
+      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+      ObjectInputStream ois = new ObjectInputStream(bais);
+      clonedObj = (T) ois.readObject();
+      ois.close();
+
+    } catch (Exception ex) {
+      throw new ToolBoxException(ex, "Copy property not Serializable {}", ex.getMessage());
+    }
+
+    return clonedObj;
   }
 
   /**

@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.entity.system;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,8 +27,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "tb_sys_status")
-public class Status {
+public class Status implements Serializable {
 
+  private static final long serialVersionUID = -1381332258502811524L;
   @Id
   @Column(name = "id", nullable = false)
   private Long id;

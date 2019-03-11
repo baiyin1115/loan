@@ -1,9 +1,8 @@
 package com.zsy.loan.bean.convey;
 
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
-import com.zsy.loan.bean.entity.biz.TBizProductInfo;
-import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -14,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.collections.functors.ConstantFactory;
 
 /**
  * 融资请求
@@ -26,9 +24,10 @@ import org.apache.commons.collections.functors.ConstantFactory;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvestCalculateVo {
+public class InvestCalculateVo implements Serializable {
 
 
+  private static final long serialVersionUID = -8798878859347645627L;
   @ApiModelProperty(value = "融资编号")
   private Long id;
 
@@ -39,6 +38,10 @@ public class InvestCalculateVo {
   @NotNull(message = "[客户编号]不能为空！")
   @ApiModelProperty(value = "客户编号")
   private Long userNo;
+
+  @NotNull(message = "[产品类型]不能为空！")
+  @ApiModelProperty(value = "产品类型")
+  private Integer investType;
 
   @NotNull(message = "[入账账户]不能为空！")
   @ApiModelProperty(value = "入账账户")
@@ -98,6 +101,10 @@ public class InvestCalculateVo {
   private BigDecimal totSchdInterest;
 
 
+  @ApiModelProperty(value = "计提利息累计") //tot_accrued_interest
+  private BigDecimal totAccruedInterest;
+
+
   @ApiModelProperty(value = "已提本金累计")
   private BigDecimal totPaidPrin;
 
@@ -129,33 +136,44 @@ public class InvestCalculateVo {
   @ApiModelProperty(value = "备注")
   private String remark;
 
-  @ApiModelProperty(value = "业务类型",hidden=true)
+  @ApiModelProperty(value = "业务类型", hidden = true)
   private Long bizType;
 
-  @ApiModelProperty(value = "日利息",hidden=true)
+  @ApiModelProperty(value = "日利息", hidden = true)
   private BigDecimal dayRate;
-  @ApiModelProperty(value = "月利息",hidden=true)
+  @ApiModelProperty(value = "月利息", hidden = true)
   private BigDecimal monthRate;
 
-  @ApiModelProperty(value = "展期日利息",hidden=true)
+  @ApiModelProperty(value = "展期日利息", hidden = true)
   private BigDecimal delayDayRate;
-  @ApiModelProperty(value = "展期月利息",hidden=true)
+  @ApiModelProperty(value = "展期月利息", hidden = true)
   private BigDecimal delayMonthRate;
 
-  @ApiModelProperty(value = "相差天数",hidden=true)
+  @ApiModelProperty(value = "相差天数", hidden = true)
   private int day;
-  @ApiModelProperty(value = "相差月数",hidden=true)
+  @ApiModelProperty(value = "相差月数", hidden = true)
   private int month;
 
-  @ApiModelProperty(value = "还款计划",hidden=true)
+  @ApiModelProperty(value = "回款计划", hidden = true)
   private List<TBizInvestPlan> planList;
 
-  @ApiModelProperty(value = "计算详情",hidden=true)
+  @ApiModelProperty(value = "当前期回款计划" , hidden = true)
+  List<TBizInvestPlan> currentPlanList;
+
+  @ApiModelProperty(value = "当前期以前的未还回款计划" , hidden = true)
+  List<TBizInvestPlan> notPayRecords;
+
+  @ApiModelProperty(value = "当前期以后的回款计划" , hidden = true)
+  List<TBizInvestPlan> afterPayRecords;
+
+  @ApiModelProperty(value = "计算详情", hidden = true)
   private String resultMsg;
 
-  private BigDecimal penMonthRate;
   @ApiModelProperty(value = "当前展期期数")
   private Long currentExtensionNo;
+
+  @ApiModelProperty(value = "当前展期利率")
+  private BigDecimal currentExtensionRate;
 
   private String orgName;
 
@@ -166,5 +184,20 @@ public class InvestCalculateVo {
   private String inAcctName;
 
   private String statusName;
+
+  @ApiModelProperty(value = "计算撤资本金")
+  private BigDecimal calculateAmt;
+
+  @ApiModelProperty(value = "计算撤资利息")
+  private BigDecimal calculateInterest;
+
+  @ApiModelProperty(value = "撤资本金")
+  private BigDecimal divestmentAmt;
+
+  @ApiModelProperty(value = "撤资利息")
+  private BigDecimal divestmentInterest;
+
+  @ApiModelProperty(value = "收益调整金额")
+  private BigDecimal divestmentWavAmt;
 
 }

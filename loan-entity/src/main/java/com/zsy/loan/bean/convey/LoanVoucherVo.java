@@ -1,6 +1,7 @@
 package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,8 +18,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanVoucherVo {
+public class LoanVoucherVo implements Serializable {
 
+  private static final long serialVersionUID = -3047088244225725980L;
   private Long id;
 
 

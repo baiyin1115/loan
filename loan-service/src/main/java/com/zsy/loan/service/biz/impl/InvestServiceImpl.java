@@ -135,7 +135,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
     calculate.setMonthRate(BigDecimalUtil.div(calculate.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN)); //月利息
 
     calculate.setDay(JodaTimeUtil.daysBetween(calculate.getBeginDate(), calculate.getEndDate())); //相差天数
-    calculate.setMonth(JodaTimeUtil.getMonthFloor(calculate.getBeginDate(), calculate.getEndDate())); //相差月数
+    calculate.setMonth(JodaTimeUtil.getMonthContain(calculate.getBeginDate(), calculate.getEndDate())); //相差月数
 
     if (calculate.getExtensionRate() != null) {
       calculate.setDelayDayRate(BigDecimalUtil.div(calculate.getExtensionRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN)); //延期日利息
@@ -153,7 +153,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
 
     //预留出业务类型
     InvestCalculateVo result = InvestTrialCalculateFactory.maps
-        .get(InvestTypeEnum.COMMON + "_" + LoanBizTypeEnum.getEnumByKey(calculate.getBizType())).apply(calculate);
+        .get(InvestTypeEnum.getEnumByKey(calculate.getInvestType()) + "_" + LoanBizTypeEnum.getEnumByKey(calculate.getBizType())).apply(calculate);
     return result;
   }
 

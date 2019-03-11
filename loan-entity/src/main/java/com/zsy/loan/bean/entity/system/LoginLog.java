@@ -2,6 +2,7 @@ package com.zsy.loan.bean.entity.system;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
 
@@ -12,8 +13,9 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "t_sys_login_log")
-public class LoginLog {
+public class LoginLog implements Serializable {
 
+  private static final long serialVersionUID = -9049542428724167411L;
   private Integer id;
   private String logname;
   private Integer userid;

@@ -1,6 +1,7 @@
 package com.zsy.loan.bean.entity.system;
 
 
+import java.io.Serializable;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,10 +15,11 @@ import java.util.Date;
 @Table(name = "t_sys_task_log")
 @Entity
 @Data
-public class TaskLog {
+public class TaskLog implements Serializable {
 
   public static final int EXE_FAILURE_RESULT = 0;
   public static final int EXE_SUCCESS_RESULT = 1;
+  private static final long serialVersionUID = -8895362287891147781L;
 
 
   @Id

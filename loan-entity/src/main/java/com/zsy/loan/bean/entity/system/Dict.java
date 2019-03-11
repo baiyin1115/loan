@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "t_sys_dict")
 public class Dict implements Serializable {
 
+  private static final long serialVersionUID = 4618067899482529120L;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")

@@ -1,6 +1,7 @@
 package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import javax.validation.constraints.NotNull;
@@ -19,8 +20,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AcctVo {
+public class AcctVo implements Serializable {
 
+  private static final long serialVersionUID = 7466162737095072436L;
   private Long id;
 
   @ApiModelProperty( value = "用户编号")

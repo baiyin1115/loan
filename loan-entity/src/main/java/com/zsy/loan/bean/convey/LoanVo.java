@@ -1,6 +1,7 @@
 package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -21,8 +22,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanVo {
+public class LoanVo implements Serializable {
 
+  private static final long serialVersionUID = -1928190769475434413L;
   private Long id;
 
   @NotNull(message = "[公司编号]不能为空！")

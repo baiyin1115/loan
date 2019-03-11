@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.entity.system;
 
+import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
 
@@ -10,8 +11,9 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "t_sys_operation_log")
-public class OperationLog {
+public class OperationLog implements Serializable {
 
+  private static final long serialVersionUID = 5486004351779132162L;
   private Integer id;
   private String logtype;
   private String logname;

@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.entity.biz;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -34,7 +35,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "t_biz_acct_record")
-public class TBizAcctRecord {
+public class TBizAcctRecord implements Serializable {
+
+  private static final long serialVersionUID = -3698556719274929524L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

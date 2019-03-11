@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.entity.system;
 
+import java.io.Serializable;
 import javax.persistence.*;
 
 /**
@@ -9,8 +10,9 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "t_sys_relation")
-public class Relation {
+public class Relation implements Serializable {
 
+  private static final long serialVersionUID = -9168543270454688438L;
   private Integer id;
   private Long menuid;
   private Integer roleid;

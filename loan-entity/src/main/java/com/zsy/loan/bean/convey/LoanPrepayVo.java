@@ -1,6 +1,7 @@
 package com.zsy.loan.bean.convey;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -22,8 +23,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanPrepayVo {
+public class LoanPrepayVo implements Serializable {
 
+  private static final long serialVersionUID = 7897221817767760434L;
   private Long id;
 
   @ApiModelProperty(value = "[公司编号]")
