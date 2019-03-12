@@ -179,7 +179,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
   /**
    * 试算
    */
-  private InvestCalculateVo calculate(InvestCalculateVo calculate) {
+  public InvestCalculateVo calculate(InvestCalculateVo calculate) {
 
     /**
      * 根据本金、利率、开始结束日期计算利息、期数、应还本金、应还利息、回款计划相关信息

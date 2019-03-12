@@ -22,6 +22,7 @@
                                 <#button name="搜索" icon="fa-search" clickFun="PopupCustomerDlg.custSearch()"/>
                                 <#button name="重置" icon="fa-trash" clickFun="PopupCustomerDlg.resetCustSearch()" space="true"/>
                             </div>
+                            <input type="hidden" id="type" value="${type}">
                         </div>
                         <div class="hidden-xs" id="CustomerTableToolbar" role="group">
                             <#button name="确定" icon="fa-plus" clickFun="PopupCustomerDlg.setCustomer()"/>

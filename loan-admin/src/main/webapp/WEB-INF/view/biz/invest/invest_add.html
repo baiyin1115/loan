@@ -20,11 +20,11 @@
               clickFun="InvestDlg.openCustList(); return false;"
           />
 
-          <#input id="investTypeName" name="产品类型" underline="false"
-              hidden="investType" readonly="readonly"
-              clickFun="InvestDlg.showInvestTypeSelectTree(); return false;"
-              style="background-color: #ffffff !important;"
-              selectFlag="true" selectId="investTypeTreeDiv" selectTreeId="investTypeTree" selectStyle="width:244px !important;"/>
+          <#select id="investType" name="融资类型" underline="false">
+            @for(dict in constant.getDicts('融资类型')){
+            <option value="${dict.num}">${dict.name}</option>
+            @}
+          </#select>
 
           <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${system.getSysAcctDate()}" />
 
@@ -40,17 +40,19 @@
         </div>
         <div class="col-sm-6">
 
-          <#input id="externalAcct" name="投资人出款账户" underline="false"/>
-
           <#input id="prin" name="本金" underline="false"/>
 
           <#input id="rate" name="利率" underline="false"/>
+
+          <#input id="ddDate" name="计息日" underline="false"/>
+
+          <#input id="externalAcct" name="投资人出款账户" underline="false"/>
 
           <#input id="termNo" name="期数" underline="false"/>
 
           <#input id="cycleInterval" name="周期间隔" underline="false"/>
 
-          <#input id="ddDate" name="计息日" underline="false"/>
+          <#input id="totSchdInterest" name="应收利息累计" underline="false"/>
 
         </div>
       </div>

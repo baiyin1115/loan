@@ -224,8 +224,11 @@ public class CustomerController extends BaseController {
   /**
    * 跳转到客户选择页面
    */
-  @RequestMapping("/popup_cust_list")
-  public String popupCustList() {
+  @RequestMapping("/popup_cust_list/{type}")
+  public String popupCustList(@PathVariable Long type, Model model) {
+
+    model.addAttribute("type", type);
+
     return PREFIX + "popup_customer.html";
   }
 

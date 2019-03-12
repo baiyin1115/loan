@@ -49,7 +49,7 @@
                             @if(shiro.hasPermission("/invest/print")){
                                 <#button name="打印" icon="fa-print" clickFun="Invest.openPrintInvest()" space="true"/>
                             @}
-                            @if(shiro.hasPermission("/invest/repay")){
+                            @if(shiro.hasPermission("/invest/accrual")){
                                 <#button name="刷新回款计划" icon="fa-refresh" clickFun="Invest.refreshInvestPlan()" space="true"/>
                             @}
                         </div>

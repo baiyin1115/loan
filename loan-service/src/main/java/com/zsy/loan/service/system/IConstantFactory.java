@@ -269,7 +269,7 @@ public interface IConstantFactory {
    * @param type
    * @return
    */
-  String getInvestTypeName(Long type);
+  String getInvestTypeName(Integer type);
 
   /**
    * 获取回款状态名称

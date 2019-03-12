@@ -1,81 +1,80 @@
 @layout("/common/_container.html"){
 <div class="ibox float-e-margins">
     <div class="ibox-content">
-        <div class="form-horizontal" id="productInfoForm">
+        <div class="form-horizontal" id="investInfoForm">
 
-            <input type="hidden" id="id" value="${product.id}">
-            <input type="hidden" id="orgNoValue" value="${product.orgNo}">
-            <input type="hidden" id="serviceFeeTypeValue" value="${product.serviceFeeType}">
-            <input type="hidden" id="isPenValue" value="${product.isPen}">
-            <input type="hidden" id="penNumberValue" value="${product.penNumber}">
-            <input type="hidden" id="repayTypeValue" value="${product.repayType}">
-            <input type="hidden" id="loanTypeValue" value="${product.loanType}">
-            <input type="hidden" id="serviceFeeScaleH" value="${product.rate,numberFormat=',###.000%'}">
+            <input type="hidden" id="orgNoValue" value="${invest.orgNo}">
+            <input type="hidden" id="investTypeValue" value="${invest.investType}">
+
+            <input type="hidden" id="id" value="${invest.id}">
+            <input type="hidden" id="statusValue" value="${invest.status}">
 
             <div class="row">
                 <div class="col-sm-6">
 
                     <#select id="orgNo" name="公司" underline="false">
-                        @for(dict in constant.getDicts('公司')){
+                        <option value=""></option>
+                        @for(dict in userown.getOrgList()){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
 
-                    <#input id="productName" name="产品名称" underline="false" value="${product.productName}"/>
+                    <#input id="custName" name="客户" underline="false" readonly="readonly" hidden="custNo" value="${invest.custName}" hiddenValue="${invest.custNo}"
+                        clickFun="InvestDlg.openCustList(); return false;"
+                    />
 
-                    <#input id="rate" name="产品利率" underline="false" value="${product.rate}"/>
-
-                    <#input id="serviceFeeScale" name="服务费比例" underline="false" value="${product.serviceFeeScale}"/>
-
-                    <#select id="serviceFeeType" name="服务费收取方式" underline="false">
-                        @for(dict in constant.getDicts('服务费收取方式')){
+                    <#select id="investType" name="融资类型" underline="false">
+                        @for(dict in constant.getDicts('融资类型')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>
 
-                    <#input id="penRate" name="罚息利率" underline="false" value="${product.penRate}" />
+                    <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${invest.acctDate}" />
 
+                    <#TimeInput id="beginDate" name="开始日期" isTime="false" pattern="YYYY-MM-DD" value="${invest.beginDate}" />
 
+                    <#TimeInput id="endDate" name="结束日期" isTime="false" pattern="YYYY-MM-DD" value="${invest.endDate}" />
+
+                    <#input id="inAcctName" name="入账账户" underline="false" value="${invest.inAcctName}" hiddenValue="${invest.inAcctNo}"
+                        hidden="inAcctNo" readonly="readonly"
+                        clickFun="InvestDlg.showInAcctSelectTree(); return false;"
+                        style="background-color: #ffffff !important;"
+                        selectFlag="true" selectId="inAcctTreeDiv" selectTreeId="inAcctTree" selectStyle="width:244px !important;"/>
                 </div>
                 <div class="col-sm-6">
-                    <#select id="isPen" name="是否罚息" underline="false">
-                        @for(dict in constant.getDicts('是否')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
 
-                    <#select id="penNumber" name="罚息基数" underline="false">
-                        @for(dict in constant.getDicts('罚息基数')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
+                    <#input id="prin" name="本金" underline="false" value="${invest.prin}" />
 
-                    <#select id="repayType" name="产品还款方式" underline="false">
-                        @for(dict in constant.getDicts('还款方式')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
+                    <#input id="rate" name="利率" underline="false" value="${invest.rate}"/>
 
-                    <#select id="loanType" name="贷款类型" underline="false">
-                        @for(dict in constant.getDicts('贷款类型')){
-                        <option value="${dict.num}">${dict.name}</option>
-                        @}
-                    </#select>
+                    <#input id="ddDate" name="计息日" underline="false" value="${invest.ddDate}"/>
 
-                    <#input id="cycleInterval" name="周期间隔" underline="false" value="${product.cycleInterval}"/>
+                    <#input id="externalAcct" name="投资人出款账户" underline="false" value="${invest.externalAcct}"/>
 
+                    <#input id="termNo" name="期数" underline="false" value="${invest.termNo}" />
+
+                    <#input id="cycleInterval" name="周期间隔" underline="false" value="${invest.cycleInterval}"/>
+
+                    <#input id="totSchdInterest" name="应收利息累计" underline="false" value="${invest.totSchdInterest}"/>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50" value="${invest.remark}" />
                 </div>
             </div>
 
             <div class="row btn-group-m-t">
                 <div class="col-sm-10">
-                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="ProductInfoDlg.editSubmit()"/>
-                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="ProductInfoDlg.close()"/>
+                    <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="InvestDlg.calculate()"/>
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="InvestDlg.editSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="InvestDlg.close()"/>
                 </div>
             </div>
         </div>
 
     </div>
 </div>
-<script src="${ctxPath}/static/modular/biz/product/product_info.js"></script>
+<script src="${ctxPath}/static/modular/biz/invest/invest_info.js"></script>
 @}

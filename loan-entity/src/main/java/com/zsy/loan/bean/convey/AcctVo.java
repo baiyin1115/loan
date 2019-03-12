@@ -27,7 +27,7 @@ public class AcctVo implements Serializable {
 
   @ApiModelProperty( value = "用户编号")
   @NotNull(message = "[用户编号]不能为空！")
-  private Long userNo;
+  private Long custNo;
 
   @ApiModelProperty( value = "账户名称")
   @NotNull(message = "[账户名称]不能为空！")

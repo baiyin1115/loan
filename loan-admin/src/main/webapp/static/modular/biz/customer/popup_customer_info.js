@@ -46,6 +46,7 @@ PopupCustomerDlg.custFormParams = function () {
   queryData['certNo'] = $("#certNo").val();
   queryData['name'] = $("#name").val();
   queryData['mobile'] = $("#mobile").val();
+  queryData['type'] = $("#type").val();
   return queryData;
 };
 
@@ -94,9 +95,9 @@ PopupCustomerDlg.close = function () {
     parent.layer.close(window.parent.Invest.custLayerIndex);
   }
 
-  // if(window.parent.Loan != undefined){
-  //   parent.layer.close(window.parent.Loan.custLayerIndex);
-  // }
+  if(window.parent.InvestDlg != undefined){
+    parent.layer.close(window.parent.InvestDlg.custLayerIndex);
+  }
 }
 
 

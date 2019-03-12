@@ -4,8 +4,11 @@ import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
+import com.zsy.loan.bean.convey.InvestCalculateVo;
 import com.zsy.loan.bean.convey.InvestInfoVo;
+import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.dictmap.biz.InvestDict;
+import com.zsy.loan.bean.dictmap.biz.LoanDict;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
@@ -18,6 +21,7 @@ import com.zsy.loan.dao.biz.InvestInfoRepo;
 import com.zsy.loan.service.biz.impl.InvestServiceImpl;
 import com.zsy.loan.service.factory.LoanStatusFactory;
 import com.zsy.loan.service.system.LogObjectHolder;
+import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.wrapper.biz.InvestWrapper;
 import com.zsy.loan.service.wrapper.biz.RepayPlanWrapper;
 import com.zsy.loan.utils.BeanUtil;
@@ -121,11 +125,13 @@ public class InvestController extends BaseController {
    * 跳转到修改融资
    */
   @Permission
-  @RequestMapping("/invest_update/{investId}")
+  @RequestMapping("/to_invest_update/{investId}")
   public String investUpdate(@PathVariable Long investId, Model model) {
     TBizInvestInfo invest = investInfoRepo.findById(investId).get();
 
     invest.setRemark(invest.getRemark()==null?"":invest.getRemark().trim());
+    invest.setCustName(ConstantFactory.me().getCustomerName(invest.getCustNo()));
+    invest.setInAcctName(ConstantFactory.me().getAcctName(invest.getInAcctNo()));
 
     model.addAttribute("invest", invest);
     LogObjectHolder.me().set(invest);
@@ -186,6 +192,36 @@ public class InvestController extends BaseController {
 
     investService.save(invest,true);
     return SUCCESS_TIP;
+  }
+
+
+  /**
+   * 登记试算
+   */
+  @BussinessLog(value = "登记试算", dict = InvestDict.class)
+  @RequestMapping(value = "/calculate")
+  @Permission
+  @ResponseBody
+  @ApiOperation(value = "登记试算", notes = "登记试算")
+  public InvestCalculateVo calculate(@Valid @RequestBody InvestCalculateVo investCalculateVo,
+      BindingResult error) {
+
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    /**
+     * 校验
+     */
+    //借款结束日期必须在开始日期之后
+    if (!DateUtil.compareDate(investCalculateVo.getBeginDate(), investCalculateVo.getEndDate())) {
+      throw new LoanException(BizExceptionEnum.INVEST_DATE, "");
+    }
+
+    investCalculateVo.setBizType(LoanBizTypeEnum.INVEST_CHECK_IN.getValue()); //设置业务类型
+
+    return investService.calculate(investCalculateVo);
   }
 
   /**

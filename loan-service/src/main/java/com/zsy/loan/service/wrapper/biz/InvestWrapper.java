@@ -30,7 +30,7 @@ public class InvestWrapper extends BaseControllerWrapper {
     map.put("custName", ConstantFactory.me().getCustomerName(((Long) map.get("custNo"))));
     map.put("inAcctName", ConstantFactory.me().getAcctName(((Long) map.get("inAcctNo"))));
     map.put("statusName", ConstantFactory.me().getInvestStatusName((Long) map.get("status")));
-    map.put("investTypeName", ConstantFactory.me().getInvestStatusName((Long) map.get("investType")));
+    map.put("investTypeName", ConstantFactory.me().getInvestTypeName((Integer) map.get("investType")));
 
     //费率部分格式化
     map.put("rateFormat", BigDecimalUtil.formatHundred((BigDecimal) map.get("rate")));

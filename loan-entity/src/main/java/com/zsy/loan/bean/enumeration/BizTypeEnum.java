@@ -36,7 +36,7 @@ public class BizTypeEnum {
     /**
      * 1:借款人账户,2:融资人账户
      */
-    INVEST(1), LOAN(2);
+    LOAN(1), INVEST(2);
 
     private long value;
 

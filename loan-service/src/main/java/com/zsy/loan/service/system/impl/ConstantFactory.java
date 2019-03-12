@@ -507,7 +507,7 @@ public class ConstantFactory implements IConstantFactory {
   }
 
   @Override
-  public String getInvestTypeName(Long type) {
+  public String getInvestTypeName(Integer type) {
     return getDictsByName("融资类型", String.valueOf(type));
   }
 

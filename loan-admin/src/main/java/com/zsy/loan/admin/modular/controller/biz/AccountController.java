@@ -109,7 +109,7 @@ public class AccountController extends BaseController {
     //不能开立投资人、借款人账户
     if (account.getAcctType().equals(AcctTypeEnum.INVEST.getValue()) || account.getAcctType()
         .equals(AcctTypeEnum.LOAN.getValue())) {
-      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_ADD, String.valueOf(account.getUserNo()));
+      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_ADD, String.valueOf(account.getCustNo()));
     }
 
     //公司、代偿账户不能透支
@@ -117,7 +117,7 @@ public class AccountController extends BaseController {
         || account.getAcctType().equals(AcctTypeEnum.INTERIM_OUT.getValue())) && account
         .getBalanceType().equals(AcctBalanceTypeEnum.OVERDRAW.getValue())) {
       throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW,
-          String.valueOf(account.getUserNo()));
+          String.valueOf(account.getCustNo()));
     }
 
     return acctService.save(account, false);
@@ -182,7 +182,7 @@ public class AccountController extends BaseController {
         && account.getBalanceType()
         .equals(AcctBalanceTypeEnum.OVERDRAW.getValue())) {
       throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW,
-          String.valueOf(account.getUserNo()));
+          String.valueOf(account.getCustNo()));
     }
 
     acctService.save(account, true);
@@ -277,6 +277,24 @@ public class AccountController extends BaseController {
     return treeList;
 
   }
+
+  /**
+   * 获取入账账户列表
+   */
+  @RequestMapping(value = "/selectInAcctTreeList")
+  @ResponseBody
+  public List<ZTreeNode> selectInAcctTreeList() {
+
+    List para  =  new ArrayList(1);
+    para.add(AcctTypeEnum.COMPANY.getValue());
+
+    List<ZTreeNode> treeList = acctService.getAcctTreeList(para);
+//    roleTreeList.add(ZTreeNode.createParent());
+    return treeList;
+
+  }
+
+
 
 
 

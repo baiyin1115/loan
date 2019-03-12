@@ -10,6 +10,7 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
+import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.JodaTimeUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -79,6 +80,13 @@ public class InvestTrialCalculateFactory {
     InvestCalculateVo result = InvestCalculateVo.builder().build();
     BeanKit.copyProperties(data, result);
 
+    if (data.getDdDate() == null) {
+      result.setDdDate(30L); //默认为30号
+    }
+    if (data.getCycleInterval() == null) {
+      result.setCycleInterval(30L); //周期为30天
+    }
+
     // 期数
     result.setTermNo((long) result.getMonth());
 
@@ -110,12 +118,18 @@ public class InvestTrialCalculateFactory {
         concurrentBegin = JodaTimeUtil.getFirstDateOfMonth(end);
         concurrentEnd = end;
       } else {
-        concurrentBegin = JodaTimeUtil.getEndDataOfMonth(concurrent);
+        concurrentBegin = JodaTimeUtil.getFirstDateOfMonth(concurrent);
         concurrentEnd = JodaTimeUtil.getEndDataOfMonth(concurrent);
       }
 
       plan.setTermNo((long) i + 1); //期数
-      plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+
+      if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+      } else {
+        plan.setDdDate(concurrentEnd); //计息日期
+      }
+
       plan.setRate(data.getRate()); //利率
       plan.setBeginDate(concurrentBegin); //本期开始日期
       plan.setEndDate(concurrentEnd); //本期结束日期
@@ -139,6 +153,7 @@ public class InvestTrialCalculateFactory {
         plan.setDdNum((long) days); //计息天数
       }
       list.add(plan);
+      concurrent = DateUtil.dateAddMonths(concurrent, 1);
     }
     result.setPlanList(list); //回款计划
 
@@ -346,7 +361,13 @@ public class InvestTrialCalculateFactory {
       concurrentEnd = JodaTimeUtil.getAfterDayMonth(concurrentBegin, 1);
       plan.setEndDate(concurrentEnd); //本期结束日期
       plan.setTermNo(data.getTermNo() + data.getExtensionNo() + i + 1l); //期数
-      plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+
+      if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+      } else {
+        plan.setDdDate(concurrentEnd); //计息日期
+      }
+
       plan.setRate(currentExtensionRate); //利率
       plan.setDdPrin(remainingPrin); //本期计息本金
       plan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息
@@ -421,6 +442,13 @@ public class InvestTrialCalculateFactory {
     InvestCalculateVo result = InvestCalculateVo.builder().build();
     BeanKit.copyProperties(data, result);
 
+    if (data.getDdDate() == null) {
+      result.setDdDate(30L); //默认为30号
+    }
+    if (data.getCycleInterval() == null) {
+      result.setCycleInterval(30L); //周期为30天
+    }
+
     // 期数
     result.setTermNo((long) result.getMonth());
 
@@ -461,7 +489,13 @@ public class InvestTrialCalculateFactory {
       }
 
       plan.setTermNo((long) i + 1); //期数
-      plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+
+      if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+      } else {
+        plan.setDdDate(concurrentEnd); //计息日期
+      }
+
       plan.setRate(data.getRate()); //利率
       plan.setBeginDate(concurrentBegin); //本期开始日期
       plan.setEndDate(concurrentEnd); //本期结束日期
@@ -676,7 +710,13 @@ public class InvestTrialCalculateFactory {
       concurrentEnd = JodaTimeUtil.getAfterDayMonth(concurrentBegin, 1);
       plan.setEndDate(concurrentEnd); //本期结束日期
       plan.setTermNo(data.getTermNo() + data.getExtensionNo() + i + 1l); //期数
-      plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+
+      if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+      } else {
+        plan.setDdDate(concurrentEnd); //计息日期
+      }
+
       plan.setRate(currentExtensionRate); //利率
       plan.setDdPrin(remainingPrin); //本期计息本金
       plan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息

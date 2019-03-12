@@ -55,7 +55,7 @@ public class ProductController extends BaseController {
    */
   @RequestMapping("")
   public String index() {
-    return PREFIX + "invest.html";
+    return PREFIX + "product.html";
   }
 
   /**
@@ -63,7 +63,7 @@ public class ProductController extends BaseController {
    */
   @RequestMapping("/product_add")
   public String productAdd() {
-    return PREFIX + "invest_add.html";
+    return PREFIX + "product_add.html";
   }
 
   /**
@@ -78,7 +78,7 @@ public class ProductController extends BaseController {
 
     model.addAttribute("product", product);
     LogObjectHolder.me().set(product);
-    return PREFIX + "invest_edit.html";
+    return PREFIX + "product_edit.html";
 
   }
 

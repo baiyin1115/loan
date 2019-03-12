@@ -252,7 +252,7 @@ Invest.openCustList = function () {
     area: ['900px', '600px'], //宽高
     fix: false, //不固定
     maxmin: true,
-    content: Feng.ctxPath + '/customer/popup_cust_list'
+    content: Feng.ctxPath + '/customer/popup_cust_list/2' //1:借款人账户,2:融资人账户
   });
   this.custLayerIndex = index;
 };

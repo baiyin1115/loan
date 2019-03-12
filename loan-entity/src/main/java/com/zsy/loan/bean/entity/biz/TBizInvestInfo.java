@@ -13,10 +13,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -35,6 +37,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
 @Table(name = "t_biz_invest_info")
 public class TBizInvestInfo implements Serializable {
 
@@ -159,6 +162,19 @@ public class TBizInvestInfo implements Serializable {
 
   @Column(name = "remark")
   private String remark;
+
+  @Transient
+  private String orgName;
+
+  @Transient
+  private String custName;
+
+  @Transient
+  private String inAcctName;
+
+  @Transient
+  private String investTypeName;
+
 
   @Override
   public boolean equals(Object o) {

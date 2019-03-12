@@ -1,5 +1,7 @@
 package com.zsy.loan.service.biz.impl;
 
+import com.zsy.loan.bean.convey.AcctVo;
+import com.zsy.loan.bean.convey.CustomerInfoVo;
 import com.zsy.loan.bean.entity.biz.TBizAcct;
 import com.zsy.loan.bean.entity.biz.TBizCustomerInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
@@ -9,8 +11,6 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.bean.convey.AcctVo;
-import com.zsy.loan.bean.convey.CustomerInfoVo;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.dao.biz.CustomerInfoRepo;
 import com.zsy.loan.service.system.impl.SystemServiceImpl;
@@ -90,6 +90,10 @@ public class CustomerServiceImpl {
               list.add(criteriaBuilder
                   .like(root.get("mobile").as(String.class), condition.getMobile().trim() + "%"));
             }
+            if (condition.getType() != null) {
+              list.add(criteriaBuilder
+                  .equal(root.get("type").as(Long.class), condition.getType()));
+            }
 
             CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("status"));
             in.value(CustomerStatusEnum.NORMAL.getValue());
@@ -108,7 +112,7 @@ public class CustomerServiceImpl {
   }
 
   @Transactional
-  public Object save(CustomerInfoVo customer,boolean isUp) {
+  public Object save(CustomerInfoVo customer, boolean isUp) {
 
     TBizCustomerInfo info = TBizCustomerInfo.builder().build();
     BeanUtils.copyProperties(customer, info);
@@ -122,20 +126,20 @@ public class CustomerServiceImpl {
     /**
      * 创建账户信息
      */
-    if(!isUp){
+    if (!isUp) {
       AcctVo account = null;
       if (info.getType().equals(CustomerTypeEnum.INVEST.getValue())) { //投资人
         account = AcctVo.builder().acctType(AcctTypeEnum.INVEST.getValue())
             .availableBalance(BigDecimal.ZERO).balanceType(AcctBalanceTypeEnum.NO_OVERDRAW.getValue())
             .freezeBalance(BigDecimal.ZERO).remark("系统自动建立").status(AcctStatusEnum.VALID.getValue())
-            .userNo(info.getId()).name(info.getName()).build();
+            .custNo(info.getId()).name(info.getName()).build();
       } else { //借款人
         account = AcctVo.builder().acctType(AcctTypeEnum.LOAN.getValue())
             .availableBalance(BigDecimal.ZERO).balanceType(AcctBalanceTypeEnum.NO_OVERDRAW.getValue())
             .freezeBalance(BigDecimal.ZERO).remark("系统自动建立").status(AcctStatusEnum.VALID.getValue())
-            .userNo(info.getId()).name(info.getName()).build();
+            .custNo(info.getId()).name(info.getName()).build();
       }
-      acctService.save(account,false);
+      acctService.save(account, false);
     }
 
     return true;
