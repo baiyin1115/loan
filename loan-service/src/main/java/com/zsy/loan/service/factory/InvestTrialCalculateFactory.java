@@ -125,11 +125,13 @@ public class InvestTrialCalculateFactory {
       plan.setTermNo((long) i + 1); //期数
 
       if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(),false)); //计息日期
       } else {
         plan.setDdDate(concurrentEnd); //计息日期
       }
 
+      plan.setId(null);
+      plan.setInvestNo(data.getId());
       plan.setRate(data.getRate()); //利率
       plan.setBeginDate(concurrentBegin); //本期开始日期
       plan.setEndDate(concurrentEnd); //本期结束日期
@@ -363,7 +365,7 @@ public class InvestTrialCalculateFactory {
       plan.setTermNo(data.getTermNo() + data.getExtensionNo() + i + 1l); //期数
 
       if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(),false)); //计息日期
       } else {
         plan.setDdDate(concurrentEnd); //计息日期
       }
@@ -491,11 +493,13 @@ public class InvestTrialCalculateFactory {
       plan.setTermNo((long) i + 1); //期数
 
       if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(),false)); //计息日期
       } else {
         plan.setDdDate(concurrentEnd); //计息日期
       }
 
+      plan.setId(null);
+      plan.setInvestNo(data.getId());
       plan.setRate(data.getRate()); //利率
       plan.setBeginDate(concurrentBegin); //本期开始日期
       plan.setEndDate(concurrentEnd); //本期结束日期
@@ -712,7 +716,7 @@ public class InvestTrialCalculateFactory {
       plan.setTermNo(data.getTermNo() + data.getExtensionNo() + i + 1l); //期数
 
       if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue())); //计息日期
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(),false)); //计息日期
       } else {
         plan.setDdDate(concurrentEnd); //计息日期
       }

@@ -1,10 +1,11 @@
 package com.zsy.loan.service.biz.impl;
 
 import com.zsy.loan.bean.convey.InvestCalculateVo;
+import com.zsy.loan.bean.convey.InvestConfirmInfoVo;
 import com.zsy.loan.bean.convey.InvestInfoVo;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
-import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
+import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestTypeEnum;
@@ -13,6 +14,7 @@ import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.InvestInfoRepo;
 import com.zsy.loan.dao.biz.InvestPlanRepo;
+import com.zsy.loan.service.factory.InvestStatusFactory;
 import com.zsy.loan.service.factory.InvestTrialCalculateFactory;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.utils.BeanKit;
@@ -32,6 +34,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -205,7 +208,13 @@ public class InvestServiceImpl extends BaseServiceImpl {
     calculate.setMonthRate(BigDecimalUtil.div(calculate.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN)); //月利息
 
     calculate.setDay(JodaTimeUtil.daysBetween(calculate.getBeginDate(), calculate.getEndDate())); //相差天数
-    calculate.setMonth(JodaTimeUtil.getMonthContain(calculate.getBeginDate(), calculate.getEndDate())); //相差月数
+
+    if(calculate.getInvestType().equals(InvestTypeEnum.HALF_YEAR_SETTLEMENT.getValue())){
+      calculate.setMonth(JodaTimeUtil.getMonthContain(calculate.getBeginDate(), calculate.getEndDate())); //相差月数
+    }else{
+      calculate.setMonth(JodaTimeUtil.getMonthFloor(calculate.getBeginDate(), calculate.getEndDate())); //相差月数
+    }
+
 
     if (calculate.getExtensionRate() != null) {
       calculate.setDelayDayRate(BigDecimalUtil.div(calculate.getExtensionRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN)); //延期日利息
@@ -228,10 +237,79 @@ public class InvestServiceImpl extends BaseServiceImpl {
   }
 
 
+  /**
+   * 确认
+   */
+  @Transactional
+  public boolean confirm(@Valid InvestConfirmInfoVo invest, boolean b) {
+
+    /**
+     * 锁记录
+     */
+    TBizInvestInfo old = repository.lockRecordByIdStatus(invest.getId(), invest.getStatus());
+    if (old == null) {
+      throw new LoanException(BizExceptionEnum.NOT_EXISTED_ING, invest.getId() + "_" + invest.getStatus());
+    }
+
+    /**
+     * 试算
+     */
+    InvestCalculateVo calculateRequest = InvestCalculateVo.builder().build();
+    BeanKit.copyProperties(invest, calculateRequest);
+    calculateRequest.setBizType(LoanBizTypeEnum.INVEST.getValue()); //设置业务类型
+    InvestCalculateVo result = calculate(calculateRequest); //试算结果
+
+    /**
+     * 比较试算结果是否与传入的一致
+     */
+    if (!invest.getTermNo().equals(result.getTermNo())) {
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "期数不一致");
+    }
+    if (invest.getTotSchdInterest().compareTo(result.getTotSchdInterest()) != 0) {
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
+    }
+
+    TBizInvestInfo info = TBizInvestInfo.builder().build();
+    BeanKit.copyProperties(invest, info);
+
+    /**
+     * 修改凭证信息
+     */
+    info.setStatus(InvestStatusFactory.getNextStatus(invest.getStatus() + "_" + LoanBizTypeEnum.INVEST.getValue()).getValue()); //融资
+    info.setAcctDate(systemService.getSysAcctDate());
+    repository
+        .confirm(info.getId(), info.getStatus(), info.getRemark(), result.getDdDate(), systemService.getSysAcctDate(),
+            result.getTotSchdInterest());
+
+    /**
+     * 先删除后插保存还款计划信息
+     */
+    investPlanRepo.deleteByInvestNo(info.getId());
+    investPlanRepo.saveAll(result.getPlanList());
+
+    /**
+     * 调用账户模块记账
+     */
+    //TODO
+
+    return true;
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   public List<ZTreeNode> getTreeList() {
     return null;
   }
-
-
 }

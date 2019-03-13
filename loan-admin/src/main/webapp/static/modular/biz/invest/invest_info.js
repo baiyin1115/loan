@@ -213,11 +213,64 @@ InvestDlg.calculate = function () {
 };
 
 /**
+ * 确认
+ */
+InvestDlg.confirmSubmit = function () {
+
+  this.clearData();
+  this.collectData();
+
+  if (!this.validate($('#investConfirmInfoForm'))) {
+    return;
+  }
+
+  //提交信息
+  var ajax = new $ax(Feng.ctxPath + "/invest/confirm", function (data) {
+    Feng.success("确认成功!");
+    window.parent.Invest.refreshInvestPlan();
+    window.parent.Invest.table.refresh();
+    InvestDlg.close();
+  }, function (data) {
+    Feng.error("确认失败!" + data.responseJSON.message + "!");
+  });
+  ajax.set(this.investInfoData);
+  ajax.setContentType("application/json")
+  ajax.start();
+};
+
+/**
+ * 确认试算
+ */
+InvestDlg.confirmCalculate = function () {
+
+  this.clearData();
+  this.collectData();
+
+  if (!this.validate($('#investConfirmInfoForm'))) {
+    return;
+  }
+
+  //提交信息
+  var ajax = new $ax(Feng.ctxPath + "/invest/calculate", function (data) {
+    Feng.infoDetail("试算详情", data.resultMsg);
+
+  }, function (data) {
+    Feng.error("试算失败!" + data.responseJSON.message + "!");
+  });
+  ajax.set(this.investInfoData);
+  //alert(JSON.stringify(this.loanInfoData));
+  ajax.setContentType("application/json")
+  ajax.start();
+};
+
+
+/**
  * 初始化
  */
 $(function () {
 
   Feng.initValidator("investInfoForm", InvestDlg.validateFields);
+  Feng.initValidator("investConfirmInfoForm", InvestDlg.validateConfirmFields);
 
   //初始化
   $("#orgNo").val($("#orgNoValue").val());

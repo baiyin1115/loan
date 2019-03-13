@@ -484,23 +484,23 @@ public class BizTypeEnum {
      */
     HALF_YEAR_SETTLEMENT(1),EXPIRATION_SETTLEMENT(2);
 
-    private long value;
+    private int value;
 
-    private InvestTypeEnum(long value) {
+    private InvestTypeEnum(int value) {
       this.value = value;
     }
 
     @JsonValue
-    public long getValue() {
+    public int getValue() {
       return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(int value) {
       this.value = value;
     }
 
     @JsonCreator
-    public static InvestTypeEnum getEnumByKey(long key) {
+    public static InvestTypeEnum getEnumByKey(int key) {
       InvestTypeEnum[] array = InvestTypeEnum.values();
       for (InvestTypeEnum item : array) {
         if (item.getValue() == key) {

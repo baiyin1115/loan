@@ -5,6 +5,7 @@ import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.convey.InvestCalculateVo;
+import com.zsy.loan.bean.convey.InvestConfirmInfoVo;
 import com.zsy.loan.bean.convey.InvestInfoVo;
 import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.dictmap.biz.InvestDict;
@@ -19,17 +20,22 @@ import com.zsy.loan.bean.logback.oplog.OpLog;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.InvestInfoRepo;
 import com.zsy.loan.service.biz.impl.InvestServiceImpl;
+import com.zsy.loan.service.factory.InvestStatusFactory;
 import com.zsy.loan.service.factory.LoanStatusFactory;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
+import com.zsy.loan.service.wrapper.biz.InvestPlanWrapper;
 import com.zsy.loan.service.wrapper.biz.InvestWrapper;
 import com.zsy.loan.service.wrapper.biz.RepayPlanWrapper;
 import com.zsy.loan.utils.BeanUtil;
+import com.zsy.loan.utils.BigDecimalUtil;
+import com.zsy.loan.utils.DateTimeKit;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.factory.Page;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -99,9 +105,7 @@ public class InvestController extends BaseController {
     Page<TBizInvestPlan> page = new PageFactory<TBizInvestPlan>().defaultPage();
 
     page = investService.getPlanPages(page, condition);
-    page.setRecords(
-        (List<TBizInvestPlan>) new RepayPlanWrapper(BeanUtil.objectsToMaps(page.getRecords()))
-            .wrap());
+    page.setRecords((List<TBizInvestPlan>) new InvestPlanWrapper(BeanUtil.objectsToMaps(page.getRecords())).wrap());
     return super.packForBT(page);
   }
 
@@ -119,24 +123,6 @@ public class InvestController extends BaseController {
   @RequestMapping("/invest_add")
   public String investAdd() {
     return PREFIX + "invest_add.html";
-  }
-
-  /**
-   * 跳转到修改融资
-   */
-  @Permission
-  @RequestMapping("/to_invest_update/{investId}")
-  public String investUpdate(@PathVariable Long investId, Model model) {
-    TBizInvestInfo invest = investInfoRepo.findById(investId).get();
-
-    invest.setRemark(invest.getRemark()==null?"":invest.getRemark().trim());
-    invest.setCustName(ConstantFactory.me().getCustomerName(invest.getCustNo()));
-    invest.setInAcctName(ConstantFactory.me().getAcctName(invest.getInAcctNo()));
-
-    model.addAttribute("invest", invest);
-    LogObjectHolder.me().set(invest);
-    return PREFIX + "invest_edit.html";
-
   }
 
   /**
@@ -174,6 +160,24 @@ public class InvestController extends BaseController {
   }
 
   /**
+   * 跳转到修改融资
+   */
+  @Permission
+  @RequestMapping("/to_invest_update/{investId}")
+  public String investUpdate(@PathVariable Long investId, Model model) {
+    TBizInvestInfo invest = investInfoRepo.findById(investId).get();
+
+    invest.setRemark(invest.getRemark()==null?"":invest.getRemark().trim());
+    invest.setCustName(ConstantFactory.me().getCustomerName(invest.getCustNo()));
+    invest.setInAcctName(ConstantFactory.me().getAcctName(invest.getInAcctNo()));
+
+    model.addAttribute("invest", invest);
+    LogObjectHolder.me().set(invest);
+    return PREFIX + "invest_edit.html";
+
+  }
+
+  /**
    * 修改融资
    */
   @BussinessLog(value = "更新融资", dict = InvestDict.class)
@@ -196,13 +200,13 @@ public class InvestController extends BaseController {
 
 
   /**
-   * 登记试算
+   * 试算
    */
-  @BussinessLog(value = "登记试算", dict = InvestDict.class)
+  @BussinessLog(value = "试算", dict = InvestDict.class)
   @RequestMapping(value = "/calculate")
   @Permission
   @ResponseBody
-  @ApiOperation(value = "登记试算", notes = "登记试算")
+  @ApiOperation(value = "试算", notes = "试算")
   public InvestCalculateVo calculate(@Valid @RequestBody InvestCalculateVo investCalculateVo,
       BindingResult error) {
 
@@ -221,7 +225,27 @@ public class InvestController extends BaseController {
 
     investCalculateVo.setBizType(LoanBizTypeEnum.INVEST_CHECK_IN.getValue()); //设置业务类型
 
-    return investService.calculate(investCalculateVo);
+    InvestCalculateVo calculateVo = investService.calculate(investCalculateVo);
+
+    StringBuffer tmp = new StringBuffer();
+    tmp.append("本金：" + BigDecimalUtil.formatAmt(calculateVo.getPrin()));
+    tmp.append(",应收利息：" + BigDecimalUtil.formatAmt(calculateVo.getTotSchdInterest()));
+    tmp.append("<BR>");
+
+    for (TBizInvestPlan plan : calculateVo.getPlanList()) {
+      tmp.append("--------------------------------------------------------------<BR>");
+      tmp.append("第：" + plan.getTermNo() + "期");
+      tmp.append(",计息日期：" + DateTimeKit.formatDate(plan.getDdDate()));
+      tmp.append(",本期计息本金：" + BigDecimalUtil.formatAmt(plan.getDdPrin()));
+      tmp.append(",本期利息：" + BigDecimalUtil.formatAmt(plan.getChdInterest()));
+      tmp.append(",本期开始日期：" + DateTimeKit.formatDate(plan.getBeginDate()));
+      tmp.append(",本期结束日期：" + DateTimeKit.formatDate(plan.getEndDate()));
+      tmp.append(",计息天数：" + plan.getDdNum());
+      tmp.append("<BR>");
+    }
+    calculateVo.setResultMsg(tmp.toString());
+
+    return calculateVo;
   }
 
   /**
@@ -240,6 +264,54 @@ public class InvestController extends BaseController {
     return SUCCESS_TIP;
 
   }
+
+  /**
+   * 跳转到修改融资
+   */
+  @Permission
+  @RequestMapping("/to_invest_confirm/{investId}")
+  public String investConfirm(@PathVariable Long investId, Model model) {
+    TBizInvestInfo invest = investInfoRepo.findById(investId).get();
+
+    //校验状态
+    InvestStatusFactory.checkCurrentStatus(invest.getStatus() + "_" + LoanBizTypeEnum.INVEST.getValue());
+
+    invest.setRemark(invest.getRemark()==null?"":invest.getRemark().trim());
+    invest.setCustName(ConstantFactory.me().getCustomerName(invest.getCustNo()));
+    invest.setInAcctName(ConstantFactory.me().getAcctName(invest.getInAcctNo()));
+    invest.setInvestTypeName(ConstantFactory.me().getInvestTypeName(invest.getInvestType()));
+    invest.setOrgName(ConstantFactory.me().getOrgNoName(invest.getOrgNo()));
+
+    model.addAttribute("invest", invest);
+    LogObjectHolder.me().set(invest);
+    return PREFIX + "invest_confirm.html";
+
+  }
+
+  /**
+   * 确认融资
+   */
+  @BussinessLog(value = "确认融资", dict = InvestDict.class)
+  @RequestMapping(value = "/confirm")
+  @Permission
+  @ResponseBody
+  public Object confirm(@Valid @RequestBody InvestConfirmInfoVo invest, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    if (invest.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    //校验状态
+    InvestStatusFactory.checkCurrentStatus(invest.getStatus() + "_" + LoanBizTypeEnum.INVEST.getValue());
+
+    investService.confirm(invest,true);
+    return SUCCESS_TIP;
+  }
+
 
   /**
    * 获取融资列表

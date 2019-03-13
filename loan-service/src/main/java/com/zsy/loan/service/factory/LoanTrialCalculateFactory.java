@@ -325,7 +325,7 @@ public class LoanTrialCalculateFactory {
         plan.setDdDate(data.getEndDate()); //还款日期
       } else {
         if (dd != null && dd.intValue() != 0) {
-          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue()));
+          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(),false));
         } else {
           plan.setDdDate(endDate); //还款日期
         }
@@ -421,7 +421,7 @@ public class LoanTrialCalculateFactory {
         plan.setDdDate(lendingDate); //还款日期
       } else {
         if (dd != null && dd.intValue() != 0) {
-          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue()));
+          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(),true));
         } else {
           plan.setDdDate(beginDate); //还款日期
         }
@@ -684,7 +684,7 @@ public class LoanTrialCalculateFactory {
         plan.setDdDate(endDate); //还款日期
       } else {
         if (dd != null && dd.intValue() != 0) {
-          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue()));
+          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(),false));
         } else {
           plan.setDdDate(endDate); //还款日期
         }
@@ -775,7 +775,7 @@ public class LoanTrialCalculateFactory {
        * 还款日期 --上扣息 首期是放款日期  如果约定还款日有值取当期约定还款日，没有就是当期开始日期，最后一期还款日是借据结束日期
        */
       if (dd != null && dd.intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue()));
+        plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(),true));
       } else {
         plan.setDdDate(beginDate); //还款日期
       }
