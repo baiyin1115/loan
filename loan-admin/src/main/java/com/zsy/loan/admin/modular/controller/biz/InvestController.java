@@ -6,13 +6,11 @@ import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.convey.InvestCalculateVo;
 import com.zsy.loan.bean.convey.InvestConfirmInfoVo;
+import com.zsy.loan.bean.convey.InvestDelayInfoVo;
 import com.zsy.loan.bean.convey.InvestInfoVo;
-import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.dictmap.biz.InvestDict;
-import com.zsy.loan.bean.dictmap.biz.LoanDict;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
-import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
@@ -21,12 +19,10 @@ import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.InvestInfoRepo;
 import com.zsy.loan.service.biz.impl.InvestServiceImpl;
 import com.zsy.loan.service.factory.InvestStatusFactory;
-import com.zsy.loan.service.factory.LoanStatusFactory;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.service.wrapper.biz.InvestPlanWrapper;
 import com.zsy.loan.service.wrapper.biz.InvestWrapper;
-import com.zsy.loan.service.wrapper.biz.RepayPlanWrapper;
 import com.zsy.loan.utils.BeanUtil;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.DateTimeKit;
@@ -35,7 +31,6 @@ import com.zsy.loan.utils.factory.Page;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.annotation.Resource;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -146,7 +141,7 @@ public class InvestController extends BaseController {
 
     invest.setBizType(LoanBizTypeEnum.INVEST_CHECK_IN.getValue()); //设置业务类型
 
-    return investService.save(invest,false);
+    return investService.save(invest, false);
   }
 
   /**
@@ -167,7 +162,7 @@ public class InvestController extends BaseController {
   public String investUpdate(@PathVariable Long investId, Model model) {
     TBizInvestInfo invest = investInfoRepo.findById(investId).get();
 
-    invest.setRemark(invest.getRemark()==null?"":invest.getRemark().trim());
+    invest.setRemark(invest.getRemark() == null ? "" : invest.getRemark().trim());
     invest.setCustName(ConstantFactory.me().getCustomerName(invest.getCustNo()));
     invest.setInAcctName(ConstantFactory.me().getAcctName(invest.getInAcctNo()));
 
@@ -194,7 +189,7 @@ public class InvestController extends BaseController {
       throw new LoanException(BizExceptionEnum.REQUEST_NULL);
     }
 
-    investService.save(invest,true);
+    investService.save(invest, true);
     return SUCCESS_TIP;
   }
 
@@ -276,7 +271,7 @@ public class InvestController extends BaseController {
     //校验状态
     InvestStatusFactory.checkCurrentStatus(invest.getStatus() + "_" + LoanBizTypeEnum.INVEST.getValue());
 
-    invest.setRemark(invest.getRemark()==null?"":invest.getRemark().trim());
+    invest.setRemark(invest.getRemark() == null ? "" : invest.getRemark().trim());
     invest.setCustName(ConstantFactory.me().getCustomerName(invest.getCustNo()));
     invest.setInAcctName(ConstantFactory.me().getAcctName(invest.getInAcctNo()));
     invest.setInvestTypeName(ConstantFactory.me().getInvestTypeName(invest.getInvestType()));
@@ -308,8 +303,100 @@ public class InvestController extends BaseController {
     //校验状态
     InvestStatusFactory.checkCurrentStatus(invest.getStatus() + "_" + LoanBizTypeEnum.INVEST.getValue());
 
-    investService.confirm(invest,true);
+    investService.confirm(invest, true);
     return SUCCESS_TIP;
+  }
+
+  /**
+   * 跳转到延期
+   */
+  @Permission
+  @RequestMapping("/to_invest_delay/{investId}")
+  public String investDelay(@PathVariable Long investId, Model model) {
+    TBizInvestInfo invest = investInfoRepo.findById(investId).get();
+
+    //校验状态
+    InvestStatusFactory.checkCurrentStatus(invest.getStatus() + "_" + LoanBizTypeEnum.DELAY.getValue());
+
+    invest.setRemark(invest.getRemark() == null ? "" : invest.getRemark().trim());
+    invest.setCustName(ConstantFactory.me().getCustomerName(invest.getCustNo()));
+    invest.setInAcctName(ConstantFactory.me().getAcctName(invest.getInAcctNo()));
+    invest.setInvestTypeName(ConstantFactory.me().getInvestTypeName(invest.getInvestType()));
+    invest.setOrgName(ConstantFactory.me().getOrgNoName(invest.getOrgNo()));
+
+    model.addAttribute("invest", invest);
+    LogObjectHolder.me().set(invest);
+    return PREFIX + "invest_delay.html";
+
+  }
+
+  /**
+   * 延期
+   */
+  @BussinessLog(value = "延期", dict = InvestDict.class)
+  @RequestMapping(value = "/delay")
+  @Permission
+  @ResponseBody
+  public Object delay(@Valid @RequestBody InvestDelayInfoVo invest, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    if (invest.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    //校验状态
+    InvestStatusFactory.checkCurrentStatus(invest.getStatus() + "_" + LoanBizTypeEnum.DELAY.getValue());
+
+    investService.delay(invest, true);
+    return SUCCESS_TIP;
+  }
+
+  /**
+   * 延期试算
+   */
+  @BussinessLog(value = "延期试算", dict = InvestDict.class)
+  @RequestMapping(value = "/delayCalculate")
+  @Permission
+  @ResponseBody
+  @ApiOperation(value = "试算", notes = "试算")
+  public InvestCalculateVo delayCalculate(@Valid @RequestBody InvestCalculateVo investCalculateVo,
+      BindingResult error) {
+
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    /**
+     * 校验
+     */
+    investCalculateVo.setBizType(LoanBizTypeEnum.DELAY.getValue()); //设置业务类型
+
+    InvestCalculateVo calculateVo = investService.delayCalculate(investCalculateVo);
+
+    StringBuffer tmp = new StringBuffer();
+    tmp.append("本金：" + BigDecimalUtil.formatAmt(calculateVo.getPrin()));
+    tmp.append(",应收利息：" + BigDecimalUtil.formatAmt(calculateVo.getTotSchdInterest()));
+    tmp.append("<BR>");
+
+    for (TBizInvestPlan plan : calculateVo.getPlanList()) {
+      tmp.append("--------------------------------------------------------------<BR>");
+      tmp.append("第：" + plan.getTermNo() + "期");
+      tmp.append(",计息日期：" + DateTimeKit.formatDate(plan.getDdDate()));
+      tmp.append(",本期计息本金：" + BigDecimalUtil.formatAmt(plan.getDdPrin()));
+      tmp.append(",本期利息：" + BigDecimalUtil.formatAmt(plan.getChdInterest()));
+      tmp.append(",本期开始日期：" + DateTimeKit.formatDate(plan.getBeginDate()));
+      tmp.append(",本期结束日期：" + DateTimeKit.formatDate(plan.getEndDate()));
+      tmp.append(",计息天数：" + plan.getDdNum());
+      tmp.append(",状态：" + ConstantFactory.me().getInvestStatusName(plan.getStatus()));
+      tmp.append("<BR>");
+    }
+    calculateVo.setResultMsg(tmp.toString());
+
+    return calculateVo;
   }
 
 

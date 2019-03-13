@@ -248,7 +248,9 @@ Loan.resetSearch = function () {
   Loan.search();
 };
 
-
+/**
+ * 刷新还款计划
+ */
 Loan.refreshLoanPlan = function () {
 
   var selected = $('#' + this.id).bootstrapTable('getSelections');

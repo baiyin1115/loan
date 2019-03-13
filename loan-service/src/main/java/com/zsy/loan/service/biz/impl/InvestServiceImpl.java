@@ -2,10 +2,12 @@ package com.zsy.loan.service.biz.impl;
 
 import com.zsy.loan.bean.convey.InvestCalculateVo;
 import com.zsy.loan.bean.convey.InvestConfirmInfoVo;
+import com.zsy.loan.bean.convey.InvestDelayInfoVo;
 import com.zsy.loan.bean.convey.InvestInfoVo;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
+import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestTypeEnum;
@@ -296,20 +298,68 @@ public class InvestServiceImpl extends BaseServiceImpl {
 
   }
 
+  public InvestCalculateVo delayCalculate(@Valid InvestCalculateVo investCalculateVo) {
 
+    //todo
+    return null;
+  }
 
+  /**
+   * 确认
+   */
+  @Transactional
+  public boolean delay(@Valid InvestDelayInfoVo invest, boolean b) {
 
+    /**
+     * 锁记录
+     */
+    TBizInvestInfo old = repository.lockRecordByIdStatus(invest.getId(), invest.getStatus());
+    if (old == null) {
+      throw new LoanException(BizExceptionEnum.NOT_EXISTED_ING, invest.getId() + "_" + invest.getStatus());
+    }
 
+    /**
+     * 试算
+     */
+    InvestCalculateVo calculateRequest = InvestCalculateVo.builder().build();
+    BeanKit.copyProperties(invest, calculateRequest);
+    calculateRequest.setBizType(LoanBizTypeEnum.DELAY.getValue()); //设置业务类型
+    InvestCalculateVo result = delayCalculate(calculateRequest); //试算结果
 
+    /**
+     * 比较试算结果是否与传入的一致
+     */
+    if (invest.getTotSchdInterest().compareTo(result.getTotSchdInterest()) != 0) {
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
+    }
 
+    TBizInvestInfo info = TBizInvestInfo.builder().build();
+    BeanKit.copyProperties(invest, info);
 
+    /**
+     * 调整还款计划
+     */
+    //插入展期的还款计划
+    investPlanRepo.saveAll(result.getPlanList());
 
+    /**
+     * 修改凭证信息
+     */
+    info.setStatus(InvestStatusFactory.getNextStatus(invest.getStatus() + "_" + LoanBizTypeEnum.DELAY.getValue()).getValue()); //融资
+    info.setAcctDate(systemService.getSysAcctDate());
+    repository
+        .delay(info.getId(), info.getStatus(), info.getRemark(), systemService.getSysAcctDate(), result.getTotSchdInterest(),
+            result.getCurrentExtensionNo(),result.getCurrentExtensionRate(),result.getEndDate());
 
+    return true;
 
+  }
 
 
 
   public List<ZTreeNode> getTreeList() {
     return null;
   }
+
+
 }

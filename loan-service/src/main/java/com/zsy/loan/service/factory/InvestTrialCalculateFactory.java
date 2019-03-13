@@ -347,6 +347,8 @@ public class InvestTrialCalculateFactory {
     BigDecimal currentExtensionRate = data.getCurrentExtensionRate();
     Date concurrentBegin = end;
     Date concurrentEnd = null;
+    Date concurrent = JodaTimeUtil.getAfterDayDate(end,3); //下个月
+
     BigDecimal remainingPrin = BigDecimalUtil.sub(data.getPrin(), data.getTotPaidPrin());
     BigDecimal concurrentInterest = BigDecimal.valueOf(0.00);
     BigDecimal totSchdInterest = BigDecimal.valueOf(0.00);
@@ -360,7 +362,19 @@ public class InvestTrialCalculateFactory {
       BeanKit.copyProperties(data, plan);
 
       plan.setBeginDate(concurrentBegin); //本期开始日期
-      concurrentEnd = JodaTimeUtil.getAfterDayMonth(concurrentBegin, 1);
+
+      //考虑不是月末的情况 延期到月末
+      if(i == 0 && JodaTimeUtil.isEndDayOfMonth(concurrentBegin)){
+        concurrentEnd = JodaTimeUtil.getEndDataOfMonth(concurrentBegin);
+        int days = JodaTimeUtil.daysBetween(concurrentBegin, concurrentEnd);
+        concurrentInterest = BigDecimalUtil.mul(remainingPrin, data.getDayRate(), BigDecimal.valueOf(days));
+        plan.setDdNum((long)days); //计息天数
+      }else{
+        concurrentEnd = JodaTimeUtil.getEndDataOfMonth(concurrent);
+        concurrentInterest = BigDecimalUtil.mul(remainingPrin, monthRate); //剩余利息
+        plan.setDdNum(30L); //计息天数
+      }
+
       plan.setEndDate(concurrentEnd); //本期结束日期
       plan.setTermNo(data.getTermNo() + data.getExtensionNo() + i + 1l); //期数
 
@@ -374,13 +388,12 @@ public class InvestTrialCalculateFactory {
       plan.setDdPrin(remainingPrin); //本期计息本金
       plan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息
       plan.setStatus(InvestPlanStatusEnum.UN_INTEREST.getValue()); //回款状态
-      concurrentInterest = BigDecimalUtil.mul(remainingPrin, monthRate); //剩余利息
       totSchdInterest = BigDecimalUtil.add(totSchdInterest, concurrentInterest);
       plan.setChdInterest(concurrentInterest); //本期利息
-      plan.setDdNum(30L); //计息天数
 
       list.add(plan);
       concurrentBegin = plan.getEndDate();//修改开始日期，为下一次循环准备
+      concurrent = JodaTimeUtil.getAfterDayDate(concurrentBegin,3);//修改开始日期，为下一次循环准备
     }
     result.setPlanList(list); //回款计划
 

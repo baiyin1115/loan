@@ -2,7 +2,6 @@
 package com.zsy.loan.dao.biz;
 
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
-import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -39,4 +38,12 @@ public interface InvestInfoRepo extends PagingAndSortingRepository<TBizInvestInf
   int confirm(@Param("id") Long id, @Param("status") Long status, @Param("remark") String remark, @Param("ddDate") Long ddDate,
       @Param("sysAcctDate") Date sysAcctDate,
       @Param("totSchdInterest") BigDecimal totSchdInterest);
+
+  @Modifying
+  @Query(nativeQuery = true, value = "update t_biz_invest_info t set status=:status,remark=:remark,acct_date=:sysAcctDate,"
+      + "tot_schd_interest=:schdInterest,extension_no=extension_no+:currentExtensionNo,"
+      + "extension_rate=:currentExtensionRate,end_date=:endDate where t.id =:id ")
+  int delay(@Param("id") Long id, @Param("status") Long status, @Param("remark") String remark, @Param("sysAcctDate") Date sysAcctDate,
+      @Param("schdInterest") BigDecimal schdInterest, @Param("currentExtensionNo") Long currentExtensionNo,
+      @Param("currentExtensionRate") BigDecimal currentExtensionRate,@Param("endDate") Date endDate);
 }
