@@ -35,7 +35,7 @@ var InvestDlg = {
   },
   validateDelayFields: {
     currentExtensionNo: {validators: {notEmpty: {message: '延期期数'}}},
-    extensionRate: {validators: {notEmpty: {message: '延期利率'}}}
+    currentExtensionRate: {validators: {notEmpty: {message: '延期利率'}}}
   },
   validateDivestmentFields: {
     divestmentAmt: {validators: {notEmpty: {message: '撤资本金'}}},
@@ -66,13 +66,9 @@ InvestDlg.set = function (key, val) {
       $("#" + key).attr("id") == "totPaidPrin" ||
       $("#" + key).attr("id") == "totPaidInterest" ||
 
-      $("#" + key).attr("id") == "extensionRate" ||
-
       $("#" + key).attr("id") == "divestmentAmt" ||
       $("#" + key).attr("id") == "divestmentInterest" ||
-      $("#" + key).attr("id") == "divestmentWavAmt" ||
-
-      $("#" + key).attr("id") == "currentExtensionRate"
+      $("#" + key).attr("id") == "divestmentWavAmt"
 
   ) {
     this.investInfoData[key] = (typeof value == "undefined") ? Feng.parseMoney(
@@ -263,6 +259,57 @@ InvestDlg.confirmCalculate = function () {
   ajax.start();
 };
 
+/**
+ * 延期
+ */
+InvestDlg.delaySubmit = function () {
+
+  this.clearData();
+  this.collectData();
+
+  if (!this.validate($('#investDelayInfoForm'))) {
+    return;
+  }
+
+  //提交信息
+  var ajax = new $ax(Feng.ctxPath + "/invest/delay", function (data) {
+    Feng.success("延期成功!");
+    window.parent.Invest.refreshInvestPlan();
+    window.parent.Invest.table.refresh();
+    InvestDlg.close();
+  }, function (data) {
+    Feng.error("延期失败!" + data.responseJSON.message + "!");
+  });
+  ajax.set(this.investInfoData);
+  ajax.setContentType("application/json")
+  ajax.start();
+};
+
+/**
+ * 延期试算
+ */
+InvestDlg.delayCalculate = function () {
+
+  this.clearData();
+  this.collectData();
+
+  if (!this.validate($('#investDelayInfoForm'))) {
+    return;
+  }
+
+  //提交信息
+  var ajax = new $ax(Feng.ctxPath + "/invest/delayCalculate", function (data) {
+    Feng.infoDetail("试算详情", data.resultMsg);
+
+  }, function (data) {
+    Feng.error("试算失败!" + data.responseJSON.message + "!");
+  });
+  ajax.set(this.investInfoData);
+  //alert(JSON.stringify(this.loanInfoData));
+  ajax.setContentType("application/json")
+  ajax.start();
+};
+
 
 /**
  * 初始化
@@ -271,6 +318,7 @@ $(function () {
 
   Feng.initValidator("investInfoForm", InvestDlg.validateFields);
   Feng.initValidator("investConfirmInfoForm", InvestDlg.validateConfirmFields);
+  Feng.initValidator("investDelayInfoForm", InvestDlg.validateDelayFields);
 
   //初始化
   $("#orgNo").val($("#orgNoValue").val());

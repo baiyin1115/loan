@@ -169,10 +169,10 @@ public class InvestCalculateVo implements Serializable {
   @ApiModelProperty(value = "计算详情", hidden = true)
   private String resultMsg;
 
-  @ApiModelProperty(value = "当前展期期数")
+  @ApiModelProperty(value = "当前延期期数")
   private Long currentExtensionNo;
 
-  @ApiModelProperty(value = "当前展期利率")
+  @ApiModelProperty(value = "当前延期利率")
   private BigDecimal currentExtensionRate;
 
   private String orgName;

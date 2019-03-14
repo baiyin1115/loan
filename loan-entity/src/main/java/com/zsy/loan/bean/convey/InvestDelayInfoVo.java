@@ -138,12 +138,12 @@ public class InvestDelayInfoVo implements Serializable {
   @ApiModelProperty(value = "业务类型",hidden=true)
   private Long bizType;
 
-  @NotNull(message = "[当前展期期数]不能为空！")
-  @ApiModelProperty(value = "当前展期期数")
+  @NotNull(message = "[当前延期期数]不能为空！")
+  @ApiModelProperty(value = "当前延期期数")
   private Long currentExtensionNo;
 
-  @NotNull(message = "[当前展期利率]不能为空！")
-  @ApiModelProperty(value = "当前展期利率")
+  @NotNull(message = "[当前延期利率]不能为空！")
+  @ApiModelProperty(value = "当前延期利率")
   private BigDecimal currentExtensionRate;
 
 }

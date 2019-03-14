@@ -1,0 +1,81 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="investDelayInfoForm">
+
+            <input type="hidden" id="orgNoValue" value="${invest.orgNo}">
+            <input type="hidden" id="investTypeValue" value="${invest.investType}">
+
+            <input type="hidden" id="id" value="${invest.id}">
+            <input type="hidden" id="statusValue" value="${invest.status}">
+            <input type="hidden" id="status" value="${invest.status}">
+            <input type="hidden" id="totPaidPrin" value="${invest.totPaidPrin}">
+
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <#input id="currentExtensionNo" name="延期期数" underline="false" value="" />
+
+                    <#input id="currentExtensionRate" name="延期利率" underline="false" value="" />
+
+                    <#input id="orgName" name="公司" underline="false" value="${invest.orgName}" hiddenValue="${invest.orgNo}"
+                        hidden="orgNo" readonly="readonly" />
+
+                    <#input id="custName" name="客户" underline="false" value="${invest.custName}" hiddenValue="${invest.custNo}"
+                        hidden="custNo" readonly="readonly" />
+
+                    <#input id="investTypeName" name="融资类型" underline="false" value="${invest.investTypeName}" hiddenValue="${invest.investType}"
+                        hidden="investType" readonly="readonly" />
+
+                    <#input id="inAcctName" name="入账账户" underline="false" value="${invest.inAcctName}" hiddenValue="${invest.inAcctNo}"
+                        hidden="inAcctNo" readonly="readonly" />
+
+                    <#input id="extensionNo" name="总延期期数" underline="false" value="${invest.extensionNo}" readonly="readonly" />
+
+                    <#input id="extensionRate" name="上一次延期利率" underline="false" value="${invest.extensionRate}" readonly="readonly" />
+
+                    <#input id="termNo" name="期数" underline="false" value="${invest.termNo}" readonly="readonly" />
+
+                </div>
+                <div class="col-sm-6">
+
+
+                    <#input id="ddDate" name="计息日" underline="false" value="${invest.ddDate}" readonly="readonly" />
+
+                    <#input id="externalAcct" name="投资人出款账户" underline="false" value="${invest.externalAcct}" readonly="readonly"/>
+
+                    <#input id="prin" name="本金" underline="false" value="${invest.prin}" readonly="readonly" />
+
+                    <#input id="rate" name="利率" underline="false" value="${invest.rate}" readonly="readonly" />
+
+                    <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${invest.acctDate}" readonly="readonly"/>
+
+                    <#TimeInput id="beginDate" name="开始日期" isTime="false" pattern="YYYY-MM-DD" value="${invest.beginDate}" readonly="readonly"/>
+
+                    <#TimeInput id="endDate" name="结束日期" isTime="false" pattern="YYYY-MM-DD" value="${invest.endDate}" readonly="readonly"/>
+
+                    <#input id="cycleInterval" name="周期间隔" underline="false" value="${invest.cycleInterval}" readonly="readonly"/>
+
+                    <#input id="totSchdInterest" name="应收利息累计" underline="false" value="${invest.totSchdInterest}" readonly="readonly"/>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50" value="${invest.remark}" />
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="InvestDlg.delayCalculate()"/>
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="InvestDlg.delaySubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="InvestDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/invest/invest_info.js"></script>
+@}

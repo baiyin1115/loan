@@ -115,17 +115,15 @@ public class InvestTrialCalculateFactory {
         concurrentBegin = begin;
         concurrentEnd = JodaTimeUtil.getEndDataOfMonth(begin);
       } else if (i == result.getMonth() - 1) {
-        concurrentBegin = JodaTimeUtil.getFirstDateOfMonth(end);
         concurrentEnd = end;
       } else {
-        concurrentBegin = JodaTimeUtil.getFirstDateOfMonth(concurrent);
         concurrentEnd = JodaTimeUtil.getEndDataOfMonth(concurrent);
       }
 
       plan.setTermNo((long) i + 1); //期数
 
       if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(),false)); //计息日期
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(), false)); //计息日期
       } else {
         plan.setDdDate(concurrentEnd); //计息日期
       }
@@ -140,7 +138,7 @@ public class InvestTrialCalculateFactory {
       plan.setStatus(InvestPlanStatusEnum.UN_INTEREST.getValue()); //回款状态
 
       //按月计息
-      if (JodaTimeUtil.isFirstDayOfMonth(concurrentBegin) && JodaTimeUtil.isEndDayOfMonth(concurrentEnd)) {
+      if (JodaTimeUtil.isEndDayOfMonth(concurrentBegin) && JodaTimeUtil.isEndDayOfMonth(concurrentEnd)) {
         concurrentInterest = BigDecimalUtil.mul(data.getPrin(), data.getMonthRate());
         totSchdInterest = BigDecimalUtil.add(totSchdInterest, concurrentInterest);
 
@@ -155,7 +153,8 @@ public class InvestTrialCalculateFactory {
         plan.setDdNum((long) days); //计息天数
       }
       list.add(plan);
-      concurrent = DateUtil.dateAddMonths(concurrent, 1);
+      concurrentBegin = concurrentEnd; //为下一次循环做准备
+      concurrent = JodaTimeUtil.getAfterDayDate(concurrentBegin, 3);
     }
     result.setPlanList(list); //回款计划
 
@@ -167,7 +166,7 @@ public class InvestTrialCalculateFactory {
   }
 
   /**
-   * 融资试算
+   * 半年结转--融资试算
    */
   private static InvestCalculateVo half_year_settlement_invest(InvestCalculateVo data) {
 
@@ -347,11 +346,11 @@ public class InvestTrialCalculateFactory {
     BigDecimal currentExtensionRate = data.getCurrentExtensionRate();
     Date concurrentBegin = end;
     Date concurrentEnd = null;
-    Date concurrent = JodaTimeUtil.getAfterDayDate(end,3); //下个月
+    Date concurrent = JodaTimeUtil.getAfterDayDate(end, 3); //下个月
 
     BigDecimal remainingPrin = BigDecimalUtil.sub(data.getPrin(), data.getTotPaidPrin());
     BigDecimal concurrentInterest = BigDecimal.valueOf(0.00);
-    BigDecimal totSchdInterest = BigDecimal.valueOf(0.00);
+    BigDecimal schdInterest = BigDecimal.valueOf(0.00);
     BigDecimal dayRate = BigDecimalUtil.div(currentExtensionRate, BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN); //日利息
     BigDecimal monthRate = BigDecimalUtil.div(currentExtensionRate, BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN);//月利息
 
@@ -364,12 +363,12 @@ public class InvestTrialCalculateFactory {
       plan.setBeginDate(concurrentBegin); //本期开始日期
 
       //考虑不是月末的情况 延期到月末
-      if(i == 0 && JodaTimeUtil.isEndDayOfMonth(concurrentBegin)){
+      if (i == 0 && !JodaTimeUtil.isEndDayOfMonth(end)) {
         concurrentEnd = JodaTimeUtil.getEndDataOfMonth(concurrentBegin);
         int days = JodaTimeUtil.daysBetween(concurrentBegin, concurrentEnd);
-        concurrentInterest = BigDecimalUtil.mul(remainingPrin, data.getDayRate(), BigDecimal.valueOf(days));
-        plan.setDdNum((long)days); //计息天数
-      }else{
+        concurrentInterest = BigDecimalUtil.mul(remainingPrin, dayRate, BigDecimal.valueOf(days));
+        plan.setDdNum((long) days); //计息天数
+      } else {
         concurrentEnd = JodaTimeUtil.getEndDataOfMonth(concurrent);
         concurrentInterest = BigDecimalUtil.mul(remainingPrin, monthRate); //剩余利息
         plan.setDdNum(30L); //计息天数
@@ -379,28 +378,30 @@ public class InvestTrialCalculateFactory {
       plan.setTermNo(data.getTermNo() + data.getExtensionNo() + i + 1l); //期数
 
       if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(),false)); //计息日期
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(), false)); //计息日期
       } else {
         plan.setDdDate(concurrentEnd); //计息日期
       }
 
+      plan.setInvestNo(data.getId());
+      plan.setId(null);
       plan.setRate(currentExtensionRate); //利率
       plan.setDdPrin(remainingPrin); //本期计息本金
       plan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息
       plan.setStatus(InvestPlanStatusEnum.UN_INTEREST.getValue()); //回款状态
-      totSchdInterest = BigDecimalUtil.add(totSchdInterest, concurrentInterest);
+      schdInterest = BigDecimalUtil.add(schdInterest, concurrentInterest);
       plan.setChdInterest(concurrentInterest); //本期利息
 
       list.add(plan);
       concurrentBegin = plan.getEndDate();//修改开始日期，为下一次循环准备
-      concurrent = JodaTimeUtil.getAfterDayDate(concurrentBegin,3);//修改开始日期，为下一次循环准备
+      concurrent = JodaTimeUtil.getAfterDayDate(concurrentBegin, 3);//修改开始日期，为下一次循环准备
     }
     result.setPlanList(list); //回款计划
 
     result.setExtensionNo(result.getExtensionNo() + currentExtensionNo);
     result.setExtensionRate(currentExtensionRate);
     result.setEndDate(concurrentEnd);
-    result.setTotSchdInterest(BigDecimalUtil.add(data.getTotSchdInterest(), concurrentInterest)); // 应收利息累计
+    result.setTotSchdInterest(BigDecimalUtil.add(data.getTotSchdInterest(), schdInterest)); // 应收利息累计
 
     log.info("半年结转--延期试算--试算结果为：" + result);
     return result;
@@ -506,7 +507,7 @@ public class InvestTrialCalculateFactory {
       plan.setTermNo((long) i + 1); //期数
 
       if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(),false)); //计息日期
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(), false)); //计息日期
       } else {
         plan.setDdDate(concurrentEnd); //计息日期
       }
@@ -514,6 +515,7 @@ public class InvestTrialCalculateFactory {
       plan.setId(null);
       plan.setInvestNo(data.getId());
       plan.setRate(data.getRate()); //利率
+
       plan.setBeginDate(concurrentBegin); //本期开始日期
       plan.setEndDate(concurrentEnd); //本期结束日期
       plan.setDdPrin(data.getPrin()); //本期计息本金
@@ -713,7 +715,7 @@ public class InvestTrialCalculateFactory {
     Date concurrentEnd = null;
     BigDecimal remainingPrin = BigDecimalUtil.sub(data.getPrin(), data.getTotPaidPrin());
     BigDecimal concurrentInterest = BigDecimal.valueOf(0.00);
-    BigDecimal totSchdInterest = BigDecimal.valueOf(0.00);
+    BigDecimal schdInterest = BigDecimal.valueOf(0.00);
     BigDecimal dayRate = BigDecimalUtil.div(currentExtensionRate, BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN); //日利息
     BigDecimal monthRate = BigDecimalUtil.div(currentExtensionRate, BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN);//月利息
 
@@ -724,22 +726,25 @@ public class InvestTrialCalculateFactory {
       BeanKit.copyProperties(data, plan);
 
       plan.setBeginDate(concurrentBegin); //本期开始日期
+
       concurrentEnd = JodaTimeUtil.getAfterDayMonth(concurrentBegin, 1);
       plan.setEndDate(concurrentEnd); //本期结束日期
       plan.setTermNo(data.getTermNo() + data.getExtensionNo() + i + 1l); //期数
 
       if (data.getDdDate() != null && data.getDdDate().intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(),false)); //计息日期
+        plan.setDdDate(JodaTimeUtil.getDdDate(concurrentBegin, concurrentEnd, data.getDdDate().intValue(), false)); //计息日期
       } else {
         plan.setDdDate(concurrentEnd); //计息日期
       }
 
+      plan.setInvestNo(data.getId());
+      plan.setId(null);
       plan.setRate(currentExtensionRate); //利率
       plan.setDdPrin(remainingPrin); //本期计息本金
       plan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息
       plan.setStatus(InvestPlanStatusEnum.UN_INTEREST.getValue()); //回款状态
       concurrentInterest = BigDecimalUtil.mul(remainingPrin, monthRate); //剩余利息
-      totSchdInterest = BigDecimalUtil.add(totSchdInterest, concurrentInterest);
+      schdInterest = BigDecimalUtil.add(schdInterest, concurrentInterest);
       plan.setChdInterest(concurrentInterest); //本期利息
       plan.setDdNum(30L); //计息天数
 
@@ -751,7 +756,7 @@ public class InvestTrialCalculateFactory {
     result.setExtensionNo(result.getExtensionNo() + currentExtensionNo);
     result.setExtensionRate(currentExtensionRate);
     result.setEndDate(concurrentEnd);
-    result.setTotSchdInterest(BigDecimalUtil.add(data.getTotSchdInterest(), concurrentInterest)); // 应收利息累计
+    result.setTotSchdInterest(BigDecimalUtil.add(data.getTotSchdInterest(), schdInterest)); // 应收利息累计
 
     log.info("到期结算--延期试算--试算结果为：" + result);
     return result;

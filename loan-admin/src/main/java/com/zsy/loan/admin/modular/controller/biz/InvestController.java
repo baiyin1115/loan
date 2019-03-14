@@ -359,9 +359,8 @@ public class InvestController extends BaseController {
    */
   @BussinessLog(value = "延期试算", dict = InvestDict.class)
   @RequestMapping(value = "/delayCalculate")
-  @Permission
   @ResponseBody
-  @ApiOperation(value = "试算", notes = "试算")
+  @ApiOperation(value = "延期试算", notes = "延期试算")
   public InvestCalculateVo delayCalculate(@Valid @RequestBody InvestCalculateVo investCalculateVo,
       BindingResult error) {
 
@@ -380,6 +379,9 @@ public class InvestController extends BaseController {
     StringBuffer tmp = new StringBuffer();
     tmp.append("本金：" + BigDecimalUtil.formatAmt(calculateVo.getPrin()));
     tmp.append(",应收利息：" + BigDecimalUtil.formatAmt(calculateVo.getTotSchdInterest()));
+    tmp.append(",延期期数：" + calculateVo.getCurrentExtensionNo());
+    tmp.append(",延期利率：" + BigDecimalUtil.formatHundred(calculateVo.getCurrentExtensionRate()));
+    tmp.append(",结束日期：" + DateTimeKit.formatDate(calculateVo.getEndDate()));
     tmp.append("<BR>");
 
     for (TBizInvestPlan plan : calculateVo.getPlanList()) {
@@ -391,7 +393,7 @@ public class InvestController extends BaseController {
       tmp.append(",本期开始日期：" + DateTimeKit.formatDate(plan.getBeginDate()));
       tmp.append(",本期结束日期：" + DateTimeKit.formatDate(plan.getEndDate()));
       tmp.append(",计息天数：" + plan.getDdNum());
-      tmp.append(",状态：" + ConstantFactory.me().getInvestStatusName(plan.getStatus()));
+      tmp.append(",状态：" + ConstantFactory.me().getInvestPlanStatusName(plan.getStatus()));
       tmp.append("<BR>");
     }
     calculateVo.setResultMsg(tmp.toString());

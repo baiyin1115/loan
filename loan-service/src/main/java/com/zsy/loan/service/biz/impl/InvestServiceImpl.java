@@ -298,10 +298,21 @@ public class InvestServiceImpl extends BaseServiceImpl {
 
   }
 
-  public InvestCalculateVo delayCalculate(@Valid InvestCalculateVo investCalculateVo) {
+  public InvestCalculateVo delayCalculate(@Valid InvestCalculateVo calculate) {
 
-    //todo
-    return null;
+    /**
+     * 根据本金、利率、开始结束日期计算利息、期数、应还本金、应还利息、回款计划相关信息
+     */
+    //设置共同信息
+    setCalculateCommon(calculate);
+
+    /**
+     * 查询下回款计划
+     */
+    List<TBizInvestPlan> investPlans = investPlanRepo.findByInvestNo(calculate.getId());
+    calculate.setPlanList(investPlans);
+
+    return executeCalculate(calculate);
   }
 
   /**
@@ -329,8 +340,11 @@ public class InvestServiceImpl extends BaseServiceImpl {
     /**
      * 比较试算结果是否与传入的一致
      */
-    if (invest.getTotSchdInterest().compareTo(result.getTotSchdInterest()) != 0) {
-      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
+    if (invest.getCurrentExtensionNo().compareTo(result.getCurrentExtensionNo()) != 0) {
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "当前延期期数不一致");
+    }
+    if (invest.getCurrentExtensionRate().compareTo(result.getCurrentExtensionRate()) != 0) {
+      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "当前延期利率不一致");
     }
 
     TBizInvestInfo info = TBizInvestInfo.builder().build();
