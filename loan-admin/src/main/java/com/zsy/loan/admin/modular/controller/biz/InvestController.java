@@ -7,8 +7,11 @@ import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.convey.InvestCalculateVo;
 import com.zsy.loan.bean.convey.InvestConfirmInfoVo;
 import com.zsy.loan.bean.convey.InvestDelayInfoVo;
+import com.zsy.loan.bean.convey.InvestDivestmentInfoVo;
 import com.zsy.loan.bean.convey.InvestInfoVo;
+import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.dictmap.biz.InvestDict;
+import com.zsy.loan.bean.dictmap.biz.InvestPlanDict;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
@@ -28,7 +31,9 @@ import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.DateTimeKit;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.factory.Page;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -136,7 +141,7 @@ public class InvestController extends BaseController {
 
     //结束日期必须在开始日期之后
     if (!DateUtil.compareDate(invest.getBeginDate(), invest.getEndDate())) {
-      throw new LoanException(BizExceptionEnum.INVEST_DATE, "");
+      throw new LoanException(BizExceptionEnum.DATE_COMPARE_ERROR, "");
     }
 
     invest.setBizType(LoanBizTypeEnum.INVEST_CHECK_IN.getValue()); //设置业务类型
@@ -215,7 +220,7 @@ public class InvestController extends BaseController {
      */
     //借款结束日期必须在开始日期之后
     if (!DateUtil.compareDate(investCalculateVo.getBeginDate(), investCalculateVo.getEndDate())) {
-      throw new LoanException(BizExceptionEnum.INVEST_DATE, "");
+      throw new LoanException(BizExceptionEnum.DATE_COMPARE_ERROR, "");
     }
 
     investCalculateVo.setBizType(LoanBizTypeEnum.INVEST_CHECK_IN.getValue()); //设置业务类型
@@ -307,7 +312,7 @@ public class InvestController extends BaseController {
     return SUCCESS_TIP;
   }
 
-  /**
+   /**
    * 跳转到延期
    */
   @Permission
@@ -399,6 +404,118 @@ public class InvestController extends BaseController {
     calculateVo.setResultMsg(tmp.toString());
 
     return calculateVo;
+  }
+
+  /**
+   * 跳转到撤资
+   */
+  @Permission
+  @RequestMapping("/to_invest_divestment/{investId}")
+  public String investDivestment(@PathVariable Long investId, Model model) {
+
+    InvestCalculateVo invest = investService.getDivestmentInfo(investId);
+
+    invest.setRemark(invest.getRemark() == null ? "" : invest.getRemark().trim());
+    invest.setCustName(ConstantFactory.me().getCustomerName(invest.getCustNo()));
+    invest.setInAcctName(ConstantFactory.me().getAcctName(invest.getInAcctNo()));
+    invest.setInvestTypeName(ConstantFactory.me().getInvestTypeName(invest.getInvestType()));
+    invest.setOrgName(ConstantFactory.me().getOrgNoName(invest.getOrgNo()));
+    invest.setStatusName(ConstantFactory.me().getInvestStatusName(invest.getStatus()));
+
+    model.addAttribute("invest", invest);
+    LogObjectHolder.me().set(invest);
+    return PREFIX + "invest_divestment.html";
+
+  }
+
+  /**
+   * 撤资
+   */
+  @BussinessLog(value = "撤资", dict = InvestDict.class)
+  @RequestMapping(value = "/divestment")
+  @Permission
+  @ResponseBody
+  public Object divestment(@Valid @RequestBody InvestDivestmentInfoVo invest, BindingResult error) {
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    if (invest.getId() == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    invest.setBizType(LoanBizTypeEnum.DIVESTMENT.getValue()); //设置业务类型
+
+    investService.divestment(invest, true);
+    return SUCCESS_TIP;
+  }
+
+  /**
+   * 撤资试算
+   */
+  @BussinessLog(value = "撤资试算", dict = InvestDict.class)
+  @RequestMapping(value = "/divestmentCalculate")
+  @ResponseBody
+  @ApiOperation(value = "撤资试算", notes = "撤资试算")
+  public InvestCalculateVo divestmentCalculate(@Valid @RequestBody InvestCalculateVo investCalculateVo,
+      BindingResult error) {
+
+    /**
+     * 处理error
+     */
+    exportErr(error);
+
+    /**
+     * 校验
+     */
+    investCalculateVo.setBizType(LoanBizTypeEnum.DIVESTMENT.getValue()); //设置业务类型
+
+    InvestCalculateVo calculateVo = investService.divestmentCalculate(investCalculateVo);
+
+    StringBuffer tmp = new StringBuffer();
+    tmp.append("本金：" + BigDecimalUtil.formatAmt(calculateVo.getPrin()));
+    tmp.append(",应收利息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotSchdInterest()));
+    tmp.append(",计提利息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidInterest()));
+    tmp.append(",已提本金累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidPrin()));
+    tmp.append(",已提利息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidInterest()));
+    tmp.append(",收益调整金额累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotWavAmt()));
+    tmp.append("<BR>");
+
+    for (TBizInvestPlan plan : calculateVo.getPlanList()) {
+      tmp.append("--------------------------------------------------------------<BR>");
+      tmp.append("第：" + plan.getTermNo() + "期");
+      tmp.append(",本期计息本金：" + BigDecimalUtil.formatAmt(plan.getDdPrin()));
+      tmp.append(",本期利息：" + BigDecimalUtil.formatAmt(plan.getChdInterest()));
+      tmp.append(",本期开始日期：" + DateTimeKit.formatDate(plan.getBeginDate()));
+      tmp.append(",本期结束日期：" + DateTimeKit.formatDate(plan.getEndDate()));
+      tmp.append(",计息天数：" + plan.getDdNum());
+      tmp.append(",状态：" + ConstantFactory.me().getInvestPlanStatusName(plan.getStatus()));
+      tmp.append("<BR>");
+    }
+    calculateVo.setResultMsg(tmp.toString());
+
+    return calculateVo;
+  }
+
+
+  /**
+   * 还款计划计提
+   */
+  @BussinessLog(value = "还款计划计提", dict = InvestPlanDict.class)
+  @RequestMapping(value = "/accrual", method = RequestMethod.POST)
+  @Permission
+  @ResponseBody
+  @OpLog
+  public Object accrual(@RequestBody List<Long> investPlanIds) {
+
+    if (investPlanIds == null) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    investService.accrual(investPlanIds);
+    return SUCCESS_TIP;
+
   }
 
 

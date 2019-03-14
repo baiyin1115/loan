@@ -377,23 +377,6 @@ LoanPlan.checkAll = function () {
 };
 
 /**
- * 打开查看还款计划详情
- */
-LoanPlan.openLoanDetail = function () {
-  if (this.check()) {
-    var index = layer.open({
-      type: 2,
-      title: '贷款详情',
-      area: ['800px', '480px'], //宽高
-      fix: false, //不固定
-      maxmin: true,
-      content: Feng.ctxPath + '/loan/loan_update/' + LoanPlan.seItem.id
-    });
-    this.layerIndex = index;
-  }
-};
-
-/**
  * 查询表单提交参数对象
  * @returns {{}}
  */
@@ -423,17 +406,3 @@ LoanPlan.openRepayLoan = function () {
     this.layerIndex = index;
   }
 };
-
-// /**
-//  * 查询还款计划列表
-//  */
-// LoanPlan.search = function () {
-//   LoanPlan.table.refresh({query: LoanPlan.formParams()});
-// };
-//
-// /**
-//  *  重置还款计划列表
-//  */
-// LoanPlan.resetSearch = function () {
-//   LoanPlan.search();
-// }

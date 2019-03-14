@@ -330,23 +330,6 @@ InvestPlan.checkAll = function () {
 };
 
 /**
- * 打开查看回款计划详情
- */
-InvestPlan.openInvestDetail = function () {
-  if (this.check()) {
-    var index = layer.open({
-      type: 2,
-      title: '贷款详情',
-      area: ['800px', '480px'], //宽高
-      fix: false, //不固定
-      maxmin: true,
-      content: Feng.ctxPath + '/invest/invest_update/' + InvestPlan.seItem.id
-    });
-    this.layerIndex = index;
-  }
-};
-
-/**
  * 查询表单提交参数对象
  * @returns {{}}
  */
@@ -361,32 +344,24 @@ InvestPlan.formParams = function () {
 };
 
 /**
- * 打开回款界面
+ * 计提
  */
 InvestPlan.openAccrual = function () {
-  if (this.check()) {
-    var index = layer.open({
-      type: 2,
-      title: '回款',
-      area: ['1000px', '750px'], //宽高
-      fix: false, //不固定
-      maxmin: true,
-      content: Feng.ctxPath + '/invest/to_invest_accrual/' + InvestPlan.seItem.id
-    });
-    this.layerIndex = index;
+  if (this.checkAll()) {
+
+    var operation = function () {
+      var ajax = new $ax(Feng.ctxPath + "/invest/accrual", function () {
+        Feng.success("计提成功!");
+        Invest.search();
+        InvestPlan.table.refresh();
+      }, function (data) {
+        Feng.error("计提失败!" + data.responseJSON.message + "!");
+      });
+      ajax.setData(InvestPlan.seItems);
+      ajax.setContentType("application/json")
+      ajax.start();
+    };
+
+    Feng.confirm("是否计提?", operation);
   }
 };
-
-// /**
-//  * 查询回款计划列表
-//  */
-// InvestPlan.search = function () {
-//   InvestPlan.table.refresh({query: InvestPlan.formParams()});
-// };
-//
-// /**
-//  *  重置回款计划列表
-//  */
-// InvestPlan.resetSearch = function () {
-//   InvestPlan.search();
-// }

@@ -36,14 +36,14 @@ public class SystemServiceImpl implements ISystemService {
   public Date getSysAcctDate() {
 
     Date acctDate = null;
-    String key = CacheConstantKey.SYS + "acct_date";
-    String val = configCache.get(key) == null ? null : (String) configCache.get(key);
-    if (val != null) {
-      acctDate = DateUtil.parseDate(val);
-      return acctDate;
-    }
+//    String key = CacheConstantKey.SYS + "acct_date";
+//    String val = configCache.get(key) == null ? null : (String) configCache.get(key);
+//    if (val != null) {
+//      acctDate = DateUtil.parseDate(val);
+//      return acctDate;
+//    }
     acctDate = repository.getSysAcctDate();
-    configCache.set(key, DateUtil.getDay(acctDate));
+//    configCache.set(key, DateUtil.getDay(acctDate));
     return acctDate;
   }
 

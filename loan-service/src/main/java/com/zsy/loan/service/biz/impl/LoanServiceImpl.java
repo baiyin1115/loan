@@ -19,7 +19,6 @@ import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.biz.RepayPlanRepo;
 import com.zsy.loan.service.factory.LoanTrialCalculateFactory;
-import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
@@ -31,14 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -355,7 +351,7 @@ public class LoanServiceImpl extends BaseServiceImpl {
     status.add(RepayStatusEnum.OVERDUE.getValue());
     List<TBizRepayPlan> notPayRecords = repayPlanRepo.findNotPayRecord(loan.getId(), status, currentTermNo);
     if (notPayRecords != null && notPayRecords.size() != 0) {
-      throw new LoanException(BizExceptionEnum.LOAN_STATUS_ERROR, "有未还的还款计划，不能提前还款");
+      throw new LoanException(BizExceptionEnum.STATUS_ERROR, "有未还的还款计划，不能提前还款");
     }
 
     List<TBizRepayPlan> afterPayRecords = repayPlanRepo.findAfterPayRecord(loan.getId(), currentTermNo);

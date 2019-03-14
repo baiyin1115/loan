@@ -185,6 +185,8 @@ public class InvestCalculateVo implements Serializable {
 
   private String statusName;
 
+  private String investTypeName;
+
   @ApiModelProperty(value = "计算撤资本金")
   private BigDecimal calculateAmt;
 

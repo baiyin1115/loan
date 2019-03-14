@@ -3,7 +3,6 @@ package com.zsy.loan.service.factory;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
-import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.vo.InvestStatusVo;
 import java.util.HashMap;
@@ -82,7 +81,7 @@ public class InvestStatusFactory {
    */
   public static boolean checkCurrentStatus(String key) {
     if (maps.get(key) == null) {
-      throw new LoanException(BizExceptionEnum.LOAN_STATUS_ERROR, "");
+      throw new LoanException(BizExceptionEnum.STATUS_ERROR, "");
     } else {
       return true;
     }
@@ -94,7 +93,7 @@ public class InvestStatusFactory {
   public static InvestStatusEnum getNextStatus(String key) {
     InvestStatusVo vo = maps.get(key);
     if (vo == null) {
-      throw new LoanException(BizExceptionEnum.LOAN_STATUS_ERROR, "");
+      throw new LoanException(BizExceptionEnum.STATUS_ERROR, "");
     }
 
     return vo.getNextStatus();

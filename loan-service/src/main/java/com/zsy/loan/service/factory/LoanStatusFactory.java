@@ -120,7 +120,7 @@ public class LoanStatusFactory {
    */
   public static boolean checkCurrentStatus(String key) {
     if (maps.get(key) == null) {
-      throw new LoanException(BizExceptionEnum.LOAN_STATUS_ERROR, "");
+      throw new LoanException(BizExceptionEnum.STATUS_ERROR, "");
     } else {
       return true;
     }
@@ -132,7 +132,7 @@ public class LoanStatusFactory {
   public static LoanStatusEnum getNextStatus(String key) {
     LoanStatusVo vo = maps.get(key);
     if (vo == null) {
-      throw new LoanException(BizExceptionEnum.LOAN_STATUS_ERROR, "");
+      throw new LoanException(BizExceptionEnum.STATUS_ERROR, "");
     }
 
     return vo.getNextStatus();

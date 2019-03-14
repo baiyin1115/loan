@@ -13,6 +13,8 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
   PARAMETER_ERROR(401, "数据错误"),
   NOT_FOUND(404, "未查询到符合条件的业务"),
   CALCULATE_REQ_NOT_MATCH(401, "请求与上次试算结果不一致"),
+  STATUS_ERROR(401, "当前状态不支持这个业务"),
+  DATE_COMPARE_ERROR(401, "日期比较错误"),
 
   /**
    * 字典
@@ -65,13 +67,11 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
   LOAN_DATE(401, "结束日期必须在开始日期之后"),
   LOAN_LENDING_DATE(401, "放款日期必须在开始日期之后"),
   LOAN_NOT_CHECK_IN(401, "不是登记状态"),
-  LOAN_STATUS_ERROR(401, "当前状态不支持这个业务"),
   LOAN_DD_DATE(401, "还款日期必须在当前账务日期之前"),
 
   /**
    * 融资问题
    */
-  INVEST_DATE(401, "结束日期必须在开始日期之后"),
   INVEST_AMT(401, "金额错误"),
 
   /**

@@ -164,6 +164,9 @@ public class TBizInvestInfo implements Serializable {
   private String remark;
 
   @Transient
+  private String statusName;
+
+  @Transient
   private String orgName;
 
   @Transient

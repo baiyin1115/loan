@@ -45,5 +45,10 @@ public interface InvestInfoRepo extends PagingAndSortingRepository<TBizInvestInf
       + "extension_rate=:currentExtensionRate,end_date=:endDate where t.id =:id ")
   int delay(@Param("id") Long id, @Param("status") Long status, @Param("remark") String remark, @Param("sysAcctDate") Date sysAcctDate,
       @Param("schdInterest") BigDecimal schdInterest, @Param("currentExtensionNo") Long currentExtensionNo,
-      @Param("currentExtensionRate") BigDecimal currentExtensionRate,@Param("endDate") Date endDate);
+      @Param("currentExtensionRate") BigDecimal currentExtensionRate, @Param("endDate") Date endDate);
+
+  @Modifying
+  @Query(nativeQuery = true, value = "update t_biz_invest_info t set acct_date=:sysAcctDate,"
+      + "tot_accrued_interest=tot_accrued_interest+:chdInterest where t.id =:investNo ")
+  void accrual(@Param("investNo") Long investNo, @Param("chdInterest") BigDecimal chdInterest, @Param("sysAcctDate") Date sysAcctDate);
 }

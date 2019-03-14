@@ -2,10 +2,8 @@ package com.zsy.loan.service.factory;
 
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
-import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayStatusEnum;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.bean.vo.LoanStatusVo;
 import com.zsy.loan.bean.vo.RepayPlanStatusVo;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +44,7 @@ public class RepayPlanStatusFactory {
    */
   public static boolean checkCurrentStatus(String key) {
     if (maps.get(key) == null) {
-      throw new LoanException(BizExceptionEnum.LOAN_STATUS_ERROR, "");
+      throw new LoanException(BizExceptionEnum.STATUS_ERROR, "");
     } else {
       return true;
     }
@@ -58,7 +56,7 @@ public class RepayPlanStatusFactory {
   public static RepayStatusEnum getNextStatus(String key) {
     RepayPlanStatusVo vo = maps.get(key);
     if (vo == null) {
-      throw new LoanException(BizExceptionEnum.LOAN_STATUS_ERROR, "");
+      throw new LoanException(BizExceptionEnum.STATUS_ERROR, "");
     }
 
     return vo.getNextStatus();

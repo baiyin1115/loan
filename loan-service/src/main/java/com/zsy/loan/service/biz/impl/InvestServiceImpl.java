@@ -3,12 +3,14 @@ package com.zsy.loan.service.biz.impl;
 import com.zsy.loan.bean.convey.InvestCalculateVo;
 import com.zsy.loan.bean.convey.InvestConfirmInfoVo;
 import com.zsy.loan.bean.convey.InvestDelayInfoVo;
+import com.zsy.loan.bean.convey.InvestDivestmentInfoVo;
 import com.zsy.loan.bean.convey.InvestInfoVo;
+import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
-import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestPlanStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
@@ -21,6 +23,7 @@ import com.zsy.loan.service.factory.InvestTrialCalculateFactory;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
+import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.JodaTimeUtil;
 import com.zsy.loan.utils.factory.Page;
 import java.math.BigDecimal;
@@ -64,7 +67,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
 
     List<Order> orders = new ArrayList<Order>();
     orders.add(Order.desc("status"));
-    orders.add(Order.desc("id"));
+    orders.add(Order.asc("id"));
     Pageable pageable = getPageable(page, orders);
 
     org.springframework.data.domain.Page<TBizInvestInfo> page1 = repository
@@ -98,7 +101,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
 
     List<Order> orders = new ArrayList<Order>();
     orders.add(Order.desc("status"));
-    orders.add(Order.desc("id"));
+    orders.add(Order.asc("id"));
     Pageable pageable = getPageable(page, orders);
 
     org.springframework.data.domain.Page<TBizInvestPlan> page1 = investPlanRepo
@@ -175,6 +178,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
     info.setTotPaidPrin(BigDecimal.valueOf(0.00)); // 已还本金累计
     info.setTotPaidInterest(BigDecimal.valueOf(0.00)); // 已还利息累计
     info.setTotWavAmt(BigDecimal.valueOf(0.00)); // 减免金额累计
+    info.setTotAccruedInterest(BigDecimal.valueOf(0.00)); //计提利息累计
 
     repository.save(info);
 
@@ -376,4 +380,76 @@ public class InvestServiceImpl extends BaseServiceImpl {
   }
 
 
+  /**
+   * 计提利息
+   * @param investPlanIds
+   */
+  @Transactional
+  public void accrual(List<Long> investPlanIds) {
+
+    for (int i = 0; i < investPlanIds.size(); i++) {
+      TBizInvestPlan investPlan = investPlanRepo.findById(investPlanIds.get(0)).get();
+
+      if(!investPlan.getStatus().equals(InvestPlanStatusEnum.UN_INTEREST.getValue())){
+        throw new LoanException(BizExceptionEnum.STATUS_ERROR, "回款状态不是[未计息]");
+      }
+
+      //计息日必须在当前系统时间之后
+      if (!DateUtil.compareDate(investPlan.getDdDate(), systemService.getSysAcctDate())) {
+        throw new LoanException(BizExceptionEnum.DATE_COMPARE_ERROR, "计息日必须在当前系统时间之后");
+      }
+
+      /**
+       * 更新状态
+       */
+      investPlan.setStatus(InvestPlanStatusEnum.INTERESTED.getValue());
+      investPlanRepo.save(investPlan);
+
+      /**
+       * 更新融资凭证
+       */
+      repository.accrual(investPlan.getInvestNo(),investPlan.getChdInterest(),systemService.getSysAcctDate());
+    }
+  }
+
+  public void divestment(@Valid InvestDivestmentInfoVo invest, boolean b) {
+    return;
+  }
+
+  public InvestCalculateVo divestmentCalculate(@Valid InvestCalculateVo calculate) {
+
+    //校验状态
+    InvestStatusFactory.checkCurrentStatus(calculate.getStatus() + "_" + LoanBizTypeEnum.DIVESTMENT.getValue());
+
+    /**
+     * 根据本金、利率、开始结束日期计算利息、期数、应还本金、应还利息、回款计划相关信息
+     */
+    //设置共同信息
+    setCalculateCommon(calculate);
+
+    /**
+     * 查询下回款计划
+     */
+    //TODO
+    List<TBizInvestPlan> investPlans = investPlanRepo.findByInvestNo(calculate.getId());
+    calculate.setPlanList(investPlans);
+
+    return executeCalculate(calculate);
+  }
+
+  public InvestCalculateVo getDivestmentInfo(Long investId) {
+
+    //借据
+    TBizInvestInfo invest = repository.findById(investId).get();
+
+    /**
+     * 试算
+     */
+    InvestCalculateVo calculateRequest = InvestCalculateVo.builder().build();
+    BeanKit.copyProperties(invest, calculateRequest);
+    calculateRequest.setBizType(LoanBizTypeEnum.DIVESTMENT.getValue()); //设置业务类型
+    InvestCalculateVo result = divestmentCalculate(calculateRequest); //试算结果
+
+    return result;
+  }
 }

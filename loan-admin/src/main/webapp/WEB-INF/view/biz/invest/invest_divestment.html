@@ -1,0 +1,93 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="investDivestmentInfoForm">
+
+            <input type="hidden" id="id" value="${invest.id}">
+
+            <div class="row">
+                <div class="col-sm-4">
+
+                    <#input id="divestmentAmt" name="撤资本金" underline="false" value="" />
+
+                    <#input id="divestmentInterest" name="撤资利息" underline="false" value="" />
+
+                    <#input id="divestmentWavAmt" name="收益调整金额" underline="false" value="" />
+
+                    <#input id="orgName" name="公司" underline="false" value="${invest.orgName}" hiddenValue="${invest.orgNo}"
+                        hidden="orgNo" readonly="readonly" />
+
+                    <#input id="custName" name="客户" underline="false" value="${invest.custName}" hiddenValue="${invest.custNo}"
+                        hidden="custNo" readonly="readonly" />
+
+                    <#input id="investTypeName" name="融资类型" underline="false" value="${invest.investTypeName}" hiddenValue="${invest.investType}"
+                        hidden="investType" readonly="readonly" />
+
+                    <#input id="inAcctName" name="入账账户" underline="false" value="${invest.inAcctName}" hiddenValue="${invest.inAcctNo}"
+                        hidden="inAcctNo" readonly="readonly" />
+
+                    <#input id="extensionNo" name="总延期期数" underline="false" value="${invest.extensionNo}" readonly="readonly" />
+
+                    <#input id="extensionRate" name="上一次延期利率" underline="false" value="${invest.extensionRate}" readonly="readonly" />
+
+                </div>
+                <div class="col-sm-4">
+                    <#input id="ddDate" name="计算撤资本金" underline="false" value="${invest.calculateAmt}" readonly="readonly" />
+
+                    <#input id="ddDate" name="计算撤资利息" underline="false" value="${invest.calculateInterest}" readonly="readonly" />
+
+                    <#input id="totSchdInterest" name="应收利息累计" underline="false" value="${invest.totSchdInterest}" readonly="readonly"/>
+
+                    <#input id="totAccruedInterest" name="计提利息累计" underline="false" value="${invest.totAccruedInterest}" readonly="readonly"/>
+
+                    <#input id="totPaidPrin" name="已提本金累计" underline="false" value="${invest.totPaidPrin}" readonly="readonly"/>
+
+                    <#input id="totPaidInterest" name="已提利息累计" underline="false" value="${invest.totPaidInterest}" readonly="readonly"/>
+
+                    <#input id="totWavAmt" name="收益调整金额累计" underline="false" value="${invest.totWavAmt}" readonly="readonly"/>
+
+                    <#input id="externalAcct" name="投资人出款账户" underline="false" value="${invest.externalAcct}" readonly="readonly"/>
+
+                </div>
+                <div class="col-sm-4">
+
+                    <#input id="statusName" name="状态" underline="false" value="${invest.statusName}" hiddenValue="${invest.status}"
+                        hidden="status" readonly="readonly" />
+
+                    <#input id="termNo" name="期数" underline="false" value="${invest.termNo}" readonly="readonly" />
+
+                    <#input id="ddDate" name="计息日" underline="false" value="${invest.ddDate}" readonly="readonly" />
+
+                    <#input id="prin" name="本金" underline="false" value="${invest.prin}" readonly="readonly" />
+
+                    <#input id="rate" name="利率" underline="false" value="${invest.rate}" readonly="readonly" />
+
+                    <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${invest.acctDate}" readonly="readonly"/>
+
+                    <#TimeInput id="beginDate" name="开始日期" isTime="false" pattern="YYYY-MM-DD" value="${invest.beginDate}" readonly="readonly"/>
+
+                    <#TimeInput id="endDate" name="结束日期" isTime="false" pattern="YYYY-MM-DD" value="${invest.endDate}" readonly="readonly"/>
+
+                    <#input id="cycleInterval" name="周期间隔" underline="false" value="${invest.cycleInterval}" readonly="readonly"/>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50" value="${invest.remark}" />
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="InvestDlg.divestmentCalculate()"/>
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="InvestDlg.delaySubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="InvestDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/invest/invest_info.js"></script>
+@}
