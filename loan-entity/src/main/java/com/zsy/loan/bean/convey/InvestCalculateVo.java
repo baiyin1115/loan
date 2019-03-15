@@ -160,8 +160,8 @@ public class InvestCalculateVo implements Serializable {
   @ApiModelProperty(value = "当前期回款计划" , hidden = true)
   List<TBizInvestPlan> currentPlanList;
 
-  @ApiModelProperty(value = "当前期以前的未还回款计划" , hidden = true)
-  List<TBizInvestPlan> notPayRecords;
+  @ApiModelProperty(value = "当前期以前的已计息回款计划" , hidden = true)
+  List<TBizInvestPlan> interestedRecords;
 
   @ApiModelProperty(value = "当前期以后的回款计划" , hidden = true)
   List<TBizInvestPlan> afterPayRecords;

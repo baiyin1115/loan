@@ -9,6 +9,7 @@ import com.zsy.loan.bean.convey.LoanCalculateVo;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
+import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestPlanStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
@@ -26,8 +27,10 @@ import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.JodaTimeUtil;
 import com.zsy.loan.utils.factory.Page;
+import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -431,8 +434,25 @@ public class InvestServiceImpl extends BaseServiceImpl {
      * 查询下回款计划
      */
     //TODO
-    List<TBizInvestPlan> investPlans = investPlanRepo.findByInvestNo(calculate.getId());
-    calculate.setPlanList(investPlans);
+    Date acctDate = systemService.getSysAcctDate();
+    List<TBizInvestPlan> currentPlans = investPlanRepo.findCurrentTermRecord(calculate.getId(),acctDate);
+    calculate.setCurrentPlanList(currentPlans);
+
+    Long currentTermNo = currentPlans.get(0).getTermNo();
+    List<Long> status = new ArrayList<>(1);
+    status.add(InvestPlanStatusEnum.INTERESTED.getValue());
+    List<TBizInvestPlan> InterestedPlans = investPlanRepo.findBeforeRecord(calculate.getId(),status,currentTermNo);
+    calculate.setInterestedRecords(InterestedPlans);
+
+    List<Long> status2 = new ArrayList<>(1);
+    status.add(InvestPlanStatusEnum.UN_INTEREST.getValue());
+    List<TBizInvestPlan> unInterestRecords = investPlanRepo.findBeforeRecord(calculate.getId(), status2, currentTermNo);
+    if (unInterestRecords != null && unInterestRecords.size() != 0) {
+      throw new LoanException(BizExceptionEnum.STATUS_ERROR, "有未计息的回款计划");
+    }
+
+    List<TBizInvestPlan> afterPayRecords = investPlanRepo.findAfterRecord(calculate.getId(), currentTermNo);
+    calculate.setAfterPayRecords(afterPayRecords);
 
     return executeCalculate(calculate);
   }
