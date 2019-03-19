@@ -39,8 +39,8 @@ public class InvestCalculateVo implements Serializable {
   @ApiModelProperty(value = "客户编号")
   private Long custNo;
 
-  @NotNull(message = "[产品类型]不能为空！")
-  @ApiModelProperty(value = "产品类型")
+  @NotNull(message = "[融资类型]不能为空！")
+  @ApiModelProperty(value = "融资类型")
   private Integer investType;
 
   @NotNull(message = "[入账账户]不能为空！")
@@ -176,8 +176,6 @@ public class InvestCalculateVo implements Serializable {
   private BigDecimal currentExtensionRate;
 
   private String orgName;
-
-  private String productName;
 
   private String custName;
 

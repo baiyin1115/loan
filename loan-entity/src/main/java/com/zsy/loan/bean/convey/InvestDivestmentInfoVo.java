@@ -148,7 +148,7 @@ public class InvestDivestmentInfoVo implements Serializable {
   @ApiModelProperty(value = "撤资本金")
   private BigDecimal divestmentAmt;
 
-  @NotNull(message = "[撤资利息]不能为空！")
+//  @NotNull(message = "[撤资利息]不能为空！")
   @ApiModelProperty(value = "撤资利息")
   private BigDecimal divestmentInterest;
 

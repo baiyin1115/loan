@@ -476,13 +476,35 @@ public class InvestController extends BaseController {
     StringBuffer tmp = new StringBuffer();
     tmp.append("本金：" + BigDecimalUtil.formatAmt(calculateVo.getPrin()));
     tmp.append(",应收利息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotSchdInterest()));
-    tmp.append(",计提利息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidInterest()));
+    tmp.append(",计提利息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotAccruedInterest()));
     tmp.append(",已提本金累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidPrin()));
     tmp.append(",已提利息累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotPaidInterest()));
     tmp.append(",收益调整金额累计：" + BigDecimalUtil.formatAmt(calculateVo.getTotWavAmt()));
     tmp.append("<BR>");
 
-    for (TBizInvestPlan plan : calculateVo.getPlanList()) {
+    for (TBizInvestPlan plan : calculateVo.getInterestedRecords()) {
+      tmp.append("--------------------------------------------------------------<BR>");
+      tmp.append("第：" + plan.getTermNo() + "期");
+      tmp.append(",本期计息本金：" + BigDecimalUtil.formatAmt(plan.getDdPrin()));
+      tmp.append(",本期利息：" + BigDecimalUtil.formatAmt(plan.getChdInterest()));
+      tmp.append(",本期开始日期：" + DateTimeKit.formatDate(plan.getBeginDate()));
+      tmp.append(",本期结束日期：" + DateTimeKit.formatDate(plan.getEndDate()));
+      tmp.append(",计息天数：" + plan.getDdNum());
+      tmp.append(",状态：" + ConstantFactory.me().getInvestPlanStatusName(plan.getStatus()));
+      tmp.append("<BR>");
+    }
+    for (TBizInvestPlan plan : calculateVo.getCurrentPlanList()) {
+      tmp.append("--------------------------------------------------------------<BR>");
+      tmp.append("第：" + plan.getTermNo() + "期");
+      tmp.append(",本期计息本金：" + BigDecimalUtil.formatAmt(plan.getDdPrin()));
+      tmp.append(",本期利息：" + BigDecimalUtil.formatAmt(plan.getChdInterest()));
+      tmp.append(",本期开始日期：" + DateTimeKit.formatDate(plan.getBeginDate()));
+      tmp.append(",本期结束日期：" + DateTimeKit.formatDate(plan.getEndDate()));
+      tmp.append(",计息天数：" + plan.getDdNum());
+      tmp.append(",状态：" + ConstantFactory.me().getInvestPlanStatusName(plan.getStatus()));
+      tmp.append("<BR>");
+    }
+    for (TBizInvestPlan plan : calculateVo.getAfterPayRecords()) {
       tmp.append("--------------------------------------------------------------<BR>");
       tmp.append("第：" + plan.getTermNo() + "期");
       tmp.append(",本期计息本金：" + BigDecimalUtil.formatAmt(plan.getDdPrin()));
@@ -518,17 +540,5 @@ public class InvestController extends BaseController {
 
   }
 
-
-  /**
-   * 获取融资列表
-   */
-  @RequestMapping(value = "/selectInvestTreeList")
-  @ResponseBody
-  public List<ZTreeNode> selectInvestTreeList() {
-    List<ZTreeNode> treeList = investService.getTreeList();
-//    roleTreeList.add(ZTreeNode.createParent());
-    return treeList;
-
-  }
 
 }

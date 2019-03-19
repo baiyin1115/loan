@@ -129,7 +129,12 @@ public class JodaTimeUtil {
       int beginYM = beginTime.getYear() + beginTime.getMonthOfYear();
       int endYM = endTime.getYear() + endTime.getMonthOfYear();
 
-      iMonth = endYM - beginYM + 1;
+      if (isEndDayOfMonth(beginTime)) { //开始日期是当月最后一天的话，这个月不算
+        iMonth = endYM - beginYM;
+      } else {
+        iMonth = endYM - beginYM + 1;
+      }
+
 //      int nextYM = 0;
 //      do {
 //        iMonth +=1;
@@ -158,8 +163,16 @@ public class JodaTimeUtil {
     return dateTime.dayOfMonth().get() == 1;
   }
 
+  public static boolean isFirstDayOfMonth(DateTime dateTime) {
+    return dateTime.dayOfMonth().get() == 1;
+  }
+
   public static boolean isEndDayOfMonth(Date date) {
     DateTime dateTime = new DateTime(date);
+    return dateTime.dayOfMonth().get() == dateTime.dayOfMonth().withMaximumValue().dayOfMonth().get();
+  }
+
+  public static boolean isEndDayOfMonth(DateTime dateTime) {
     return dateTime.dayOfMonth().get() == dateTime.dayOfMonth().withMaximumValue().dayOfMonth().get();
   }
 
@@ -167,7 +180,7 @@ public class JodaTimeUtil {
   /**
    * 取得dd日期
    */
-  public static Date getDdDate(Date begin, Date end, int dd,boolean isBegin) {
+  public static Date getDdDate(Date begin, Date end, int dd, boolean isBegin) {
 
     DateTime beginTime = new DateTime(begin);
     DateTime endTime = new DateTime(end);
@@ -186,7 +199,7 @@ public class JodaTimeUtil {
       ddEndTime = endTime.withDayOfMonth(dd);
     }
 
-    if(isBegin){
+    if (isBegin) {
       if (ddBeginTime.compareTo(beginTime) >= 0 && ddBeginTime.compareTo(endTime) <= 0) { //先记着开始日期
         return ddBeginTime.toDate();
       }
@@ -195,7 +208,7 @@ public class JodaTimeUtil {
       }
 
       return beginTime.toDate(); //不在开始结束范围内返回开始日期
-    }else{
+    } else {
       if (ddEndTime.compareTo(beginTime) >= 0 && ddEndTime.compareTo(endTime) <= 0) { //先记着结束日期来
         return ddEndTime.toDate();
       }
@@ -256,32 +269,32 @@ public class JodaTimeUtil {
     dateBegin = DateTimeKit.parse("2019-02-27", DateTimeKit.NORM_DATE_PATTERN);
     dateEnd = DateTimeKit.parse("2019-03-27", DateTimeKit.NORM_DATE_PATTERN);
 
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 29,false)));
+    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 29, false)));
 
     dateBegin = DateTimeKit.parse("2019-01-30", DateTimeKit.NORM_DATE_PATTERN);
     dateEnd = DateTimeKit.parse("2019-02-28", DateTimeKit.NORM_DATE_PATTERN);
 
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 5,false)));
+    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 5, false)));
 
     dateBegin = DateTimeKit.parse("2019-02-28", DateTimeKit.NORM_DATE_PATTERN);
     dateEnd = DateTimeKit.parse("2019-03-31", DateTimeKit.NORM_DATE_PATTERN);
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 27,false)));
+    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 27, false)));
 
     dateBegin = DateTimeKit.parse("2019-01-15", DateTimeKit.NORM_DATE_PATTERN);
     dateEnd = DateTimeKit.parse("2019-02-15", DateTimeKit.NORM_DATE_PATTERN);
 
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 16,false)));
+    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 16, false)));
 
     dateBegin = DateTimeKit.parse("2019-01-01", DateTimeKit.NORM_DATE_PATTERN);
     dateEnd = DateTimeKit.parse("2019-01-31", DateTimeKit.NORM_DATE_PATTERN);
 
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 30,false)));
+    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 30, false)));
 
     dateBegin = DateTimeKit.parse("2019-01-01", DateTimeKit.NORM_DATE_PATTERN);
     dateEnd = DateTimeKit.parse("2019-03-31", DateTimeKit.NORM_DATE_PATTERN);
 
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 2,true)));
-    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 2,false)));
+    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 2, true)));
+    System.out.println(DateTimeKit.formatDate(getDdDate(dateBegin, dateEnd, 2, false)));
 
 //    Date dateBegin = DateTimeKit.parse("2019-01-01", DateTimeKit.NORM_DATE_PATTERN);
 //    Date dateEnd = DateTimeKit.parse("2019-01-31", DateTimeKit.NORM_DATE_PATTERN);

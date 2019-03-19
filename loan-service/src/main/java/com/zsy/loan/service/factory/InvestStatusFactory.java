@@ -61,6 +61,20 @@ public class InvestStatusFactory {
             .bizType(LoanBizTypeEnum.DIVESTMENT).build());
 
     /**
+     * 部分撤资
+     */
+    maps.put(InvestStatusEnum.INTEREST_ING.getValue() + "_" + LoanBizTypeEnum.PART_DIVESTMENT.getValue(),//计息中-部分撤资
+        InvestStatusVo.builder()
+            .currentStatus(InvestStatusEnum.INTEREST_ING)
+            .nextStatus(InvestStatusEnum.INTEREST_ING)
+            .bizType(LoanBizTypeEnum.PART_DIVESTMENT).build());
+    maps.put(InvestStatusEnum.DELAY.getValue() + "_" + LoanBizTypeEnum.PART_DIVESTMENT.getValue(), //已延期-部分撤资
+        InvestStatusVo.builder()
+            .currentStatus(InvestStatusEnum.DELAY)
+            .nextStatus(InvestStatusEnum.DELAY)
+            .bizType(LoanBizTypeEnum.PART_DIVESTMENT).build());
+
+    /**
      * 结转
      */
     maps.put(InvestStatusEnum.INTEREST_ING.getValue() + "_" + LoanBizTypeEnum.SETTLEMENT.getValue(),//计息中-撤资

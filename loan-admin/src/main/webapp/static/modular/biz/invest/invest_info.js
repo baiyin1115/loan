@@ -39,7 +39,7 @@ var InvestDlg = {
   },
   validateDivestmentFields: {
     divestmentAmt: {validators: {notEmpty: {message: '撤资本金'}}},
-    divestmentInterest: {validators: {notEmpty: {message: '撤资费用'}}},
+    // divestmentInterest: {validators: {notEmpty: {message: '撤资费用'}}},
     divestmentWavAmt: {validators: {notEmpty: {message: '收益调整金额'}}}
   }
 };
@@ -67,8 +67,11 @@ InvestDlg.set = function (key, val) {
       $("#" + key).attr("id") == "totPaidInterest" ||
 
       $("#" + key).attr("id") == "divestmentAmt" ||
-      $("#" + key).attr("id") == "divestmentInterest" ||
-      $("#" + key).attr("id") == "divestmentWavAmt"
+      // $("#" + key).attr("id") == "divestmentInterest" ||
+      $("#" + key).attr("id") == "divestmentWavAmt" ||
+
+      $("#" + key).attr("id") == "calculateAmt" ||
+      $("#" + key).attr("id") == "calculateInterest"
 
   ) {
     this.investInfoData[key] = (typeof value == "undefined") ? Feng.parseMoney(
@@ -310,6 +313,57 @@ InvestDlg.delayCalculate = function () {
   ajax.start();
 };
 
+/**
+ * 撤资
+ */
+InvestDlg.divestmentSubmit = function () {
+
+  this.clearData();
+  this.collectData();
+
+  if (!this.validate($('#investDivestmentInfoForm'))) {
+    return;
+  }
+
+  //提交信息
+  var ajax = new $ax(Feng.ctxPath + "/invest/divestment", function (data) {
+    Feng.success("撤资成功!");
+    window.parent.Invest.refreshInvestPlan();
+    window.parent.Invest.table.refresh();
+    InvestDlg.close();
+  }, function (data) {
+    Feng.error("撤资失败!" + data.responseJSON.message + "!");
+  });
+  ajax.set(this.investInfoData);
+  ajax.setContentType("application/json")
+  ajax.start();
+};
+
+/**
+ * 撤资试算
+ */
+InvestDlg.divestmentCalculate = function () {
+
+  this.clearData();
+  this.collectData();
+
+  if (!this.validate($('#investDivestmentInfoForm'))) {
+    return;
+  }
+
+  //提交信息
+  var ajax = new $ax(Feng.ctxPath + "/invest/divestmentCalculate", function (data) {
+    Feng.infoDetail("试算详情", data.resultMsg);
+
+  }, function (data) {
+    Feng.error("试算失败!" + data.responseJSON.message + "!");
+  });
+  ajax.set(this.investInfoData);
+  // alert(JSON.stringify(this.investInfoData));
+  ajax.setContentType("application/json")
+  ajax.start();
+};
+
 
 /**
  * 初始化
@@ -319,6 +373,7 @@ $(function () {
   Feng.initValidator("investInfoForm", InvestDlg.validateFields);
   Feng.initValidator("investConfirmInfoForm", InvestDlg.validateConfirmFields);
   Feng.initValidator("investDelayInfoForm", InvestDlg.validateDelayFields);
+  Feng.initValidator("investDivestmentInfoForm", InvestDlg.validateDivestmentFields);
 
   //初始化
   $("#orgNo").val($("#orgNoValue").val());
@@ -331,6 +386,9 @@ $(function () {
   $("#totPaidPrin").val(Feng.formatMoney($("#totPaidPrin").val(), 2));
   $("#totPaidInterest").val(Feng.formatMoney($("#totPaidInterest").val(), 2));
   $("#totWavAmt").val(Feng.formatMoney($("#totWavAmt").val(), 2));
+
+  $("#calculateAmt").val(Feng.formatMoney($("#calculateAmt").val(), 2));
+  $("#calculateInterest").val(Feng.formatMoney($("#calculateInterest").val(), 2));
 
   //绑定格式化事件
   $('#prin').bind('blur', function () {
@@ -350,6 +408,23 @@ $(function () {
   });
   $('#totWavAmt').bind('blur', function () {
     Feng.formatAmt($('#totWavAmt'));
+  });
+
+  $('#calculateAmt').bind('blur', function () {
+    Feng.formatAmt($('#calculateAmt'));
+  });
+  $('#calculateInterest').bind('blur', function () {
+    Feng.formatAmt($('#calculateInterest'));
+  });
+
+  $('#divestmentAmt').bind('blur', function () {
+    Feng.formatAmt($('#divestmentAmt'));
+  });
+  // $('#divestmentInterest').bind('blur', function () {
+  //   Feng.formatAmt($('#divestmentInterest'));
+  // });
+  $('#divestmentWavAmt').bind('blur', function () {
+    Feng.formatAmt($('#divestmentWavAmt'));
   });
 
   //----------------------------------------------------------------------------

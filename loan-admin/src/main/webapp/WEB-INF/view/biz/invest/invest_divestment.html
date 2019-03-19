@@ -5,12 +5,15 @@
 
             <input type="hidden" id="id" value="${invest.id}">
 
+            <input type="hidden" id="orgNoValue" value="${invest.orgNo}">
+            <input type="hidden" id="investTypeValue" value="${invest.investType}">
+
             <div class="row">
                 <div class="col-sm-4">
 
                     <#input id="divestmentAmt" name="撤资本金" underline="false" value="" />
 
-                    <#input id="divestmentInterest" name="撤资利息" underline="false" value="" />
+                    @/*<#input id="divestmentInterest" name="撤资利息" underline="false" value="" /> @*/
 
                     <#input id="divestmentWavAmt" name="收益调整金额" underline="false" value="" />
 
@@ -32,9 +35,9 @@
 
                 </div>
                 <div class="col-sm-4">
-                    <#input id="ddDate" name="计算撤资本金" underline="false" value="${invest.calculateAmt}" readonly="readonly" />
+                    <#input id="calculateAmt" name="计算撤资本金" underline="false" value="${invest.calculateAmt}" readonly="readonly" />
 
-                    <#input id="ddDate" name="计算撤资利息" underline="false" value="${invest.calculateInterest}" readonly="readonly" />
+                    <#input id="calculateInterest" name="计算撤资利息" underline="false" value="${invest.calculateInterest}" readonly="readonly" />
 
                     <#input id="totSchdInterest" name="应收利息累计" underline="false" value="${invest.totSchdInterest}" readonly="readonly"/>
 
@@ -81,7 +84,7 @@
             <div class="row btn-group-m-t">
                 <div class="col-sm-10">
                     <#button btnCss="primary" name="试算" id="ensure" icon="fa-calculator" clickFun="InvestDlg.divestmentCalculate()"/>
-                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="InvestDlg.delaySubmit()"/>
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="InvestDlg.divestmentSubmit()"/>
                     <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="InvestDlg.close()"/>
                 </div>
             </div>

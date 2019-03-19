@@ -10,6 +10,7 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
+import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.JodaTimeUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -57,6 +58,14 @@ public class InvestTrialCalculateFactory {
     maps.put(InvestTypeEnum.EXPIRATION_SETTLEMENT + "_" + LoanBizTypeEnum.DIVESTMENT, InvestTrialCalculateFactory::expiration_settlement_divestment);
 
     /**
+     * 部分撤资试算
+     */
+    maps.put(InvestTypeEnum.HALF_YEAR_SETTLEMENT + "_" + LoanBizTypeEnum.PART_DIVESTMENT,
+        InvestTrialCalculateFactory::half_year_settlement_divestment);
+    maps.put(InvestTypeEnum.EXPIRATION_SETTLEMENT + "_" + LoanBizTypeEnum.PART_DIVESTMENT,
+        InvestTrialCalculateFactory::expiration_settlement_divestment);
+
+    /**
      * 延期试算
      */
     maps.put(InvestTypeEnum.HALF_YEAR_SETTLEMENT + "_" + LoanBizTypeEnum.DELAY, InvestTrialCalculateFactory::half_year_settlement_delay);
@@ -99,7 +108,7 @@ public class InvestTrialCalculateFactory {
     Date begin = data.getBeginDate();
     Date end = data.getEndDate();
 
-    Date concurrent = data.getBeginDate();
+    Date concurrent = JodaTimeUtil.getAfterDayDate(data.getBeginDate(), 3);
     Date concurrentBegin = null;
     Date concurrentEnd = null;
     boolean isMonth = false;
@@ -112,7 +121,14 @@ public class InvestTrialCalculateFactory {
 
       if (i == 0) {
         concurrentBegin = begin;
-        concurrentEnd = JodaTimeUtil.getEndDataOfMonth(begin);
+
+        //如果是开始日期是月初的话，就是一个月一个月的算了
+        if(JodaTimeUtil.isEndDayOfMonth(concurrentBegin)){
+          concurrentEnd = JodaTimeUtil.getEndDataOfMonth(concurrent);
+        }else{
+          concurrentEnd = JodaTimeUtil.getEndDataOfMonth(begin);
+        }
+
       } else if (i == result.getMonth() - 1) {
         concurrentEnd = end;
       } else {
@@ -137,7 +153,8 @@ public class InvestTrialCalculateFactory {
       plan.setStatus(InvestPlanStatusEnum.UN_INTEREST.getValue()); //回款状态
 
       //按月计息
-      if (JodaTimeUtil.isEndDayOfMonth(concurrentBegin) && JodaTimeUtil.isEndDayOfMonth(concurrentEnd)) {
+      if (JodaTimeUtil.isEndDayOfMonth(concurrentBegin) && JodaTimeUtil.isEndDayOfMonth(concurrentEnd) &&
+          concurrentBegin.getTime() != concurrentEnd.getTime()) {
         concurrentInterest = BigDecimalUtil.mul(data.getPrin(), data.getMonthRate());
         totSchdInterest = BigDecimalUtil.add(totSchdInterest, concurrentInterest);
 
@@ -427,10 +444,7 @@ public class InvestTrialCalculateFactory {
    * 半年结转--撤资试算
    */
   private static InvestCalculateVo half_year_settlement_divestment(InvestCalculateVo data) {
-    /**
-     * 计算规则：查找当前月，判断当前月是否计提计息，如果计息重新计算利息，可提利息=汇总计提利息-当期利息
-     * 可提利息=汇总计提利息+当期利息
-     */
+
     log.info("半年结转--撤资试算--要试算的数据是：" + data);
     InvestCalculateVo result = InvestCalculateVo.builder().build();
     BeanKit.copyProperties(data, result);
@@ -442,23 +456,35 @@ public class InvestTrialCalculateFactory {
     BigDecimal concurrentInterest = BigDecimal.valueOf(0.00); //本期利息
     BigDecimal divestmentWavAmt = data.getDivestmentWavAmt() == null ? BigDecimal.valueOf(0.00) : data.getDivestmentWavAmt(); //收益调整
 
-    /**
-     * 应收利息
-     * 计算规则：登记日到截止日之间包含的月数是期数，如果开始日期不是月初、计算首期利息时按日息计算；如果截止日期不是月末，计算末期利息按照日计算
-     */
     calculateAmt = BigDecimalUtil.sub(data.getPrin(), data.getTotPaidPrin());
     Date acctDate = data.getAcctDate();
+
+    BigDecimal dayRate = null; //日利息
+    BigDecimal monthRate = null;//月利息
 
     for (int i = 0; i < data.getCurrentPlanList().size(); i++) {
       TBizInvestPlan currentPlan = data.getCurrentPlanList().get(i); //当前期
 
-      if (JodaTimeUtil.daysBetween(acctDate, currentPlan.getEndDate()) == 0 &&
-          currentPlan.getStatus().equals(InvestPlanStatusEnum.UN_INTEREST.getValue())) { //最后一天并且未计息
-        calculateInterest = BigDecimalUtil.add(data.getTotAccruedInterest(), currentPlan.getChdInterest());
-      }else{
+      if (currentPlan.getStatus().equals(InvestPlanStatusEnum.RECEIVING.getValue())
+          || currentPlan.getStatus().equals(InvestPlanStatusEnum.END.getValue())) {
+        continue;
+      }
+
+      if (DateUtil.compareDate(currentPlan.getDdDate(), acctDate)) { //已计息 and 计息日在当前时间以后
+
+        if (currentPlan.getStatus().equals(InvestPlanStatusEnum.INTERESTED.getValue())) {
+          calculateInterest = data.getTotAccruedInterest();
+          continue;
+        } else {
+          calculateInterest = BigDecimalUtil.add(data.getTotAccruedInterest(), concurrentInterest);
+          continue;
+        }
+      } else {
         Date concurrentBegin = currentPlan.getBeginDate();
+        dayRate = BigDecimalUtil.div(currentPlan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN); //日利息
         int days = JodaTimeUtil.daysBetween(concurrentBegin, acctDate);
-        concurrentInterest = BigDecimalUtil.mul(calculateAmt, currentPlan.getRate(), BigDecimal.valueOf(days));
+        concurrentInterest = BigDecimalUtil.mul(calculateAmt, dayRate, BigDecimal.valueOf(days));
+
         if (currentPlan.getStatus().equals(InvestPlanStatusEnum.INTERESTED.getValue())) { //已计息
           calculateInterest = BigDecimalUtil.sub(data.getTotAccruedInterest(), concurrentInterest);
         } else if (currentPlan.getStatus().equals(InvestPlanStatusEnum.UN_INTEREST.getValue())) {
@@ -467,16 +493,16 @@ public class InvestTrialCalculateFactory {
           continue;
         }
       }
-
-      result.setCalculateAmt(calculateAmt);
-      result.setCalculateInterest(calculateInterest);
     }
+
+    result.setCalculateAmt(calculateAmt);
+    result.setCalculateInterest(calculateInterest);
 
     if (divestmentAmt == null && divestmentInterest == null) {
       return result;
     }
 
-    if (divestmentInterest.compareTo(calculateAmt) > 0) {
+    if (divestmentAmt.compareTo(calculateAmt) > 0) {
       throw new LoanException(BizExceptionEnum.INVEST_AMT, "撤资本金不能大于试算撤资本金");
     }
 
@@ -484,26 +510,35 @@ public class InvestTrialCalculateFactory {
     List<TBizInvestPlan> interestedRecords = result.getInterestedRecords(); //当前期以前的已计息回款计划
     List<TBizInvestPlan> afterPayRecords = result.getAfterPayRecords(); //当前期以后的回款计划
 
-    if (divestmentInterest.compareTo(calculateAmt) == 0) { //全额撤资
+    if (divestmentAmt.compareTo(calculateAmt) == 0) { //全额撤资
 
       for (TBizInvestPlan plan : currentPlans) {
 
-        if(plan.getStatus().equals(InvestPlanStatusEnum.RECEIVING.getValue())
-            ||plan.getStatus().equals(InvestPlanStatusEnum.END.getValue())){
+        if (plan.getStatus().equals(InvestPlanStatusEnum.RECEIVING.getValue())
+            || plan.getStatus().equals(InvestPlanStatusEnum.END.getValue())) {
           continue;
         }
 
-        if (JodaTimeUtil.daysBetween(acctDate, plan.getEndDate()) == 0 &&
-            plan.getStatus().equals(InvestPlanStatusEnum.UN_INTEREST.getValue())) { //最后一天并且未计息
-          plan.setPaidInterest(plan.getChdInterest());
-        }else {
+        if (DateUtil.compareDate(plan.getDdDate(), acctDate)) { //计息日在当前时间以后
+
+          if (plan.getStatus().equals(InvestPlanStatusEnum.INTERESTED.getValue())) {
+            plan.setPaidInterest(plan.getChdInterest());
+          } else {
+            plan.setPaidInterest(plan.getChdInterest());
+            result.setTotAccruedInterest(BigDecimalUtil.add(data.getTotAccruedInterest(), plan.getChdInterest()));
+          }
+
+        } else {
           Date concurrentBegin = plan.getBeginDate();
           int days = JodaTimeUtil.daysBetween(concurrentBegin, acctDate);
-          BigDecimal concurrent = BigDecimalUtil.mul(calculateAmt, plan.getRate(), BigDecimal.valueOf(days));
+          dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN); //日利息
+          BigDecimal concurrent = BigDecimalUtil.mul(calculateAmt, dayRate, BigDecimal.valueOf(days));
 
           plan.setChdInterest(concurrent); //本期利息
           plan.setPaidInterest(concurrent); //本期已提利息
-          plan.setDdNum((long)days);
+          plan.setDdNum((long) days);
+
+          result.setTotAccruedInterest(BigDecimalUtil.add(data.getTotAccruedInterest(), concurrent));
         }
 
         plan.setAcctDate(data.getAcctDate()); //业务日期
@@ -524,73 +559,111 @@ public class InvestTrialCalculateFactory {
       result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), calculateAmt)); //已提本金累计
       result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), calculateInterest)); //已提利息累计
       result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), divestmentWavAmt));
-      result.setTotAccruedInterest(BigDecimal.valueOf(0.00)); //计提利息--提出后重新计算
+      //result.setTotAccruedInterest(BigDecimal.valueOf(0.00)); //计提利息--提出后重新计算--更新的时候修改
 
     } else { //部分撤资
 
       /**
-       * 根据待还本金，设置当前期和后续期的回款计划
-       * 更新凭证的已提本金累计、已提利息累计、应收利息累计
+       * 当前期的计算 如果是最后一天，就不计算部分撤资，计提利息就是当月利息
+       * 如果不是最后一天，技术当前账务日期到开始日期之间的利息，后续的利息单起一起技术
        */
       BigDecimal remainingPrin = BigDecimalUtil.sub(calculateAmt, divestmentAmt); // 剩余本金
       BigDecimal difference = BigDecimal.valueOf(0.00); // 存下差额--利息
-      divestmentInterest = BigDecimal.valueOf(0.00); //撤资利息 --需要重新计算
 
+      List newPlans = new ArrayList();
       for (TBizInvestPlan plan : currentPlans) {
+
+        if (plan.getStatus().equals(InvestPlanStatusEnum.RECEIVING.getValue())
+            || plan.getStatus().equals(InvestPlanStatusEnum.END.getValue())) {
+          continue;
+        }
+
+        if (DateUtil.compareDate(plan.getDdDate(), acctDate)) { //计息日在当前时间以后
+
+          if (plan.getStatus().equals(InvestPlanStatusEnum.INTERESTED.getValue())) {
+            plan.setPaidInterest(plan.getChdInterest());
+          } else {
+            plan.setPaidInterest(plan.getChdInterest());
+            result.setTotAccruedInterest(BigDecimalUtil.add(data.getTotAccruedInterest(), plan.getChdInterest()));
+          }
+
+        } else {
+          Date concurrentBegin = plan.getBeginDate();
+          int days = JodaTimeUtil.daysBetween(concurrentBegin, acctDate);
+          dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN); //日利率
+          BigDecimal concurrent = BigDecimalUtil.mul(calculateAmt, dayRate, BigDecimal.valueOf(days));
+          difference = BigDecimalUtil.sub(plan.getChdInterest(), concurrent); // 减少利息
+
+          plan.setAcctDate(data.getAcctDate()); //业务日期
+          plan.setChdInterest(concurrent); //本期利息
+          plan.setPaidInterest(concurrent); //本期已提利息
+
+          //新的当前期
+          TBizInvestPlan newCurrentPlan = TBizInvestPlan.builder().build();
+          BeanKit.copyProperties(plan, newCurrentPlan);
+          newCurrentPlan.setId(null);
+          newCurrentPlan.setDdPrin(remainingPrin);
+          newCurrentPlan.setBeginDate(data.getAcctDate()); //本期开始日期
+          newCurrentPlan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息
+          newCurrentPlan.setStatus(InvestPlanStatusEnum.UN_INTEREST.getValue()); //回款状态
+          Long newDays = plan.getDdNum() - days; //剩余计息天数
+          BigDecimal newInterest = BigDecimalUtil.mul(remainingPrin, dayRate, BigDecimal.valueOf(newDays)); //剩余利息
+          newCurrentPlan.setChdInterest(newInterest);
+          newCurrentPlan.setDdDate(plan.getEndDate());
+          newCurrentPlan.setDdNum((long) newDays);
+          newPlans.add(newCurrentPlan);
+
+          /**
+           * 修改下汇总利息情况
+           */
+          if (plan.getStatus().equals(InvestPlanStatusEnum.INTERESTED.getValue())) { //已计息
+            result.setTotAccruedInterest(BigDecimalUtil.sub(result.getTotAccruedInterest(), concurrent));
+          } else if (plan.getStatus().equals(InvestPlanStatusEnum.UN_INTEREST.getValue())) {
+            result.setTotAccruedInterest(BigDecimalUtil.add(data.getTotAccruedInterest(), concurrent));
+          }
+
+          plan.setDdNum((long) days);
+
+          result.setTotSchdInterest(BigDecimalUtil.sub(result.getTotSchdInterest(), difference));  // 减少利息
+          result.setTotSchdInterest(BigDecimalUtil.add(result.getTotSchdInterest(), newInterest));  // 减少利息
+
+        }
+
+        plan.setEndDate(data.getAcctDate());
+        plan.setStatus(InvestPlanStatusEnum.RECEIVING.getValue()); //已结息
+      }
+      currentPlans.addAll(newPlans);
+
+      for (TBizInvestPlan plan : interestedRecords) {
         plan.setAcctDate(data.getAcctDate()); //业务日期
         plan.setStatus(InvestPlanStatusEnum.RECEIVING.getValue()); //已结息
-        plan.setPaidInterest(concurrentInterest); //本期已提利息
-        divestmentInterest = BigDecimalUtil.add(divestmentInterest, concurrentInterest);
+        plan.setPaidInterest(plan.getChdInterest()); //本期已提利息
       }
 
-      //新的当前期
-      TBizInvestPlan newCurrentPlan = TBizInvestPlan.builder().build();
-      BeanKit.copyProperties(currentPlans.get(0), newCurrentPlan);
+      /**
+       * 计算一下减少的利息
+       */
+      for (TBizInvestPlan plan : afterPayRecords) {
+        plan.setAcctDate(data.getAcctDate()); //业务日期
+        plan.setDdPrin(remainingPrin);
 
-//      newCurrentPlan.setDdPrin(remainingPrin);
-//      newCurrentPlan.setBeginDate(data.getAcctDate()); //本期开始日期
-//      newCurrentPlan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息
-//      newCurrentPlan.setStatus(InvestPlanStatusEnum.UN_INTEREST.getValue()); //回款状态
-//      int newDays = JodaTimeUtil.daysBetween(acctDate, concurrentEnd); //剩余计息天数
-//      BigDecimal newInterest = BigDecimalUtil.mul(remainingPrin, currentPlan.getRate(), BigDecimal.valueOf(newDays)); //剩余利息
-//      newCurrentPlan.setEndDate(concurrentEnd);
-//      newCurrentPlan.setChdInterest(newInterest);
-//      newCurrentPlan.setDdDate(concurrentEnd);
-//      newCurrentPlan.setDdNum((long) newDays);
-//      currentPlans.add(newCurrentPlan);
-//
-//      for (TBizInvestPlan plan : notPayRecords) {
-//        plan.setAcctDate(data.getAcctDate()); //业务日期
-//        plan.setStatus(InvestPlanStatusEnum.RECEIVING.getValue()); //已结息
-//        plan.setPaidInterest(plan.getChdInterest()); //本期已提利息
-//        divestmentInterest = BigDecimalUtil.add(divestmentInterest, plan.getChdInterest());
-//      }
-//
-//      BigDecimal dayRate = BigDecimal.valueOf(0.00); //日利息
-//      BigDecimal monthRate = BigDecimal.valueOf(0.00);//月利息
-//
-//      for (TBizInvestPlan plan : afterPayRecords) {
-//        plan.setAcctDate(data.getAcctDate()); //业务日期
-//        plan.setDdPrin(remainingPrin);
-//
-//        BigDecimal afterInterest = BigDecimal.valueOf(0.00);
-//        if (plan.getDdNum().equals(30L)) {
-//          monthRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN);
-//          afterInterest = BigDecimalUtil.mul(remainingPrin, monthRate); //剩余利息
-//        } else {
-//          dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
-//          afterInterest = BigDecimalUtil.mul(remainingPrin, dayRate, BigDecimal.valueOf(plan.getDdNum())); //剩余利息
-//        }
-//
-//        difference = BigDecimalUtil.add(difference, BigDecimalUtil.sub(plan.getChdInterest(), afterInterest));
-//        plan.setChdInterest(afterInterest);
-//      }
+        BigDecimal lessenInterest = BigDecimal.valueOf(0.00);
+        if (plan.getDdNum().equals(30L)) {
+          monthRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN);
+          lessenInterest = BigDecimalUtil.mul(divestmentAmt, monthRate);
+          plan.setChdInterest(BigDecimalUtil.sub(plan.getChdInterest(), lessenInterest));
+          result.setTotSchdInterest(BigDecimalUtil.sub(result.getTotSchdInterest(), lessenInterest));  // 减少利息
+        } else {
+          dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
+          lessenInterest = BigDecimalUtil.mul(divestmentAmt, dayRate, BigDecimal.valueOf(plan.getDdNum()));
+          plan.setChdInterest(BigDecimalUtil.sub(plan.getChdInterest(), lessenInterest));
+          result.setTotSchdInterest(BigDecimalUtil.sub(result.getTotSchdInterest(), lessenInterest));  // 减少利息
+        }
+      }
 
       result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), divestmentAmt)); //已提本金累计
-      result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), divestmentInterest)); //已提利息累计
-      result.setDivestmentInterest(divestmentInterest); //撤资利息 重新计算所得
-      result.setTotAccruedInterest(BigDecimal.valueOf(0.00)); //计提利息--提出后重新计算
-      result.setTotSchdInterest(BigDecimalUtil.sub(data.getTotSchdInterest(), difference)); //应收利息累计
+      result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), calculateInterest)); //已提利息累计
+      //result.setTotAccruedInterest(BigDecimal.valueOf(0.00)); //计提利息--提出后重新计算 --更新的时候修改
       result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), divestmentWavAmt));
     }
 
@@ -603,147 +676,10 @@ public class InvestTrialCalculateFactory {
    * 到期结算--撤资试算
    */
   private static InvestCalculateVo expiration_settlement_divestment(InvestCalculateVo data) {
-    /**
-     * 计算规则：查找当前月，判断当前月是否计提计息，如果计息重新计算利息，可提利息=汇总计提利息-当期利息
-     * 可提利息=汇总计提利息+当期利息
-     */
+
     log.info("到期结算--撤资试算--要试算的数据是：" + data);
-    InvestCalculateVo result = InvestCalculateVo.builder().build();
-    BeanKit.copyProperties(data, result);
 
-    BigDecimal calculateAmt = BigDecimal.valueOf(0.00); //计算撤资本金
-    BigDecimal calculateInterest = BigDecimal.valueOf(0.00); //计算撤资利息
-    BigDecimal divestmentAmt = data.getDivestmentAmt(); //撤资本金
-    BigDecimal divestmentInterest = data.getDivestmentInterest(); //撤资利息
-    BigDecimal concurrentInterest = BigDecimal.valueOf(0.00); //本期利息
-    BigDecimal divestmentWavAmt = data.getDivestmentWavAmt() == null ? BigDecimal.valueOf(0.00) : data.getDivestmentWavAmt(); //收益调整
-
-    /**
-     * 应收利息
-     * 计算规则：登记日到截止日之间包含的月数是期数，如果开始日期不是月初、计算首期利息时按日息计算；如果截止日期不是月末，计算末期利息按照日计算
-     */
-    calculateAmt = BigDecimalUtil.sub(data.getPrin(), data.getTotPaidPrin());
-    TBizInvestPlan currentPlan = data.getCurrentPlanList().get(0); //当前期
-
-    Date concurrentBegin = currentPlan.getBeginDate();
-    Date concurrentEnd = currentPlan.getEndDate();
-    Date acctDate = data.getAcctDate();
-    int days = JodaTimeUtil.daysBetween(concurrentBegin, acctDate);
-    concurrentInterest = BigDecimalUtil.mul(calculateAmt, currentPlan.getRate(), BigDecimal.valueOf(days));
-
-    if (currentPlan.getStatus().equals(InvestPlanStatusEnum.INTERESTED.getValue())) { //已计息
-      calculateInterest = BigDecimalUtil.sub(data.getTotAccruedInterest(), concurrentInterest);
-    } else if (currentPlan.getStatus().equals(InvestPlanStatusEnum.UN_INTEREST.getValue())) {
-      calculateInterest = BigDecimalUtil.add(data.getTotAccruedInterest(), concurrentInterest);
-    } else {
-      throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "当前回款计划状态错误");
-    }
-    result.setCalculateAmt(calculateAmt);
-    result.setCalculateInterest(calculateInterest);
-
-    if (divestmentAmt == null && divestmentInterest == null) {
-      return result;
-    }
-
-    if (divestmentInterest.compareTo(calculateAmt) > 0) {
-      throw new LoanException(BizExceptionEnum.INVEST_AMT, "撤资本金不能大于试算撤资本金");
-    }
-
-    List<TBizInvestPlan> currentPlans = result.getCurrentPlanList(); //当前期回款计划
-    List<TBizInvestPlan> notPayRecords = result.getInterestedRecords(); //回款计划---当前期以前的已计息回款计划
-    List<TBizInvestPlan> afterPayRecords = result.getAfterPayRecords(); //回款计划---当前期以后的回款计划
-
-    if (divestmentInterest.compareTo(calculateAmt) == 0) { //全额撤资
-
-      for (TBizInvestPlan plan : currentPlans) {
-        plan.setAcctDate(data.getAcctDate()); //业务日期
-        plan.setStatus(InvestPlanStatusEnum.RECEIVING.getValue()); //已结息
-        plan.setPaidInterest(concurrentInterest); //本期已提利息
-      }
-
-      for (TBizInvestPlan plan : notPayRecords) {
-        plan.setAcctDate(data.getAcctDate()); //业务日期
-        plan.setStatus(InvestPlanStatusEnum.RECEIVING.getValue()); //已结息
-        plan.setPaidInterest(plan.getChdInterest()); //本期已提利息
-      }
-
-      for (TBizInvestPlan plan : afterPayRecords) {
-        plan.setAcctDate(data.getAcctDate()); //业务日期
-        plan.setStatus(InvestPlanStatusEnum.END.getValue()); //已终止
-      }
-
-      result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), calculateAmt)); //已提本金累计
-      result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), calculateInterest)); //已提利息累计
-      result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), divestmentWavAmt));
-      result.setTotAccruedInterest(BigDecimal.valueOf(0.00)); //计提利息--提出后重新计算
-
-    } else { //部分撤资
-
-      /**
-       * 根据待还本金，设置当前期和后续期的回款计划
-       * 更新凭证的已提本金累计、已提利息累计、应收利息累计
-       */
-      BigDecimal remainingPrin = BigDecimalUtil.sub(calculateAmt, divestmentAmt); // 剩余本金
-      BigDecimal difference = BigDecimal.valueOf(0.00); // 存下差额--利息
-      divestmentInterest = BigDecimal.valueOf(0.00); //撤资利息 --需要重新计算
-
-      for (TBizInvestPlan plan : currentPlans) {
-        plan.setAcctDate(data.getAcctDate()); //业务日期
-        plan.setStatus(InvestPlanStatusEnum.RECEIVING.getValue()); //已结息
-        plan.setPaidInterest(concurrentInterest); //本期已提利息
-        divestmentInterest = BigDecimalUtil.add(divestmentInterest, concurrentInterest);
-      }
-
-      //新的当前期
-      TBizInvestPlan newCurrentPlan = TBizInvestPlan.builder().build();
-      BeanKit.copyProperties(currentPlans.get(0), newCurrentPlan);
-
-      newCurrentPlan.setDdPrin(remainingPrin);
-      newCurrentPlan.setBeginDate(data.getAcctDate()); //本期开始日期
-      newCurrentPlan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息
-      newCurrentPlan.setStatus(InvestPlanStatusEnum.UN_INTEREST.getValue()); //回款状态
-      int newDays = JodaTimeUtil.daysBetween(acctDate, concurrentEnd); //剩余计息天数
-      BigDecimal newInterest = BigDecimalUtil.mul(remainingPrin, currentPlan.getRate(), BigDecimal.valueOf(newDays)); //剩余利息
-      newCurrentPlan.setEndDate(concurrentEnd);
-      newCurrentPlan.setChdInterest(newInterest);
-      newCurrentPlan.setDdDate(concurrentEnd);
-      newCurrentPlan.setDdNum((long) newDays);
-      currentPlans.add(newCurrentPlan);
-
-      for (TBizInvestPlan plan : notPayRecords) {
-        plan.setAcctDate(data.getAcctDate()); //业务日期
-        plan.setStatus(InvestPlanStatusEnum.RECEIVING.getValue()); //已结息
-        plan.setPaidInterest(plan.getChdInterest()); //本期已提利息
-        divestmentInterest = BigDecimalUtil.add(divestmentInterest, plan.getChdInterest());
-      }
-
-      BigDecimal dayRate = BigDecimal.valueOf(0.00); //日利息
-      BigDecimal monthRate = BigDecimal.valueOf(0.00);//月利息
-
-      for (TBizInvestPlan plan : afterPayRecords) {
-        plan.setAcctDate(data.getAcctDate()); //业务日期
-        plan.setDdPrin(remainingPrin);
-
-        BigDecimal afterInterest = BigDecimal.valueOf(0.00);
-        if (plan.getDdNum().equals(30L)) {
-          monthRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_EVEN);
-          afterInterest = BigDecimalUtil.mul(remainingPrin, monthRate); //剩余利息
-        } else {
-          dayRate = BigDecimalUtil.div(plan.getRate(), BigDecimal.valueOf(360), 6, BigDecimal.ROUND_HALF_EVEN);
-          afterInterest = BigDecimalUtil.mul(remainingPrin, dayRate, BigDecimal.valueOf(plan.getDdNum())); //剩余利息
-        }
-
-        difference = BigDecimalUtil.add(difference, BigDecimalUtil.sub(plan.getChdInterest(), afterInterest));
-        plan.setChdInterest(afterInterest);
-      }
-
-      result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), divestmentAmt)); //已提本金累计
-      result.setTotPaidInterest(BigDecimalUtil.add(data.getTotPaidInterest(), divestmentInterest)); //已提利息累计
-      result.setDivestmentInterest(divestmentInterest); //撤资利息 重新计算所得
-      result.setTotAccruedInterest(BigDecimal.valueOf(0.00)); //计提利息--提出后重新计算
-      result.setTotSchdInterest(BigDecimalUtil.sub(data.getTotSchdInterest(), difference)); //应收利息累计
-      result.setTotWavAmt(BigDecimalUtil.add(data.getTotWavAmt(), divestmentWavAmt));
-    }
+    InvestCalculateVo result = half_year_settlement_divestment(data);
 
     log.info("到期结算--撤资试算--试算结果为：" + result);
     return result;
@@ -779,7 +715,7 @@ public class InvestTrialCalculateFactory {
     }
 
     if (calculateInterest.compareTo(data.getTotAccruedInterest()) != 0) {
-      throw new LoanException(BizExceptionEnum.INVEST_AMT, "汇总计提金额与未回款计划中的金额累计不一致");
+      throw new LoanException(BizExceptionEnum.INVEST_AMT, "汇总计提金额与回款计划中的金额累计不一致");
     }
 
     result.setTotPaidPrin(BigDecimalUtil.add(data.getTotPaidPrin(), calculateAmt)); //已提本金累计

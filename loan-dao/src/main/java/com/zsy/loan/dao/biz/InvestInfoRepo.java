@@ -50,5 +50,15 @@ public interface InvestInfoRepo extends PagingAndSortingRepository<TBizInvestInf
   @Modifying
   @Query(nativeQuery = true, value = "update t_biz_invest_info t set acct_date=:sysAcctDate,"
       + "tot_accrued_interest=tot_accrued_interest+:chdInterest where t.id =:investNo ")
-  void accrual(@Param("investNo") Long investNo, @Param("chdInterest") BigDecimal chdInterest, @Param("sysAcctDate") Date sysAcctDate);
+  int accrual(@Param("investNo") Long investNo, @Param("chdInterest") BigDecimal chdInterest, @Param("sysAcctDate") Date sysAcctDate);
+
+  @Modifying
+  @Query(nativeQuery = true, value = "update t_biz_invest_info t set status=:status,remark=:remark,acct_date=:sysAcctDate,"
+      + "tot_schd_interest=:totSchdInterest,tot_accrued_interest=:totAccruedInterest,"
+      + "tot_paid_prin=:totPaidPrin,tot_paid_interest=:totPaidInterest,tot_wav_amt=:totWavAmt where t.id =:id ")
+  int divestment(@Param("id") Long id, @Param("status") Long status, @Param("remark") String remark, @Param("sysAcctDate") Date sysAcctDate,
+      @Param("totSchdInterest") BigDecimal totSchdInterest, @Param("totPaidPrin") BigDecimal totPaidPrin,
+      @Param("totAccruedInterest") BigDecimal totAccruedInterest, @Param("totWavAmt") BigDecimal totWavAmt,
+      @Param("totPaidInterest") BigDecimal totPaidInterest);
+
 }
