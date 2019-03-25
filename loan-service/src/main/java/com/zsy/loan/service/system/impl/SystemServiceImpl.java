@@ -47,6 +47,21 @@ public class SystemServiceImpl implements ISystemService {
     return acctDate;
   }
 
+  @Override
+  public Integer getSettlementFlag() {
+
+    Integer flag = null;
+//    String key = CacheConstantKey.SYS + "settlement_flag";
+//    String val = configCache.get(key) == null ? null : (String) configCache.get(key);
+//    if (val != null) {
+//    flag = Integer.parseInt(val);
+//      return flag;
+//    }
+    flag = repository.getSettlementFlag();
+//    configCache.set(key, flag);
+    return flag;
+  }
+
   /**
    * 账户号起始 融资账户171开头,借款账户271开头,公司卡账户471开头, 暂收371，暂付372，代偿370
    */

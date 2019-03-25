@@ -16,6 +16,12 @@ public interface ISystemService {
   Date getSysAcctDate();
 
   /**
+   * 取得结转状态
+   * @return
+   */
+  Integer getSettlementFlag();
+
+  /**
    * 取得下一个账户号
    * @return
    */

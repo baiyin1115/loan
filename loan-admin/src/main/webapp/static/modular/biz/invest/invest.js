@@ -169,6 +169,7 @@ Invest.delete = function () {
     var operation = function () {
       var ajax = new $ax(Feng.ctxPath + "/invest/delete", function () {
         Feng.success("删除成功!");
+        Invest.refreshInvestPlan();
         Invest.table.refresh();
       }, function (data) {
         Feng.error("删除失败!" + data.responseJSON.message + "!");
@@ -179,6 +180,48 @@ Invest.delete = function () {
     };
 
     Feng.confirm("是否刪除该融资凭证?", operation);
+  }
+};
+
+
+/**
+ * to结转
+ */
+Invest.settlement = function () {
+
+  if (this.checkAll()) {
+    var ajax = new $ax(Feng.ctxPath + "/invest/to_settlement", function (data) {
+      //alert(data.message);
+      Invest.to_settlement(data.message);
+    }, function (data) {
+      Feng.error("结转失败!" + data.responseJSON.message + "!");
+    });
+    ajax.setData(Invest.seItems);
+    ajax.setContentType("application/json")
+    ajax.start();
+  }
+};
+
+/**
+ *结转融资凭证
+ */
+Invest.to_settlement = function (message) {
+  if (this.checkAll()) {
+
+    var operation = function () {
+      var ajax = new $ax(Feng.ctxPath + "/invest/settlement", function () {
+        Feng.success("结转成功!");
+        Invest.refreshInvestPlan();
+        Invest.table.refresh();
+      }, function (data) {
+        Feng.error("结转失败!" + data.responseJSON.message + "!");
+      });
+      ajax.setData(Invest.seItems);
+      ajax.setContentType("application/json")
+      ajax.start();
+    };
+
+    Feng.confirm(message, operation);
   }
 };
 
@@ -352,8 +395,8 @@ InvestPlan.openAccrual = function () {
     var operation = function () {
       var ajax = new $ax(Feng.ctxPath + "/invest/accrual", function () {
         Feng.success("计提成功!");
-        Invest.search();
         InvestPlan.table.refresh();
+        Invest.search();
       }, function (data) {
         Feng.error("计提失败!" + data.responseJSON.message + "!");
       });

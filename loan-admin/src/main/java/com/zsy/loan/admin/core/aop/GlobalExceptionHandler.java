@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
     LogManager.me().executeLog(LogTaskFactory.exceptionLog(ShiroKit.getUser().getId(), e));
     HttpKit.getRequest().setAttribute("tip", e.getMessage());
     log.error("业务异常:", e);
-    return new ErrorTip(e.getCode(), e.getMessage() + (e.getData() == null ? "" : e.getData()));
+    return new ErrorTip(e.getCode(), e.getMessage() + (e.getData() == null ? "" : "["+e.getData()+"]"));
   }
 
   /**

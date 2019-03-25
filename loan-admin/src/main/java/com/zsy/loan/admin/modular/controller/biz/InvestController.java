@@ -1,6 +1,8 @@
 package com.zsy.loan.admin.modular.controller.biz;
 
 import com.zsy.loan.admin.core.base.controller.BaseController;
+import com.zsy.loan.admin.core.base.tips.SuccessTip;
+import com.zsy.loan.admin.core.base.tips.Tip;
 import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
@@ -536,6 +538,40 @@ public class InvestController extends BaseController {
     }
 
     investService.accrual(investPlanIds);
+    return SUCCESS_TIP;
+
+  }
+
+
+  /**
+   * 结转检查
+   */
+  @BussinessLog(value = "结转检查", dict = InvestDict.class)
+  @RequestMapping(value = "/to_settlement", method = RequestMethod.POST)
+  @ResponseBody
+  @OpLog
+  public Object toSettlement(@RequestBody List<Long> investIds) {
+    String resultMsg = investService.toSettlement(investIds);
+
+    Tip tip = new SuccessTip();
+    tip.setCode(200);
+    tip.setMessage(resultMsg);
+
+    return tip;
+
+  }
+
+  /**
+   * 结转
+   */
+  @BussinessLog(value = "结转", dict = InvestDict.class)
+  @RequestMapping(value = "/settlement", method = RequestMethod.POST)
+  @Permission
+  @ResponseBody
+  @OpLog
+  public Object settlement(@RequestBody List<Long> investIds) {
+
+    investService.settlement(investIds);
     return SUCCESS_TIP;
 
   }

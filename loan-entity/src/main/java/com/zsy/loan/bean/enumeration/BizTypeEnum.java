@@ -182,7 +182,7 @@ public class BizTypeEnum {
     /**
      * 1:公司卡账户,2:融资账户,3:借款人账户,4:代偿账户,5:暂收,6:暂付
      */
-    COMPANY(1), INVEST(2), LOAN(3), REPLACE(4), INTERIM_IN(5),INTERIM_OUT(6);
+    COMPANY(1), INVEST(2), LOAN(3), REPLACE(4), INTERIM_IN(5), INTERIM_OUT(6);
 
     private long value;
 
@@ -219,7 +219,7 @@ public class BizTypeEnum {
     /**
      * 9:登记,8:已放款,12:还款中,11:已逾期,10:已展期,3:已结清,2:已代偿,1:已终止
      */
-    CHECK_IN(9), PUT(8), REPAY_IND(12), OVERDUE(11), DELAY(10),SETTLE(3),COMPENSATION(2),END(1);
+    CHECK_IN(9), PUT(8), REPAY_IND(12), OVERDUE(11), DELAY(10), SETTLE(3), COMPENSATION(2), END(1);
 
     private long value;
 
@@ -330,7 +330,7 @@ public class BizTypeEnum {
     /**
      * 1:本金,2:利息,3:罚息,4:服务费,5:活期利息,6:资金
      */
-    CAPITAL(1), INTEREST(2), BREACH_INTEREST(3), SERVICE_FEE(4), PASS_INTEREST(5),FUNDS(6);
+    CAPITAL(1), INTEREST(2), BREACH_INTEREST(3), SERVICE_FEE(4), PASS_INTEREST(5), FUNDS(6);
 
     private long value;
 
@@ -363,14 +363,14 @@ public class BizTypeEnum {
   /**
    * 业务类型
    */
-  public enum  LoanBizTypeEnum {
+  public enum LoanBizTypeEnum {
     /**
      * 1:放款,2:还款,3:服务费收取,4:服务费补偿,5:支出,6:融资,7:撤资,8:收入,9:资金登记,10:转账,11:提现,12:结转,13:代偿,14:提前还款
      * ,15:借据登记,16:融资登记,17:展期,18:部分还款,19:部分撤资
      */
-    PUT(1), REPAY(2), SERVICE_FEE_IN(3), SERVICE_FEE_OUT(4), OUT(5),INVEST(6),DIVESTMENT(7),IN(8),FUNDS_CHECK_IN(9)
-    ,TRANSFER(10),WITHDRAW(11),SETTLEMENT(12),COMPENSATION(13),PREPAYMENT(14),LOAN_CHECK_IN(15),INVEST_CHECK_IN(16)
-    ,DELAY(17),PART_REPAYMENT(18),PART_DIVESTMENT(19);
+    PUT(1), REPAY(2), SERVICE_FEE_IN(3), SERVICE_FEE_OUT(4), OUT(5), INVEST(6), DIVESTMENT(7), IN(8), FUNDS_CHECK_IN(9), TRANSFER(10), WITHDRAW(
+        11), SETTLEMENT(12), COMPENSATION(13), PREPAYMENT(14), LOAN_CHECK_IN(15), INVEST_CHECK_IN(16), DELAY(17), PART_REPAYMENT(18), PART_DIVESTMENT(
+        19);
 
     private long value;
 
@@ -398,6 +398,42 @@ public class BizTypeEnum {
       return null;
     }
 
+  }
+
+  /**
+   * 结转标识
+   */
+  public enum SettlementFlagEnum {
+    /**
+     * 0:不结转,1:半年结转,2:年末结转
+     */
+    NOT_SETTLEMENT(0), MID_YEAR_SETTLEMENT(1), YEAR_SETTLEMENT(2);
+
+    private int value;
+
+    private SettlementFlagEnum(int value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public long getValue() {
+      return value;
+    }
+
+    public void setValue(int value) {
+      this.value = value;
+    }
+
+    @JsonCreator
+    public static SettlementFlagEnum getEnumByKey(int key) {
+      SettlementFlagEnum[] array = SettlementFlagEnum.values();
+      for (SettlementFlagEnum item : array) {
+        if (item.getValue() == key) {
+          return item;
+        }
+      }
+      return null;
+    }
   }
 
 
@@ -482,7 +518,7 @@ public class BizTypeEnum {
     /**
      * 1:半年结转,2:到期结算
      */
-    HALF_YEAR_SETTLEMENT(1),EXPIRATION_SETTLEMENT(2);
+    HALF_YEAR_SETTLEMENT(1), EXPIRATION_SETTLEMENT(2);
 
     private int value;
 
@@ -556,7 +592,7 @@ public class BizTypeEnum {
     /**
      * 1:一般预算支出,2:办公支出,3:其他支出,4:股东分润,5:对公支出,6:对公收入,7:利息收入
      */
-    GENERAL(1), OFFICE(2), OTHER(3), SPLITTING(4), PUBLIC_OUT(5),PUBLIC_IN(6),INTEREST(7);
+    GENERAL(1), OFFICE(2), OTHER(3), SPLITTING(4), PUBLIC_OUT(5), PUBLIC_IN(6), INTEREST(7);
 
     private long value;
 

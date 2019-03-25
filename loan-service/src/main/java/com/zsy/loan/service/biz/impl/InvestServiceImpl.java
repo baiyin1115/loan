@@ -12,8 +12,8 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestPlanStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.SettlementFlagEnum;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.InvestInfoRepo;
 import com.zsy.loan.dao.biz.InvestPlanRepo;
 import com.zsy.loan.service.factory.InvestStatusFactory;
@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -157,9 +158,9 @@ public class InvestServiceImpl extends BaseServiceImpl {
     if (!invest.getTermNo().equals(result.getTermNo())) {
       throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "期数不一致");
     }
-    if (invest.getTotSchdInterest().compareTo(result.getTotSchdInterest()) != 0) {
-      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
-    }
+//    if (invest.getTotSchdInterest().compareTo(result.getTotSchdInterest()) != 0) {
+//      throw new LoanException(BizExceptionEnum.CALCULATE_REQ_NOT_MATCH, "应收利息不一致");
+//    }
 
     TBizInvestInfo info = TBizInvestInfo.builder().build();
     BeanKit.copyProperties(invest, info);
@@ -378,10 +379,10 @@ public class InvestServiceImpl extends BaseServiceImpl {
   public void accrual(List<Long> investPlanIds) {
 
     for (int i = 0; i < investPlanIds.size(); i++) {
-      TBizInvestPlan investPlan = investPlanRepo.findById(investPlanIds.get(0)).get();
+      TBizInvestPlan investPlan = investPlanRepo.findById(investPlanIds.get(i)).get();
 
       if (!investPlan.getStatus().equals(InvestPlanStatusEnum.UN_INTEREST.getValue())) {
-        throw new LoanException(BizExceptionEnum.STATUS_ERROR, "回款状态不是[未计息]");
+        throw new LoanException(BizExceptionEnum.STATUS_ERROR, "回款状态不是未计息");
       }
 
       //计息日必须在当前系统时间之后
@@ -533,5 +534,146 @@ public class InvestServiceImpl extends BaseServiceImpl {
     InvestCalculateVo result = divestmentCalculate(calculateRequest); //试算结果
 
     return result;
+  }
+
+  /**
+   * 结转check
+   */
+  public String toSettlement(List<Long> investIds) {
+
+    StringBuilder msg = new StringBuilder();
+    /**
+     * 校验 结转标识是否开启、时间是否是630 1231以后、回款计划是否已计提、计提金额是否跟回款计划金额一致、融资凭证状态是否正确
+     */
+    Integer settlementFlag = systemService.getSettlementFlag();
+    if (settlementFlag == null || SettlementFlagEnum.NOT_SETTLEMENT.getValue() == settlementFlag) {
+      throw new LoanException(BizExceptionEnum.STATUS_ERROR, "请在系统维护里设置结转标识！！！");
+    }
+
+    Date settleDate = null;  //结转截止日期
+    Date acctDate = systemService.getSysAcctDate();
+    int year = JodaTimeUtil.getYear(acctDate);
+    int month = JodaTimeUtil.getMonthOfYear(acctDate);
+    if (SettlementFlagEnum.MID_YEAR_SETTLEMENT.getValue() == settlementFlag) { //年中结转
+      settleDate = DateUtil.parseDate(year + "-06-30");
+    }
+    if (SettlementFlagEnum.YEAR_SETTLEMENT.getValue() == settlementFlag) { //年末结转
+      if (month == 12) {
+        settleDate = DateUtil.parseDate(year + "-12-31");
+      } else { //如果不是12月 证明这次年末结转已经跨年
+        settleDate = DateUtil.parseDate((year - 1) + "-12-31");
+      }
+    }
+    if(!DateUtil.compareDate(settleDate,acctDate)){
+      throw new LoanException(BizExceptionEnum.DATE_COMPARE_ERROR, "结转日期必须大于等于6月30号或12月31号");
+    }
+
+    for (Long investId : investIds) {
+      TBizInvestInfo invest = repository.findById(investId).get();
+
+      if (!invest.getInvestType().equals(InvestTypeEnum.HALF_YEAR_SETTLEMENT.getValue())) {
+        throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "选中信息不是可结转的业务");
+      }
+
+      //校验状态
+      InvestStatusFactory.checkCurrentStatus(invest.getStatus() + "_" + LoanBizTypeEnum.SETTLEMENT.getValue());
+
+      List<Long> status = new ArrayList<>(1);
+      status.add(InvestPlanStatusEnum.INTERESTED.getValue());
+      Map<String, Object> result = investPlanRepo.findSettlement(investId, status, settleDate);
+
+      if (result == null || result.get("interest") == null) {
+        throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "查询回款计划错误");
+      }
+
+      BigDecimal interest = (BigDecimal) result.get("interest");
+      if (interest.compareTo(invest.getTotAccruedInterest()) != 0) {
+        throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "凭证计提利息与回款计划不一致");
+      }
+
+      msg.append("id：" + investId);
+      msg.append("|本金：" + BigDecimalUtil.formatAmt(BigDecimalUtil.sub(invest.getPrin(), invest.getTotPaidPrin())));
+      msg.append("|利息：" + BigDecimalUtil.formatAmt(invest.getTotAccruedInterest()));
+      msg.append("<BR>");
+
+    }
+
+    return msg.toString();
+  }
+
+  /**
+   * 结转
+   */
+  @Transactional
+  public void settlement(List<Long> investIds) {
+
+    /**
+     * 校验
+     */
+    toSettlement(investIds);
+
+    Integer settlementFlag = systemService.getSettlementFlag();
+    Date settleDate = null;  //结转截止日期
+    Date acctDate = systemService.getSysAcctDate();
+    int year = JodaTimeUtil.getYear(acctDate);
+    if (SettlementFlagEnum.MID_YEAR_SETTLEMENT.getValue() == settlementFlag) { //年中结转
+      settleDate = DateUtil.parseDate(year + "-06-30");
+    }
+    if (SettlementFlagEnum.YEAR_SETTLEMENT.getValue() == settlementFlag) { //年中结转
+      if (year == 12) {
+        settleDate = DateUtil.parseDate(year + "-12-31");
+      } else { //如果不是12月 证明这次年末结转已经跨年
+        settleDate = DateUtil.parseDate((year - 1) + "-12-31");
+      }
+    }
+
+    for (Long investId : investIds) {
+
+      TBizInvestInfo invest = repository.findById(investId).get();
+      /**
+       * 锁记录
+       */
+      TBizInvestInfo old = repository.lockRecordByIdStatus(invest.getId(), invest.getStatus());
+      if (old == null) {
+        throw new LoanException(BizExceptionEnum.NOT_EXISTED_ING, invest.getId() + "_" + invest.getStatus());
+      }
+
+      /**
+       * 调整还款计划
+       */
+      //更新结息还款计划
+      investPlanRepo.updateSettlement(investId, InvestPlanStatusEnum.INTERESTED.getValue(), InvestPlanStatusEnum.RECEIVING.getValue(),
+          settleDate, acctDate);
+
+      //更新未结息还款计划
+      investPlanRepo.updateSettlementAfter(investId, InvestPlanStatusEnum.UN_INTEREST.getValue(), InvestPlanStatusEnum.END.getValue(),
+          settleDate, acctDate);
+
+      /**
+       * 调用账户模块记账
+       */
+      //TODO
+
+      /**
+       * 更新凭证
+       */
+      repository.settlement(investId, acctDate, BigDecimalUtil.add(old.getTotAccruedInterest(), old.getTotPaidInterest()), old.getPrin(), BigDecimal
+          .valueOf(0.00), InvestStatusEnum.SETTLEMENT.getValue());
+
+      /**
+       * 插入结转后的凭证--登记状态
+       */
+      InvestInfoVo newInfo = InvestInfoVo.builder().build();
+      BeanKit.copyProperties(old, newInfo);
+      newInfo.setId(null);
+      newInfo.setBeginDate(settleDate);
+      newInfo.setEndDate(JodaTimeUtil.getAfterDayMonth(settleDate, 6));
+      BigDecimal prin = BigDecimalUtil.add(BigDecimalUtil.sub(old.getPrin(),old.getTotPaidInterest()),old.getTotAccruedInterest());
+      newInfo.setPrin(prin); //默认本金=待收本金+计提利息
+      newInfo.setTermNo(6l);
+      save(newInfo, false);
+
+    }
+
   }
 }

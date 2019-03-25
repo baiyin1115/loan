@@ -205,6 +205,7 @@ Loan.delete = function () {
     var operation = function () {
       var ajax = new $ax(Feng.ctxPath + "/loan/delete", function () {
         Feng.success("删除成功!");
+        Loan.refreshLoanPlan();
         Loan.table.refresh();
       }, function (data) {
         Feng.error("删除失败!" + data.responseJSON.message + "!");

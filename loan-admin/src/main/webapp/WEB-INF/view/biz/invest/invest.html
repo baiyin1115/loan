@@ -46,6 +46,9 @@
                             @if(shiro.hasPermission("/invest/divestment")){
                                 <#button name="撤资" icon="fa-recycle" clickFun="Invest.openDivestment()" space="true"/>
                             @}
+                            @if(shiro.hasPermission("/invest/settlement")){
+                                <#button name="结转" icon="fa-magnet" clickFun="Invest.settlement()" space="true"/>
+                            @}
                             @if(shiro.hasPermission("/invest/print")){
                                 <#button name="打印" icon="fa-print" clickFun="Invest.openPrintInvest()" space="true"/>
                             @}

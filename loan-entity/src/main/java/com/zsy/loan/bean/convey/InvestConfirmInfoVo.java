@@ -82,7 +82,7 @@ public class InvestConfirmInfoVo implements Serializable {
   @ApiModelProperty(value = "状态")
   private Long status;
 
-  @NotNull(message = "[计息日]不能为空！")
+//  @NotNull(message = "[计息日]不能为空！")
   @ApiModelProperty(value = "计息日")
   private Long ddDate;
 
