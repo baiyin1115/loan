@@ -70,6 +70,11 @@ public class TBizAcct implements Serializable {
   @Column(name = "status")
   private Long status;
 
+
+  @Column(name = "version")
+  private Long version;
+
+
   /**
    * 创建人
    */

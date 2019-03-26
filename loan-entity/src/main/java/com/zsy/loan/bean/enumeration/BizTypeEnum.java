@@ -553,9 +553,9 @@ public class BizTypeEnum {
    */
   public enum ProcessStatusEnum {
     /**
-     * 1:成功,2:失败,0:处理中,3:撤销
+     * 1:成功,2:失败,0:处理中,3:撤销,4:待处理
      */
-    SUCCESS(1), FAIL(2), ING(0),CANCEL(3);
+    SUCCESS(1), FAIL(2), ING(0),CANCEL(3),NOT_PROCESS(4);
 
     private long value;
 
@@ -627,9 +627,9 @@ public class BizTypeEnum {
    */
   public enum TransferTypeEnum {
     /**
-     * 1:账户调整,2:服务费补偿,3:融资人贴息,4:其他
+     * 1:资金登记,2:资金提出,3:资金分拨,4:服务费补偿,5:贴息,6:其他
      */
-    ADJUST(1), COMPENSATE(2), DISCOUNT(3), OTHER(4);
+    REGISTER(1), WITHDRAW(2), DISTRIBUTION(3), SUPPLEMENT(4),DISCOUNT(5),OTHER(6);
 
     private long value;
 

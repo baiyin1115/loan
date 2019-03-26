@@ -21,6 +21,8 @@ public interface InOutVoucherInfoRepo extends PagingAndSortingRepository<TBizInO
 
 
   @Modifying
-  @Query(nativeQuery = true, value = "update t_biz_in_out_voucher_info t set acct_date=:sysAcctDate,status=:newStatus where t.id =:id ")
-  int updateStatus(@Param("id") Long id, @Param("newStatus") Long newStatus, @Param("sysAcctDate") Date sysAcctDate);
+  @Query(nativeQuery = true, value = "update t_biz_in_out_voucher_info t set acct_date=:sysAcctDate,status=:newStatus where t.id =:id "
+      + " and status=:oldStatus ")
+  int updateStatus(@Param("id") Long id, @Param("newStatus") Long newStatus, @Param("oldStatus") Long oldStatus,
+      @Param("sysAcctDate") Date sysAcctDate);
 }

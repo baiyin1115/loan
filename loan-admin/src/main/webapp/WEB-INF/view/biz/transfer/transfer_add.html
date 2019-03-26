@@ -1,0 +1,61 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="transferInfoForm">
+
+            <input type="hidden" id="id" value="">
+
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <#select id="orgNo" name="公司" underline="false">
+                        @for(dict in constant.getDicts('公司')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#input id="inAcctName" name="账户" underline="false"
+                        hidden="inAcctNo" readonly="readonly"
+                        clickFun="TransferInfoDlg.showInAcctSelectTree(); return false;"
+                        style="background-color: #ffffff !important;"
+                        selectFlag="true" selectId="inAcctTreeDiv" selectTreeId="inAcctTree" selectStyle="width:244px !important;"/>
+
+                    <#input id="outAcctName" name="账户" underline="false"
+                        hidden="outAcctNo" readonly="readonly"
+                        clickFun="TransferInfoDlg.showOutAcctSelectTree(); return false;"
+                        style="background-color: #ffffff !important;"
+                        selectFlag="true" selectId="outAcctTreeDiv" selectTreeId="outAcctTree" selectStyle="width:244px !important;"/>
+
+                </div>
+                <div class="col-sm-6">
+
+                    <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${system.getSysAcctDate()}" />
+
+                    <#input id="amt" name="金额" underline="false"/>
+
+                    <#select id="type" name="用途" underline="false">
+                        @for(dict in constant.getDicts('收支用途')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-11">
+                        <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="TransferInfoDlg.addSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="TransferInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/transfer/transfer_info.js"></script>
+@}

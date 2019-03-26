@@ -1,11 +1,11 @@
 package com.zsy.loan.service.biz.impl;
 
-import com.zsy.loan.bean.convey.InOutInfoVo;
-import com.zsy.loan.bean.entity.biz.TBizInOutVoucherInfo;
+import com.zsy.loan.bean.convey.TransferInfoVo;
+import com.zsy.loan.bean.entity.biz.TBizTransferVoucherInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.ProcessStatusEnum;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.dao.biz.InOutVoucherInfoRepo;
+import com.zsy.loan.dao.biz.TransferVoucherRepo;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.utils.BeanKit;
@@ -29,35 +29,35 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 /**
- * 收支服务
+ * 转账服务
  *
  * @Author zhangxh
  * @Date 2019-01-18  12:27
  */
 @Service
-public class InOutServiceImpl extends BaseServiceImpl {
+public class TransferServiceImpl extends BaseServiceImpl {
 
   @Resource
-  InOutVoucherInfoRepo repository;
+  TransferVoucherRepo repository;
 
   @Autowired
   private ISystemService systemService;
 
 
-  public Object save(InOutInfoVo inOut, boolean b) {
+  public Object save(TransferInfoVo transfer, boolean b) {
 
     /**
      * 判断状态
      */
     if (b) { //修改
-      TBizInOutVoucherInfo info = repository.findById(inOut.getId()).get();
+      TBizTransferVoucherInfo info = repository.findById(transfer.getId()).get();
       if (!info.getStatus().equals(ProcessStatusEnum.ING.getValue())) { //处理中
         throw new LoanException(BizExceptionEnum.STATUS_ERROR, String.valueOf(info.getId()));
       }
     }
 
-    TBizInOutVoucherInfo newInfo = TBizInOutVoucherInfo.builder().build();
-    BeanKit.copyProperties(inOut, newInfo);
+    TBizTransferVoucherInfo newInfo = TBizTransferVoucherInfo.builder().build();
+    BeanKit.copyProperties(transfer, newInfo);
 
     /**
      * 赋值
@@ -73,18 +73,19 @@ public class InOutServiceImpl extends BaseServiceImpl {
 
   }
 
-  public Page<TBizInOutVoucherInfo> getTBizInOutVouchers(Page<TBizInOutVoucherInfo> page, InOutInfoVo condition) {
+
+  public Page<TBizTransferVoucherInfo> getTBizTransferVouchers(Page<TBizTransferVoucherInfo> page, TransferInfoVo condition) {
 
     List<Order> orders = new ArrayList<Order>();
     orders.add(Order.asc("status"));
     orders.add(Order.asc("id"));
     Pageable pageable = getPageable(page, orders);
 
-    org.springframework.data.domain.Page<TBizInOutVoucherInfo> page1 = repository
-        .findAll(new Specification<TBizInOutVoucherInfo>() {
+    org.springframework.data.domain.Page<TBizTransferVoucherInfo> page1 = repository
+        .findAll(new Specification<TBizTransferVoucherInfo>() {
 
           @Override
-          public Predicate toPredicate(Root<TBizInOutVoucherInfo> root, CriteriaQuery<?> criteriaQuery,
+          public Predicate toPredicate(Root<TBizTransferVoucherInfo> root, CriteriaQuery<?> criteriaQuery,
               CriteriaBuilder criteriaBuilder) {
 
             List<Predicate> list = new ArrayList<Predicate>();
@@ -118,15 +119,15 @@ public class InOutServiceImpl extends BaseServiceImpl {
     return page;
   }
 
-  public String toConfirm(List<Long> inOutIds) {
+  public String toConfirm(List<Long> transferIds) {
 
     StringBuilder msg = new StringBuilder();
 
-    for (long id : inOutIds) {
+    for (long id : transferIds) {
       /**
        * 判断状态
        */
-      TBizInOutVoucherInfo info = repository.findById(id).get();
+      TBizTransferVoucherInfo info = repository.findById(id).get();
       if (!info.getStatus().equals(ProcessStatusEnum.ING.getValue())) { //处理中
         throw new LoanException(BizExceptionEnum.STATUS_ERROR, String.valueOf(id));
       }
@@ -135,7 +136,8 @@ public class InOutServiceImpl extends BaseServiceImpl {
       msg.append("|金额:" + BigDecimalUtil.formatAmt(info.getAmt()));
       msg.append("|日期:" + DateTimeKit.formatDate(info.getAcctDate()));
       msg.append("|用途:" + ConstantFactory.me().getInOutTypeName(info.getType()));
-      msg.append("|账户:" + ConstantFactory.me().getAcctName(info.getAcctNo()));
+      msg.append("|入账账户:" + ConstantFactory.me().getAcctName(info.getInAcctNo()));
+      msg.append("|出账账户:" + ConstantFactory.me().getAcctName(info.getOutAcctNo()));
       msg.append("<BR>");
     }
 
@@ -145,18 +147,18 @@ public class InOutServiceImpl extends BaseServiceImpl {
   }
 
   @Transactional
-  public Boolean confirm(List<Long> inOutIds) {
+  public Boolean confirm(List<Long> transferIds) {
 
     /**
      * 校验
      */
-    toConfirm(inOutIds);
+    toConfirm(transferIds);
 
-    for (long id : inOutIds) {
+    for (long id : transferIds) {
       /**
        * 判断状态
        */
-      TBizInOutVoucherInfo info = repository.findById(id).get();
+      TBizTransferVoucherInfo info = repository.findById(id).get();
       if (!info.getStatus().equals(ProcessStatusEnum.ING.getValue())) { //处理中
         throw new LoanException(BizExceptionEnum.STATUS_ERROR, String.valueOf(id));
       }
@@ -173,13 +175,13 @@ public class InOutServiceImpl extends BaseServiceImpl {
   }
 
   @Transactional
-  public Boolean cancel(List<Long> inOutIds) {
+  public Boolean cancel(List<Long> transferIds) {
 
-    for (long id : inOutIds) {
+    for (long id : transferIds) {
       /**
        * 判断账户状态
        */
-      TBizInOutVoucherInfo info = repository.findById(id).get();
+      TBizTransferVoucherInfo info = repository.findById(id).get();
       if (!info.getStatus().equals(ProcessStatusEnum.SUCCESS.getValue())) { //成功
         throw new LoanException(BizExceptionEnum.STATUS_ERROR, String.valueOf(id));
       }
@@ -196,13 +198,13 @@ public class InOutServiceImpl extends BaseServiceImpl {
   }
 
   @Transactional
-  public Boolean delete(List<Long> inOutIds) {
+  public Boolean delete(List<Long> transferIds) {
 
-    for (long id : inOutIds) {
+    for (long id : transferIds) {
       /**
        * 判断账户状态
        */
-      TBizInOutVoucherInfo info = repository.findById(id).get();
+      TBizTransferVoucherInfo info = repository.findById(id).get();
       if (!info.getStatus().equals(ProcessStatusEnum.ING.getValue())) { //处理中
         throw new LoanException(BizExceptionEnum.STATUS_ERROR, String.valueOf(id));
       }

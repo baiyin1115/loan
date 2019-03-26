@@ -3,6 +3,7 @@ package com.zsy.loan.bean.entity.biz;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,38 +39,42 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "t_biz_transfer_voucher_info")
 public class TBizTransferVoucherInfo implements Serializable {
 
-  private static final long serialVersionUID = 7099828336472811968L;
+  private static final Long serialVersionUID = 7099828336472811968L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "org_no")
   private Integer orgNo;
 
   @Column(name = "in_acct_no")
-  private long inAcctNo;
+  private Long inAcctNo;
 
 
   @Column(name = "out_acct_no")
-  private long outAcctNo;
+  private Long outAcctNo;
 
 
   @Column(name = "amt")
   private BigDecimal amt;
 
 
+  @Column(name = "acct_date")
+  private Date acctDate;
+
+
   @Column(name = "type")
-  private long type;
+  private Long type;
 
 
   @Column(name = "status")
-  private long status;
+  private Long status;
 
 
   @Column(name = "operator")
-  private long operator;
+  private Long operator;
 
   /**
    * 创建人
