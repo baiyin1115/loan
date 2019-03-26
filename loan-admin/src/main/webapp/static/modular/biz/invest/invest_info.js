@@ -1,5 +1,5 @@
 /**
- * 初始化账户详情对话框
+ * 初始化详情对话框
  */
 var InvestDlg = {
   investInfoData: {},
@@ -428,9 +428,9 @@ $(function () {
   });
 
   //----------------------------------------------------------------------------
-  //放款账户树
+  //账户树
   var tree = new $ZTree("inAcctTree",
-      "/account/selectInAcctTreeList");
+      "/account/selectCompanyAcctTreeList");
   tree.bindOnClick(InvestDlg.onClickInAcct);
   tree.init();
   InvestDlg.inAcctTreeInstance = tree;

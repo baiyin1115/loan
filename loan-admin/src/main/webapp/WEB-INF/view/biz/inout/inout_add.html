@@ -1,0 +1,57 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="inoutInfoForm">
+
+            <input type="hidden" id="id" value="">
+
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <#select id="orgNo" name="公司" underline="false">
+                        @for(dict in constant.getDicts('公司')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                    <#input id="acctName" name="账户" underline="false"
+                        hidden="acctNo" readonly="readonly"
+                        clickFun="InoutInfoDlg.showAcctSelectTree(); return false;"
+                        style="background-color: #ffffff !important;"
+                        selectFlag="true" selectId="acctTreeDiv" selectTreeId="acctTree" selectStyle="width:244px !important;"/>
+
+                    <#input id="externalAcct" name="外部账户" underline="false"/>
+
+                </div>
+                <div class="col-sm-6">
+
+                    <#TimeInput id="acctDate" name="业务日期" isTime="false" pattern="YYYY-MM-DD" value="${system.getSysAcctDate()}" />
+
+                    <#input id="amt" name="金额" underline="false"/>
+
+                    <#select id="type" name="用途" underline="false">
+                        @for(dict in constant.getDicts('收支用途')){
+                        <option value="${dict.num}">${dict.name}</option>
+                        @}
+                    </#select>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-11">
+                        <#textarea id="remark" name="备注" underline="false" rows="3"  cols="50"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="InoutInfoDlg.addSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="InoutInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/inout/inout_info.js"></script>
+@}

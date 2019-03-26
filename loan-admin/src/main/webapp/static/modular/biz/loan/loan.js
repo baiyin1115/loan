@@ -228,6 +228,8 @@ Loan.formParams = function () {
   queryData['orgNo'] = $("#orgNo").val();
   queryData['custNo'] = $("#custNo").val();
   queryData['contrNo'] = $("#contrNo").val();
+  queryData['queryBeginDate'] = $("#queryBeginDate").val();
+  queryData['queryEndDate'] = $("#queryEndDate").val();
   return queryData;
 };
 
@@ -245,6 +247,8 @@ Loan.resetSearch = function () {
   $("#orgNo").val("");
   $("#custNo").val("");
   $("#contrNo").val("");
+  $("#queryBeginDate").val("");
+  $("#queryEndDate").val("");
 
   Loan.search();
 };

@@ -9,7 +9,7 @@
                 <div class="row row-lg">
                     <div class="col-sm-12">
                         <div class="row">
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <#SelectCon id="orgNo" name="公司" underline="false">
                                     <option value=""></option>
                                     @for(dict in userown.getOrgList()){
@@ -17,10 +17,16 @@
                                     @}
                                 </#SelectCon>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <#NameCon id="custName" name="客户" underline="false" readonly="readonly" hidden="custNo"
                                     clickFun="Invest.openCustList(); return false;"
                                 />
+                            </div>
+                            <div class="col-sm-2">
+                                <#TimeInput id="queryBeginDate" name="开始日期" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-2">
+                                <#TimeInput id="queryEndDate" name="结束日期" isTime="false" pattern="YYYY-MM-DD"/>
                             </div>
                             <div class="col-sm-3">
                                 <#button name="搜索" icon="fa-search" clickFun="Invest.search()"/>

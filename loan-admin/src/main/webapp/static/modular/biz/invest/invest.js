@@ -185,7 +185,7 @@ Invest.delete = function () {
 
 
 /**
- * to结转
+ * 结转融资凭证
  */
 Invest.settlement = function () {
 
@@ -203,7 +203,7 @@ Invest.settlement = function () {
 };
 
 /**
- *结转融资凭证
+ *to结转
  */
 Invest.to_settlement = function (message) {
   if (this.checkAll()) {
@@ -233,6 +233,9 @@ Invest.formParams = function () {
   var queryData = {};
   queryData['orgNo'] = $("#orgNo").val();
   queryData['custNo'] = $("#custNo").val();
+  queryData['queryBeginDate'] = $("#queryBeginDate").val();
+  queryData['queryEndDate'] = $("#queryEndDate").val();
+  //alert(JSON.stringify(queryData));
   return queryData;
 };
 
@@ -249,6 +252,8 @@ Invest.search = function () {
 Invest.resetSearch = function () {
   $("#orgNo").val("");
   $("#custNo").val("");
+  $("#queryBeginDate").val("");
+  $("#queryEndDate").val("");
 
   Invest.search();
 };

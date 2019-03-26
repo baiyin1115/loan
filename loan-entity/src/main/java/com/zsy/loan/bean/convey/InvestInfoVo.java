@@ -140,4 +140,10 @@ public class InvestInfoVo implements Serializable {
   @ApiModelProperty(value = "业务类型",hidden=true)
   private Long bizType;
 
+  @ApiModelProperty(value = "查询开始日期")
+  private String queryBeginDate;
+
+  @ApiModelProperty(value = "查询结束日期")
+  private String queryEndDate;
+
 }

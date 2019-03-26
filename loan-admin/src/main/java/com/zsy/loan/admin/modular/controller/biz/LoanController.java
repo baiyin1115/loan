@@ -92,7 +92,7 @@ public class LoanController extends BaseController {
   @ResponseBody
   @OpLog
   @ApiOperation(value = "获取所有借据列表", notes = "获取所有借据列表")
-  public Object list(TBizLoanInfo condition) {
+  public Object list(LoanVo condition) {
 
     Page<TBizLoanInfo> page = new PageFactory<TBizLoanInfo>().defaultPage();
 

@@ -247,11 +247,11 @@ public class AccountController extends BaseController {
   }
 
   /**
-   * 获取放款账户列表
+   * 获取公司卡账户列表
    */
-  @RequestMapping(value = "/selectLendingAcctTreeList")
+  @RequestMapping(value = "/selectCompanyAcctTreeList")
   @ResponseBody
-  public List<ZTreeNode> selectLendingAcctTreeList() {
+  public List<ZTreeNode> selectCompanyAcctTreeList() {
 
     List para  =  new ArrayList(1);
     para.add(AcctTypeEnum.COMPANY.getValue());
@@ -277,25 +277,5 @@ public class AccountController extends BaseController {
     return treeList;
 
   }
-
-  /**
-   * 获取入账账户列表
-   */
-  @RequestMapping(value = "/selectInAcctTreeList")
-  @ResponseBody
-  public List<ZTreeNode> selectInAcctTreeList() {
-
-    List para  =  new ArrayList(1);
-    para.add(AcctTypeEnum.COMPANY.getValue());
-
-    List<ZTreeNode> treeList = acctService.getAcctTreeList(para);
-//    roleTreeList.add(ZTreeNode.createParent());
-    return treeList;
-
-  }
-
-
-
-
 
 }

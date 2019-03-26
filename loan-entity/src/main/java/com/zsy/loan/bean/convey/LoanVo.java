@@ -172,4 +172,10 @@ public class LoanVo implements Serializable {
   @ApiModelProperty(value = "备注")
   private String remark;
 
+  @ApiModelProperty(value = "查询开始日期")
+  private String queryBeginDate;
+
+  @ApiModelProperty(value = "查询结束日期")
+  private String queryEndDate;
+
 }

@@ -553,9 +553,9 @@ public class BizTypeEnum {
    */
   public enum ProcessStatusEnum {
     /**
-     * 1:成功,2:失败,0:处理中
+     * 1:成功,2:失败,0:处理中,3:撤销
      */
-    SUCCESS(1), FAIL(2), ING(0);
+    SUCCESS(1), FAIL(2), ING(0),CANCEL(3);
 
     private long value;
 

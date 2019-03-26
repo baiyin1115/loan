@@ -3,6 +3,7 @@ package com.zsy.loan.bean.entity.biz;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -33,25 +35,30 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
 @Table(name = "t_biz_in_out_voucher_info")
 public class TBizInOutVoucherInfo implements Serializable {
 
-  private static final long serialVersionUID = 7432927477456095247L;
+  private static final Long serialVersionUID = 7432927477456095247L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "org_no")
   private Integer orgNo;
 
   @Column(name = "acct_no")
-  private long acctNo;
+  private Long acctNo;
 
 
   @Column(name = "external_acct")
   private String externalAcct;
+
+
+  @Column(name = "acct_date")
+  private Date acctDate;
 
 
   @Column(name = "amt")
@@ -59,11 +66,11 @@ public class TBizInOutVoucherInfo implements Serializable {
 
 
   @Column(name = "type")
-  private long type;
+  private Long type;
 
 
   @Column(name = "status")
-  private long status;
+  private Long status;
 
   /**
    * 创建人

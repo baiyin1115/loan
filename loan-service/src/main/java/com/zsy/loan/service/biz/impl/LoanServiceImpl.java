@@ -22,6 +22,7 @@ import com.zsy.loan.service.factory.LoanTrialCalculateFactory;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
+import com.zsy.loan.utils.DateUtil;
 import com.zsy.loan.utils.JodaTimeUtil;
 import com.zsy.loan.utils.StringUtils;
 import com.zsy.loan.utils.factory.Page;
@@ -460,7 +461,7 @@ public class LoanServiceImpl extends BaseServiceImpl {
       status = LoanStatusEnum.REPAY_IND.getValue();
     }
     repository.repay(plan.getLoanNo(), systemService.getSysAcctDate(), status, currentPrin, currentInterest, currentPen, currentServFee,
-        currentWav,plan.getRemark());
+        currentWav, plan.getRemark());
 
   }
 
@@ -483,7 +484,7 @@ public class LoanServiceImpl extends BaseServiceImpl {
     BigDecimal currentBreachFee = loan.getCurrentBreachFee();    // 录入费用
     String compensationAcct = loan.getCompensationAcct();         // 代偿账户
 
-    BigDecimal schdPrin = BigDecimalUtil.sub(old.getSchdPrin(),old.getTotPaidPrin());
+    BigDecimal schdPrin = BigDecimalUtil.sub(old.getSchdPrin(), old.getTotPaidPrin());
 
     if (currentBreachPrin.compareTo(schdPrin) > 0) {
       throw new LoanException(BizExceptionEnum.PARAMETER_ERROR, "当前用户录入本金不能大于待还的本金");
@@ -502,7 +503,7 @@ public class LoanServiceImpl extends BaseServiceImpl {
     status.add(RepayStatusEnum.NOT_REPAY.getValue());
     status.add(RepayStatusEnum.OVERDUE.getValue());
     List<TBizRepayPlan> notPayRecords = repayPlanRepo.findNotPayRecord(loan.getId(), status);
-    if (notPayRecords == null || notPayRecords.size()== 0) {
+    if (notPayRecords == null || notPayRecords.size() == 0) {
       throw new LoanException(BizExceptionEnum.NOT_FOUND, "未查询到还款计划");
     }
 
@@ -525,7 +526,7 @@ public class LoanServiceImpl extends BaseServiceImpl {
     repository.repay(old.getId(), systemService.getSysAcctDate(), LoanStatusEnum.COMPENSATION.getValue(), currentBreachPrin, BigDecimal.valueOf(0.00),
         currentBreachFee,
         BigDecimal.valueOf(0.00),
-        BigDecimal.valueOf(0.00),loan.getRemark());
+        BigDecimal.valueOf(0.00), loan.getRemark());
   }
 
   public void updateVoucher(LoanVo loan, boolean b) {
@@ -597,11 +598,8 @@ public class LoanServiceImpl extends BaseServiceImpl {
 
   /**
    * 查询借据list
-   * @param page
-   * @param condition
-   * @return
    */
-  public Page<TBizLoanInfo> getTBLoanPages(Page<TBizLoanInfo> page, TBizLoanInfo condition) {
+  public Page<TBizLoanInfo> getTBLoanPages(Page<TBizLoanInfo> page, LoanVo condition) {
 
     List<Order> orders = new ArrayList<Order>();
     orders.add(Order.desc("status"));
@@ -628,6 +626,14 @@ public class LoanServiceImpl extends BaseServiceImpl {
                   .like(root.get("contrNo").as(String.class), condition.getContrNo().trim() + "%"));
             }
 
+            if (!ObjectUtils.isEmpty(condition.getQueryBeginDate())) {
+              list.add(criteriaBuilder.greaterThanOrEqualTo(root.get("acctDate"), DateUtil.parseDate(condition.getQueryBeginDate())));
+            }
+
+            if (!ObjectUtils.isEmpty(condition.getQueryEndDate())) {
+              list.add(criteriaBuilder.lessThanOrEqualTo(root.get("acctDate"), DateUtil.parseDate(condition.getQueryEndDate())));
+            }
+
             Predicate[] p = new Predicate[list.size()];
             return criteriaBuilder.and(list.toArray(p));
           }
@@ -641,9 +647,6 @@ public class LoanServiceImpl extends BaseServiceImpl {
 
   /**
    * 查询还款计划list
-   * @param page
-   * @param condition
-   * @return
    */
   public Page<TBizRepayPlan> getPlanPages(Page<TBizRepayPlan> page, TBizRepayPlan condition) {
 

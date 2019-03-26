@@ -608,7 +608,7 @@ $(function () {
 
   //放款账户树
   var tree = new $ZTree("lendingAcctTree",
-      "/account/selectLendingAcctTreeList");
+      "/account/selectCompanyAcctTreeList");
   tree.bindOnClick(LoanDlg.onClickLendingAcct);
   tree.init();
   LoanDlg.lendingAcctTreeInstance = tree;

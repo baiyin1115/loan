@@ -83,7 +83,7 @@ public class InvestController extends BaseController {
   @RequestMapping(value = "/list")
   @Permission
   @ResponseBody
-  public Object list(TBizInvestInfo condition) {
+  public Object list(InvestInfoVo condition) {
 
     Page<TBizInvestInfo> page = new PageFactory<TBizInvestInfo>().defaultPage();
 
@@ -260,15 +260,17 @@ public class InvestController extends BaseController {
   @OpLog
   public Object delete(@RequestBody List<Long> investIds) {
 
-    //缓存被删除的融资名称
-//    LogObjectHolder.me().set(investService.getInvestNames(investIds));
-    investInfoRepo.deleteByIds(investIds);
+    if (investIds == null || investIds.size() == 0) {
+      throw new LoanException(BizExceptionEnum.REQUEST_NULL);
+    }
+
+    investService.delete(investIds);
     return SUCCESS_TIP;
 
   }
 
   /**
-   * 跳转到修改融资
+   * 跳转到确认融资
    */
   @Permission
   @RequestMapping("/to_invest_confirm/{investId}")

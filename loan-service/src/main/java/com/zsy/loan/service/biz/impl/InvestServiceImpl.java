@@ -63,7 +63,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
   /**
    * 取得凭证list
    */
-  public Page<TBizInvestInfo> getTBizInvests(Page<TBizInvestInfo> page, TBizInvestInfo condition) {
+  public Page<TBizInvestInfo> getTBizInvests(Page<TBizInvestInfo> page, InvestInfoVo condition) {
 
     List<Order> orders = new ArrayList<Order>();
     orders.add(Order.desc("status"));
@@ -82,8 +82,20 @@ public class InvestServiceImpl extends BaseServiceImpl {
             // 设置有权限的公司
             setOrgList(condition.getOrgNo(), root.get("orgNo"), criteriaBuilder, list);
 
+            if (!ObjectUtils.isEmpty(condition.getOrgNo())) {
+              list.add(criteriaBuilder.equal(root.get("orgNo"), condition.getOrgNo()));
+            }
+
             if (!ObjectUtils.isEmpty(condition.getCustNo())) {
               list.add(criteriaBuilder.equal(root.get("custNo"), condition.getCustNo()));
+            }
+
+            if (!ObjectUtils.isEmpty(condition.getQueryBeginDate())) {
+              list.add(criteriaBuilder.greaterThanOrEqualTo(root.get("acctDate"), DateUtil.parseDate(condition.getQueryBeginDate())));
+            }
+
+            if (!ObjectUtils.isEmpty(condition.getQueryEndDate())) {
+              list.add(criteriaBuilder.lessThanOrEqualTo(root.get("acctDate"), DateUtil.parseDate(condition.getQueryEndDate())));
             }
 
             Predicate[] p = new Predicate[list.size()];
@@ -318,7 +330,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
   }
 
   /**
-   * 确认
+   * 延期
    */
   @Transactional
   public boolean delay(@Valid InvestDelayInfoVo invest, boolean b) {
@@ -564,7 +576,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
         settleDate = DateUtil.parseDate((year - 1) + "-12-31");
       }
     }
-    if(!DateUtil.compareDate(settleDate,acctDate)){
+    if (!DateUtil.compareDate(settleDate, acctDate)) {
       throw new LoanException(BizExceptionEnum.DATE_COMPARE_ERROR, "结转日期必须大于等于6月30号或12月31号");
     }
 
@@ -668,12 +680,31 @@ public class InvestServiceImpl extends BaseServiceImpl {
       newInfo.setId(null);
       newInfo.setBeginDate(settleDate);
       newInfo.setEndDate(JodaTimeUtil.getAfterDayMonth(settleDate, 6));
-      BigDecimal prin = BigDecimalUtil.add(BigDecimalUtil.sub(old.getPrin(),old.getTotPaidInterest()),old.getTotAccruedInterest());
+      BigDecimal prin = BigDecimalUtil.add(BigDecimalUtil.sub(old.getPrin(), old.getTotPaidInterest()), old.getTotAccruedInterest());
       newInfo.setPrin(prin); //默认本金=待收本金+计提利息
       newInfo.setTermNo(6l);
       save(newInfo, false);
 
     }
+
+  }
+
+  @Transactional
+  public Boolean delete(List<Long> investIds) {
+
+    for (long investId : investIds) {
+      /**
+       * 判断账户状态
+       */
+      TBizInvestInfo info = repository.findById(investId).get();
+      if (!info.getStatus().equals(InvestStatusEnum.CHECK_IN.getValue())) { //登记
+        throw new LoanException(BizExceptionEnum.STATUS_ERROR, String.valueOf(investId));
+      }
+
+      repository.deleteById(investId);
+
+    }
+    return true;
 
   }
 }

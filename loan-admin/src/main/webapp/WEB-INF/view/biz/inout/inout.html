@@ -1,0 +1,66 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>收支管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <#SelectCon id="orgNo" name="公司" underline="false">
+                                    <option value=""></option>
+                                    @for(dict in userown.getOrgList()){
+                                    <option value="${dict.num}">${dict.name}</option>
+                                    @}
+                                </#SelectCon>
+                            </div>
+                            <div class="col-sm-2">
+                                <#SelectCon id="type" name="用途" underline="false">
+                                    <option value=""></option>
+                                    @for(dict in constant.getDicts('收支用途')){
+                                    <option value="${dict.num}">${dict.name}</option>
+                                    @}
+                                </#SelectCon>
+                            </div>
+                            <div class="col-sm-2">
+                                <#TimeCon id="queryBeginDate" name="开始日期" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-2">
+                                <#TimeCon id="queryEndDate" name="结束日期" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-2">
+                                <#button name="搜索" icon="fa-search" clickFun="Inout.search()"/>
+                                <#button name="重置" icon="fa-trash" clickFun="Inout.resetSearch()" space="true"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="InOutTableToolbar" role="group">
+                            @if(shiro.hasPermission("/inout/add")){
+                            <#button name="添加" icon="fa-plus" clickFun="Inout.openAdd()"/>
+                            @}
+                            @if(shiro.hasPermission("/inout/update")){
+                            <#button name="修改" icon="fa-edit" clickFun="Inout.openDetail()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/inout/delete")){
+                            <#button name="删除" icon="fa-remove" clickFun="Inout.delete()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/inout/confirm")){
+                            <#button name="确认" icon="fa-forward" clickFun="Inout.confirm()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/inout/cancel")){
+                            <#button name="撤销" icon="fa-recycle" clickFun="Inout.cancel()" space="true"/>
+                            @}
+                        </div>
+                        <#table id="InOutTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/inout/inout.js"></script>
+@}
+
+

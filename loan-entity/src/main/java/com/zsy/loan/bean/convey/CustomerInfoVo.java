@@ -30,7 +30,7 @@ public class CustomerInfoVo implements Serializable {
 
   @ApiModelProperty( value = "证件类型")
   @NotNull(message = "[证件类型]不能为空！")
-  private long certType;
+  private Long certType;
 
   @ApiModelProperty( value = "客户姓名")
   @NotNull(message = "[客户姓名]不能为空！")
@@ -38,7 +38,7 @@ public class CustomerInfoVo implements Serializable {
 
   @ApiModelProperty( value = "性别")
   @NotNull(message = "[性别]不能为空！")
-  private long sex;
+  private Long sex;
 
   @ApiModelProperty( value = "手机号")
   private String mobile;
