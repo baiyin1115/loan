@@ -53,7 +53,7 @@ AccountDlg.close = function () {
  * 收集数据
  */
 AccountDlg.collectData = function () {
-  this.set('id').set('userNo').set('name').set('availableBalance').set('freezeBalance').set('acctType').set('balanceType')
+  this.set('id').set('custNo').set('name').set('availableBalance').set('freezeBalance').set('acctType').set('balanceType')
   .set('status').set('createBy').set('modifiedBy').set('createAt').set('updateAt').set('remark')   ;
 }
 

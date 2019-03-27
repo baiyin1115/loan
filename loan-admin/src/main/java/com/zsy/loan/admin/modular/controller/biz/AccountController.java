@@ -4,14 +4,16 @@ import com.zsy.loan.admin.core.base.controller.BaseController;
 import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
+import com.zsy.loan.bean.constant.Const;
+import com.zsy.loan.bean.convey.AcctVo;
 import com.zsy.loan.bean.dictmap.biz.AcctDict;
 import com.zsy.loan.bean.entity.biz.TBizAcct;
+import com.zsy.loan.bean.entity.biz.TBizAcctPopup;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctBalanceTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.bean.logback.oplog.OpLog;
-import com.zsy.loan.bean.convey.AcctVo;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.service.biz.impl.AcctServiceImpl;
@@ -28,6 +30,7 @@ import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,7 +81,7 @@ public class AccountController extends BaseController {
   public String accountUpdate(@PathVariable Long accountId, Model model) {
     TBizAcct account = acctRepo.findById(accountId).get();
 
-    account.setRemark(account.getRemark()==null?"":account.getRemark().trim());
+    account.setRemark(account.getRemark() == null ? "" : account.getRemark().trim());
     account.setAcctTypeName(ConstantFactory.me().getAcctTypeName(account.getAcctType()));
     account.setStatusName(ConstantFactory.me().getAcctStatusName(account.getStatus()));
 
@@ -120,6 +123,9 @@ public class AccountController extends BaseController {
           String.valueOf(account.getCustNo()));
     }
 
+    if (ObjectUtils.isEmpty(account.getCustNo())) {
+      account.setCustNo(Const.CUSTOMER_NO_BEGIN_COMPANY);
+    }
     return acctService.save(account, false);
   }
 
@@ -253,7 +259,7 @@ public class AccountController extends BaseController {
   @ResponseBody
   public List<ZTreeNode> selectCompanyAcctTreeList() {
 
-    List para  =  new ArrayList(1);
+    List para = new ArrayList(1);
     para.add(AcctTypeEnum.COMPANY.getValue());
 
     List<ZTreeNode> treeList = acctService.getAcctTreeList(para);
@@ -269,13 +275,45 @@ public class AccountController extends BaseController {
   @ResponseBody
   public List<ZTreeNode> selectCompensationAcctTreeList() {
 
-    List para  =  new ArrayList(1);
+    List para = new ArrayList(1);
     para.add(AcctTypeEnum.REPLACE.getValue());
 
     List<ZTreeNode> treeList = acctService.getAcctTreeList(para);
 //    roleTreeList.add(ZTreeNode.createParent());
     return treeList;
 
+  }
+
+  /**
+   * 跳转到账户选择页面
+   */
+  @RequestMapping("/popup_account_list/{acctType}")
+  public String popupCustList(@PathVariable Long acctType, Model model) {
+
+    if (acctType != -1) {
+      model.addAttribute("acctType", acctType);
+    }
+
+    return PREFIX + "popup_account.html";
+  }
+
+  /**
+   * 获取所有账户列表
+   * 通过账户名、手机号、身份证号码、账户类型 模糊查询
+   */
+  @RequestMapping(value = "/popup_list")
+  @ResponseBody
+  @OpLog
+  @ApiOperation(value = "获取所有账户列表", notes = "获取所有账户列表")
+  public Object popupList(AcctVo condition) {
+
+    Page<TBizAcctPopup> page = new PageFactory<TBizAcctPopup>().defaultPage();
+
+    page = acctService.getPopupAccounts(page, condition);
+    page.setRecords(
+        (List<TBizAcctPopup>) new AcctWrapper(BeanUtil.objectsToMaps(page.getRecords()))
+            .wrap());
+    return super.packForBT(page);
   }
 
 }

@@ -10,7 +10,10 @@
                     <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-3">
-                                <#NameCon id="userNo" name="客户姓名" />
+                                <#NameCon id="custNo" name="客户编号" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="账户名称" />
                             </div>
                             <div class="col-sm-3">
                                 <#select id="acctType" name="账户类型" underline="false" >
@@ -19,9 +22,6 @@
                                     <option value="${dict.num}">${dict.name}</option>
                                     @}
                                 </#select>
-                            </div>
-                            <div class="col-sm-3">
-                                <#NameCon id="name" name="账户名称" />
                             </div>
                             <div class="col-sm-3">
                                 <#button name="搜索" icon="fa-search" clickFun="Account.search()"/>

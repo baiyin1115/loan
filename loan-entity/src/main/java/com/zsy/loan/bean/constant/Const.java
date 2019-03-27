@@ -41,7 +41,7 @@ public interface Const {
   //借款人
   long CUSTOMER_NO_BEGIN_LOAN = 25100000000L;
   //公司账户统一应用
-  long CUSTOMER_NO_BEGIN_COMPANY = 15000000001L;
+  long CUSTOMER_NO_BEGIN_COMPANY = 14000000001L;
 
   /**
    * 账户号起始 融资账户171开头,借款账户271开头,公司卡账户471开头, 暂收371，暂付372，代偿370

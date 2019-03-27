@@ -58,7 +58,7 @@ public class InOutController extends BaseController {
    */
   @RequestMapping("")
   public String index() {
-    return PREFIX + "transfer.html";
+    return PREFIX + "inout.html";
   }
 
   /**
@@ -66,7 +66,7 @@ public class InOutController extends BaseController {
    */
   @RequestMapping("/inout_add")
   public String inOutAdd() {
-    return PREFIX + "transfer_add.html";
+    return PREFIX + "inout_add.html";
   }
 
   /**
@@ -83,7 +83,7 @@ public class InOutController extends BaseController {
 
     model.addAttribute("inout", inout);
     LogObjectHolder.me().set(inout);
-    return PREFIX + "transfer_edit.html";
+    return PREFIX + "inout_edit.html";
 
   }
 

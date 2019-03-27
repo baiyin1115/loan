@@ -6,7 +6,8 @@ var Transfer = {
   seItem: null,		//选中的条目
   seItems: null, //批量删除的数组
   table: null,
-  custLayerIndex: null,
+  accountLayerIndex: null,
+  accountType: null,
   layerIndex: -1
 };
 
@@ -70,7 +71,7 @@ Transfer.openAdd = function () {
   var index = layer.open({
     type: 2,
     title: '登记转账凭证',
-    area: ['800px', '450px'], //宽高
+    area: ['1200px', '800px'], //宽高
     fix: false, //不固定
     maxmin: true,
     content: Feng.ctxPath + '/transfer/transfer_add'
@@ -86,7 +87,7 @@ Transfer.openDetail = function () {
     var index = layer.open({
       type: 2,
       title: '转账凭证详情',
-      area: ['800px', '450px'], //宽高
+      area: ['1200px', '800px'], //宽高
       fix: false, //不固定
       maxmin: true,
       content: Feng.ctxPath + '/transfer/to_transfer_update/' + Transfer.seItem.id
@@ -188,6 +189,8 @@ Transfer.formParams = function () {
   var queryData = {};
   queryData['orgNo'] = $("#orgNo").val();
   queryData['type'] = $("#type").val();
+  queryData['inAcctNo'] = $("#inAcctNo").val();
+  queryData['outAcctNo'] = $("#outAcctNo").val();
   queryData['queryBeginDate'] = $("#queryBeginDate").val();
   queryData['queryEndDate'] = $("#queryEndDate").val();
   return queryData;
@@ -206,6 +209,8 @@ Transfer.search = function () {
 Transfer.resetSearch = function () {
   $("#orgNo").val("");
   $("#type").val("");
+  $("#inAcctNo").val("");
+  $("#outAcctNo").val("");
   $("#queryBeginDate").val("");
   $("#queryEndDate").val("");
 
@@ -221,3 +226,36 @@ $(function () {
   table.init();
   Transfer.table = table;
 });
+
+//账户--------------------------------------------------------------------------------------
+/**
+ * 打开入账账户
+ */
+Transfer.openInAccountList = function () {
+  var index = layer.open({
+    type: 2,
+    title: '选择账户',
+    area: ['1100px', '600px'], //宽高
+    fix: false, //不固定
+    maxmin: true,
+    content: Feng.ctxPath + '/account/popup_account_list/-1'
+  });
+  this.accountLayerIndex = index;
+  this.accountType = "in";
+};
+
+/**
+ * 打开出账账户
+ */
+Transfer.openOutAccountList = function () {
+  var index = layer.open({
+    type: 2,
+    title: '选择账户',
+    area: ['1100px', '600px'], //宽高
+    fix: false, //不固定
+    maxmin: true,
+    content: Feng.ctxPath + '/account/popup_account_list/-1'
+  });
+  this.accountLayerIndex = index;
+  this.accountType = "out";
+};

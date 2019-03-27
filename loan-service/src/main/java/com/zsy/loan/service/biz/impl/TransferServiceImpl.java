@@ -101,6 +101,14 @@ public class TransferServiceImpl extends BaseServiceImpl {
               list.add(criteriaBuilder.equal(root.get("type"), condition.getType()));
             }
 
+            if (!ObjectUtils.isEmpty(condition.getInAcctNo())) {
+              list.add(criteriaBuilder.equal(root.get("inAcctNo"), condition.getInAcctNo()));
+            }
+
+            if (!ObjectUtils.isEmpty(condition.getOutAcctNo())) {
+              list.add(criteriaBuilder.equal(root.get("outAcctNo"), condition.getOutAcctNo()));
+            }
+
             if (!ObjectUtils.isEmpty(condition.getQueryBeginDate())) {
               list.add(criteriaBuilder.greaterThanOrEqualTo(root.get("acctDate"), DateUtil.parseDate(condition.getQueryBeginDate())));
             }

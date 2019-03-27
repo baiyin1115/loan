@@ -1,16 +1,18 @@
 package com.zsy.loan.service.biz.impl;
 
+import com.zsy.loan.bean.convey.AcctVo;
 import com.zsy.loan.bean.entity.biz.TBizAcct;
+import com.zsy.loan.bean.entity.biz.TBizAcctPopup;
 import com.zsy.loan.bean.entity.biz.TBizCustomerInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerStatusEnum;
 import com.zsy.loan.bean.exception.LoanException;
-import com.zsy.loan.bean.convey.AcctVo;
 import com.zsy.loan.bean.vo.node.ZTreeNode;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.dao.biz.CustomerInfoRepo;
+import com.zsy.loan.dao.biz.JoinQueryRepoImpl;
 import com.zsy.loan.service.system.impl.SystemServiceImpl;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.factory.Page;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +42,7 @@ import org.springframework.util.ObjectUtils;
  * @Date 2019-01-18  12:27
  */
 @Service
-public class AcctServiceImpl {
+public class AcctServiceImpl extends BaseServiceImpl {
 
   @Autowired
   private AcctRepo repository;
@@ -50,9 +53,12 @@ public class AcctServiceImpl {
   @Autowired
   private SystemServiceImpl systemService;
 
+  @Autowired
+  private JoinQueryRepoImpl joinQueryRepo;
+
 
   @Transactional
-  public Object save(@Valid AcctVo account,boolean isUp) {
+  public Object save(@Valid AcctVo account, boolean isUp) {
 
     TBizAcct info = TBizAcct.builder().build();
     BeanUtils.copyProperties(account, info);
@@ -67,13 +73,9 @@ public class AcctServiceImpl {
 
   public Page<TBizAcct> getTBizAccounts(Page<TBizAcct> page, TBizAcct condition) {
 
-    Pageable pageable = null;
-    if (page.isOpenSort()) {
-      pageable = new PageRequest(page.getCurrent() - 1, page.getSize(),
-          page.isAsc() ? Sort.Direction.ASC : Sort.Direction.DESC, page.getOrderByField());
-    } else {
-      pageable = new PageRequest(page.getCurrent() - 1, page.getSize(), Sort.Direction.DESC, "id");
-    }
+    List<Order> orders = new ArrayList<Order>();
+    orders.add(Order.asc("id"));
+    Pageable pageable = getPageable(page, orders);
 
     org.springframework.data.domain.Page<TBizAcct> page1 = repository
         .findAll(new Specification<TBizAcct>() {
@@ -208,6 +210,20 @@ public class AcctServiceImpl {
       nodes.add(node);
     }
     return nodes;
+
+  }
+
+  public Page<TBizAcctPopup> getPopupAccounts(Page<TBizAcctPopup> page, AcctVo condition) {
+
+    List<Order> orders = new ArrayList<Order>();
+    orders.add(Order.asc("id"));
+    Pageable pageable = getPageable(page, orders);
+
+    org.springframework.data.domain.Page<TBizAcctPopup> page1 = joinQueryRepo.findAcctPopup(condition, pageable);
+
+    page.setTotal(Integer.valueOf(page1.getTotalElements() + ""));
+    page.setRecords(page1.getContent());
+    return page;
 
   }
 }

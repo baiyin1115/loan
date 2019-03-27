@@ -72,10 +72,6 @@ public class TBizTransferVoucherInfo implements Serializable {
   @Column(name = "status")
   private Long status;
 
-
-  @Column(name = "operator")
-  private Long operator;
-
   /**
    * 创建人
    */

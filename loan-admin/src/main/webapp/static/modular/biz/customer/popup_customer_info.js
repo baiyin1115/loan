@@ -1,5 +1,5 @@
 /**
- * 初始化账户详情对话框
+ * 初始化对话框
  */
 var PopupCustomerDlg = {
   custId: "PopupCustomerTable",	//表格id

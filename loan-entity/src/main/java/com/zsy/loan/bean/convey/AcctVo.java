@@ -66,4 +66,16 @@ public class AcctVo implements Serializable {
   @ApiModelProperty( value = "备注")
   private String remark;
 
+  @ApiModelProperty( value = "证件号码",hidden = true)
+  private String custCertNo;
+
+  @ApiModelProperty( value = "姓名",hidden = true)
+  private String custName;
+
+  @ApiModelProperty( value = "手机号",hidden = true)
+  private String custMobile;
+
+  @ApiModelProperty( value = "状态条件",hidden = true)
+  private String statsList;
+
 }

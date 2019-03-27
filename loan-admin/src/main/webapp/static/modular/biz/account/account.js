@@ -16,7 +16,7 @@ Account.initColumn = function () {
   return [
     {field: 'selectItem', radio: false},
     {title:'账户',field:'id',align:'center',valign:'middle',sortable:true},
-    {title:'用户编号',field:'userNo',align:'center',valign:'middle',sortable:true},
+    {title:'客户编号',field:'custNo',align:'center',valign:'middle',sortable:true},
     {title:'账户名称',field:'name',align:'center',valign:'middle',sortable:true},
     {title:'可用余额',field:'availableBalance',align:'center',valign:'middle',sortable:true},
     {title:'冻结余额',field:'freezeBalance',align:'center',valign:'middle',sortable:true},
@@ -167,7 +167,7 @@ Account.formParams = function () {
   var queryData = {};
   queryData['acctType'] = $("#acctType").val();
   queryData['name'] = $("#name").val();
-  queryData['userNo'] = $("#userNo").val();
+  queryData['custNo'] = $("#custNo").val();
   return queryData;
 }
 
@@ -184,7 +184,7 @@ Account.search = function () {
 Account.resetSearch = function () {
   $("#acctType").val("");
   $("#name").val("");
-  $("#userNo").val("");
+  $("#custNo").val("");
 
   Account.search();
 }

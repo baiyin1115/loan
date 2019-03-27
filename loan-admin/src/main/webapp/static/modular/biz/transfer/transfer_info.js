@@ -4,8 +4,8 @@
 var TransferInfoDlg = {
   transferInfoData: {},
   typeInstance: null,
-  inAcctTreeInstance: null,
-  outAcctTreeInstance: null,
+  accountLayerIndex: null,
+  accountType: null,
   validateFields: {
     orgNo: {validators: {notEmpty: {message: '公司编号'}}},
     type: {validators: {notEmpty: {message: '用途'}}},
@@ -144,53 +144,38 @@ $(function () {
     Feng.formatAmt($('#amt'));
   });
 
-  //----------------------------------------------------------------------------
-  //TODO ---账户要以列表的形式展示
-  //账户树
-  var tree = new $ZTree("inAcctTree",
-      "/account/selectCompanyAcctTreeList");
-  tree.bindOnClick(TransferInfoDlg.onClickInAcct);
-  tree.init();
-  TransferInfoDlg.inAcctTreeInstance = tree;
-
-  var tree = new $ZTree("outAcctTree",
-      "/account/selectCompanyAcctTreeList");
-  tree.bindOnClick(TransferInfoDlg.onClickOutAcct);
-  tree.init();
-  TransferInfoDlg.outAcctTreeInstance = tree;
-
 });
 
 
-//账户部分---------------------------------------------------------------------------------
+//账户--------------------------------------------------------------------------------------
 /**
- * 显示父级菜单选择的树--入账账户
+ * 打开入账账户
  */
-TransferInfoDlg.showInAcctSelectTree = function () {
-  Feng.showInputTree("inAcctName", "inAcctTreeDiv", 15, 34);
+TransferInfoDlg.openInAccountList = function () {
+  var index = layer.open({
+    type: 2,
+    title: '选择账户',
+    area: ['1000px', '750px'], //宽高
+    fix: true, //不固定
+    maxmin: true,
+    content: Feng.ctxPath + '/account/popup_account_list/-1'
+  });
+  this.accountLayerIndex = index;
+  this.accountType = "in";
 };
 
 /**
- * 点击父级编号input框时
+ * 打开出账账户
  */
-TransferInfoDlg.onClickInAcct = function (e, treeId, treeNode) {
-  $("#inAcctName").attr("value",
-      TransferInfoDlg.inAcctTreeInstance.getSelectedVal());
-  $("#inAcctNo").attr("value", treeNode.id);
-};
-
-/**
- * 显示父级菜单选择的树--出账账户
- */
-TransferInfoDlg.showOutAcctSelectTree = function () {
-  Feng.showInputTree("outAcctName", "outAcctTreeDiv", 15, 34);
-};
-
-/**
- * 点击父级编号input框时
- */
-TransferInfoDlg.onClickInAcct = function (e, treeId, treeNode) {
-  $("#outAcctName").attr("value",
-      TransferInfoDlg.outAcctTreeInstance.getSelectedVal());
-  $("#outAcctNo").attr("value", treeNode.id);
+TransferInfoDlg.openOutAccountList = function () {
+  var index = layer.open({
+    type: 2,
+    title: '选择账户',
+    area: ['1000px', '750px'], //宽高
+    fix: false, //不固定
+    maxmin: true,
+    content: Feng.ctxPath + '/account/popup_account_list/-1'
+  });
+  this.accountLayerIndex = index;
+  this.accountType = "out";
 };

@@ -20,10 +20,21 @@
                             <div class="col-sm-2">
                                 <#SelectCon id="type" name="用途" underline="false">
                                     <option value=""></option>
-                                    @for(dict in constant.getDicts('收支用途')){
+                                    @for(dict in constant.getDicts('转账用途')){
                                     <option value="${dict.num}">${dict.name}</option>
                                     @}
                                 </#SelectCon>
+                            </div>
+
+                            <div class="col-sm-2">
+                            <#NameCon id="inAcctName" name="入账账户" underline="false" readonly="readonly" hidden="inAcctNo"
+                                clickFun="Transfer.openInAccountList(); return false;"
+                            />
+                            </div>
+                            <div class="col-sm-2">
+                                <#NameCon id="outAcctName" name="出账账户" underline="false" readonly="readonly" hidden="outAcctNo"
+                                    clickFun="Transfer.openOutAccountList(); return false;"
+                                />
                             </div>
                             <div class="col-sm-2">
                                 <#TimeCon id="queryBeginDate" name="开始日期" isTime="false" pattern="YYYY-MM-DD"/>
@@ -31,7 +42,9 @@
                             <div class="col-sm-2">
                                 <#TimeCon id="queryEndDate" name="结束日期" isTime="false" pattern="YYYY-MM-DD"/>
                             </div>
-                            <div class="col-sm-2">
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12" align="right">
                                 <#button name="搜索" icon="fa-search" clickFun="Transfer.search()"/>
                                 <#button name="重置" icon="fa-trash" clickFun="Transfer.resetSearch()" space="true"/>
                             </div>
