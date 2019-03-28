@@ -87,20 +87,20 @@ PopupAccountDlg.setAccount = function () {
 
     if (window.parent.Transfer != undefined) {
       if (window.parent.Transfer.accountType == "in") {
-        window.parent.$("#inAcctName").attr("value", seItem.name);
+        window.parent.$("#inAcctName").attr("value", seItem.id+"_"+seItem.name);
         window.parent.$("#inAcctNo").attr("value", seItem.id);
       }else{
-        window.parent.$("#outAcctName").attr("value", seItem.name);
+        window.parent.$("#outAcctName").attr("value", seItem.id+"_"+seItem.name);
         window.parent.$("#outAcctNo").attr("value", seItem.id);
       }
     }
 
     if (window.parent.TransferInfoDlg != undefined) {
       if (window.parent.TransferInfoDlg.accountType == "in") {
-        window.parent.$("#inAcctName").attr("value", seItem.name);
+        window.parent.$("#inAcctName").attr("value", seItem.id+"_"+seItem.name);
         window.parent.$("#inAcctNo").attr("value", seItem.id);
       }else{
-        window.parent.$("#outAcctName").attr("value", seItem.name);
+        window.parent.$("#outAcctName").attr("value", seItem.id+"_"+seItem.name);
         window.parent.$("#outAcctNo").attr("value", seItem.id);
       }
     }

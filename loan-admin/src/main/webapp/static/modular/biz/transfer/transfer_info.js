@@ -61,7 +61,7 @@ TransferInfoDlg.close = function () {
  * 收集数据
  */
 TransferInfoDlg.collectData = function () {
-  this.set('id').set('orgNo').set('type').set('acctNo').set('externalAcct').set('amt')
+  this.set('id').set('orgNo').set('type').set('inAcctNo').set('outAcctNo').set('amt')
   .set('acctDate').set('status').set('createBy').set('modifiedBy').set('createAt').set('updateAt').set('remark')
   ;
 };

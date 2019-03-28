@@ -16,17 +16,13 @@
                         @}
                     </#select>
 
-                    <#input id="inAcctNoName" name="账户" underline="false" value="${transfer.inAcctName}" hiddenValue="${transfer.inAcctNo}"
-                        hidden="inAcctNo" readonly="readonly"
-                        clickFun="TransferInfoDlg.showInAcctSelectTree(); return false;"
-                        style="background-color: #ffffff !important;"
-                        selectFlag="true" selectId="inAcctTreeDiv" selectTreeId="inAcctTree" selectStyle="width:244px !important;"/>
+                    <#input id="inAcctName" name="入账账户" underline="false" readonly="readonly" hidden="inAcctNo" value="${transfer.inAcctName}" hiddenValue="${transfer.inAcctNo}"
+                        clickFun="TransferInfoDlg.openInAccountList(); return false;"
+                    />
 
-                    <#input id="outAcctName" name="账户" underline="false" value="${transfer.outAcctName}" hiddenValue="${transfer.outAcctNo}"
-                        hidden="outAcctNo" readonly="readonly"
-                        clickFun="TransferInfoDlg.showOutAcctSelectTree(); return false;"
-                        style="background-color: #ffffff !important;"
-                        selectFlag="true" selectId="outAcctTreeDiv" selectTreeId="outAcctTree" selectStyle="width:244px !important;"/>
+                    <#input id="outAcctName" name="出账账户" underline="false" readonly="readonly" hidden="outAcctNo" value="${transfer.outAcctName}" hiddenValue="${transfer.outAcctNo}"
+                        clickFun="TransferInfoDlg.openOutAccountList(); return false;"
+                    />
                 </div>
                 <div class="col-sm-6">
 
@@ -35,7 +31,7 @@
                     <#input id="amt" name="金额" underline="false" value="${transfer.amt}"/>
 
                     <#select id="type" name="用途" underline="false">
-                        @for(dict in constant.getDicts('收支用途')){
+                        @for(dict in constant.getDicts('转账用途')){
                         <option value="${dict.num}">${dict.name}</option>
                         @}
                     </#select>

@@ -627,7 +627,7 @@ public class BizTypeEnum {
    */
   public enum TransferTypeEnum {
     /**
-     * 1:资金登记,2:资金提出,3:资金分拨,4:服务费补偿,5:贴息,6:其他
+     * 1:资金登记,2:资金提出,3:资金分拨,4:补偿,5:贴息,6:其他
      */
     REGISTER(1), WITHDRAW(2), DISTRIBUTION(3), SUPPLEMENT(4),DISCOUNT(5),OTHER(6);
 

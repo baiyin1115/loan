@@ -7,7 +7,6 @@ import com.zsy.loan.admin.core.page.PageFactory;
 import com.zsy.loan.bean.annotion.core.BussinessLog;
 import com.zsy.loan.bean.annotion.core.Permission;
 import com.zsy.loan.bean.convey.TransferInfoVo;
-import com.zsy.loan.bean.convey.TransferInfoVo;
 import com.zsy.loan.bean.dictmap.biz.TransferDict;
 import com.zsy.loan.bean.entity.biz.TBizTransferVoucherInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
@@ -17,7 +16,6 @@ import com.zsy.loan.dao.biz.TransferVoucherRepo;
 import com.zsy.loan.service.biz.impl.TransferServiceImpl;
 import com.zsy.loan.service.system.LogObjectHolder;
 import com.zsy.loan.service.system.impl.ConstantFactory;
-import com.zsy.loan.service.wrapper.biz.InOutWrapper;
 import com.zsy.loan.service.wrapper.biz.TransferWrapper;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BeanUtil;
@@ -80,8 +78,13 @@ public class TransferController extends BaseController {
     TransferInfoVo transfer = TransferInfoVo.builder().build();
     BeanKit.copyProperties(repo.findById(transferId).get(), transfer);
 
-    transfer.setInAcctName(ConstantFactory.me().getAcctName(transfer.getInAcctNo()));
-    transfer.setOutAcctName(ConstantFactory.me().getAcctName(transfer.getOutAcctNo()));
+    if (transfer.getInAcctNo() != null) {
+      transfer.setInAcctName(ConstantFactory.me().getAcctName(transfer.getInAcctNo()));
+    }
+    if (transfer.getOutAcctNo() != null) {
+      transfer.setOutAcctName(ConstantFactory.me().getAcctName(transfer.getOutAcctNo()));
+    }
+
     transfer.setRemark(transfer.getRemark() == null ? "" : transfer.getRemark().trim());
 
     model.addAttribute("transfer", transfer);

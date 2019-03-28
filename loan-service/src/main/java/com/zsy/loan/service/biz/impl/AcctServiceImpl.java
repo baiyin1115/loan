@@ -65,6 +65,7 @@ public class AcctServiceImpl extends BaseServiceImpl {
 
     if (ObjectUtils.isEmpty(info.getId())) {
       info.setId(systemService.getNextAcctNO(AcctTypeEnum.getEnumByKey(info.getAcctType())));
+      info.setVersion(0l);
     }
 
     return repository.save(info);

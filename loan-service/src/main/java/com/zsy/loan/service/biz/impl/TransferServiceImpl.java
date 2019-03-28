@@ -4,8 +4,11 @@ import com.zsy.loan.bean.convey.TransferInfoVo;
 import com.zsy.loan.bean.entity.biz.TBizTransferVoucherInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.ProcessStatusEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.TransferTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
+import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.dao.biz.TransferVoucherRepo;
+import com.zsy.loan.service.factory.TransferPermissionFactory;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.utils.BeanKit;
@@ -41,10 +44,27 @@ public class TransferServiceImpl extends BaseServiceImpl {
   TransferVoucherRepo repository;
 
   @Autowired
+  private AcctRepo acctRepo;
+
+
+  @Autowired
   private ISystemService systemService;
 
 
   public Object save(TransferInfoVo transfer, boolean b) {
+
+    Long outAcctType = null;
+    if (transfer.getOutAcctNo() != null) {
+      outAcctType = acctRepo.findById(transfer.getOutAcctNo()).get().getAcctType();
+    }
+    Long inAcctType = null;
+    if (transfer.getInAcctNo() != null) {
+      inAcctType = acctRepo.findById(transfer.getInAcctNo()).get().getAcctType();
+    }
+
+    TransferPermissionFactory
+        .checkPermission((outAcctType == null ? null : outAcctType.longValue()) + "_" + TransferTypeEnum.getEnumByKey(transfer.getType()) + "_" +
+            (inAcctType == null ? null : inAcctType.longValue()));
 
     /**
      * 判断状态
@@ -144,8 +164,8 @@ public class TransferServiceImpl extends BaseServiceImpl {
       msg.append("|金额:" + BigDecimalUtil.formatAmt(info.getAmt()));
       msg.append("|日期:" + DateTimeKit.formatDate(info.getAcctDate()));
       msg.append("|用途:" + ConstantFactory.me().getInOutTypeName(info.getType()));
-      msg.append("|入账账户:" + ConstantFactory.me().getAcctName(info.getInAcctNo()));
-      msg.append("|出账账户:" + ConstantFactory.me().getAcctName(info.getOutAcctNo()));
+      msg.append("|入账账户:" + (info.getInAcctNo() == null ? "-" : ConstantFactory.me().getAcctName(info.getInAcctNo())));
+      msg.append("|出账账户:" + (info.getOutAcctNo() == null ? "-" : ConstantFactory.me().getAcctName(info.getOutAcctNo())));
       msg.append("<BR>");
     }
 

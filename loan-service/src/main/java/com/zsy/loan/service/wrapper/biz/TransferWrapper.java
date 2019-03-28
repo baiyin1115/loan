@@ -25,9 +25,13 @@ public class TransferWrapper extends BaseControllerWrapper {
   public void wrapTheMap(Map<String, Object> map) {
 
     map.put("orgName", ConstantFactory.me().getDeptName(((Integer) map.get("orgNo")).intValue()));
-    map.put("inAcctName", ConstantFactory.me().getAcctName(((Long) map.get("inAcctNo"))));
-    map.put("outAcctName", ConstantFactory.me().getAcctName(((Long) map.get("outAcctNo"))));
-    map.put("typeName", ConstantFactory.me().getInOutTypeName(((Long) map.get("type"))));
+    if (map.get("inAcctNo") != null) {
+      map.put("inAcctName", ConstantFactory.me().getAcctName(((Long) map.get("inAcctNo"))));
+    }
+    if (map.get("outAcctNo") != null) {
+      map.put("outAcctName", ConstantFactory.me().getAcctName(((Long) map.get("outAcctNo"))));
+    }
+    map.put("typeName", ConstantFactory.me().getTransferTypeName(((Long) map.get("type"))));
     map.put("statusName", ConstantFactory.me().getProcessStatusName((Long) map.get("status")));
 
     //时间格式化
