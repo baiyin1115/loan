@@ -659,5 +659,41 @@ public class BizTypeEnum {
 
   }
 
+  /**
+   * 资金方向
+   */
+  public enum BalDirEnum {
+    /**
+     * +:增加,2:减少
+     */
+    ADD("+"), SUB("-");
+
+    private String value;
+
+    private BalDirEnum(String value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    public void setValue(String value) {
+      this.value = value;
+    }
+
+    @JsonCreator
+    public static BalDirEnum getEnumByKey(String key) {
+      BalDirEnum[] array = BalDirEnum.values();
+      for (BalDirEnum item : array) {
+        if (item.getValue().equals(key)) {
+          return item;
+        }
+      }
+      return null;
+    }
+  }
+
 
 }

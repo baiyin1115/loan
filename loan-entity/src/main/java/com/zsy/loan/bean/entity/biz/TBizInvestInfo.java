@@ -1,16 +1,12 @@
 package com.zsy.loan.bean.entity.biz;
 
-import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.sql.Timestamp;
-import javax.persistence.Basic;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -26,8 +22,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- *
- *
  * @Author zhangxh
  * @Date 2019-01-18  12:30
  */
@@ -39,7 +33,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
 @Table(name = "t_biz_invest_info")
-public class TBizInvestInfo implements Serializable {
+public class TBizInvestInfo implements Serializable, IBizInfo {
 
   private static final long serialVersionUID = 2406673866480723832L;
 
