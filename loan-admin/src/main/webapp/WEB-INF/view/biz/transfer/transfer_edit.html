@@ -16,12 +16,12 @@
                         @}
                     </#select>
 
-                    <#input id="inAcctName" name="入账账户" underline="false" readonly="readonly" hidden="inAcctNo" value="${transfer.inAcctName}" hiddenValue="${transfer.inAcctNo}"
-                        clickFun="TransferInfoDlg.openInAccountList(); return false;"
-                    />
-
                     <#input id="outAcctName" name="出账账户" underline="false" readonly="readonly" hidden="outAcctNo" value="${transfer.outAcctName}" hiddenValue="${transfer.outAcctNo}"
                         clickFun="TransferInfoDlg.openOutAccountList(); return false;"
+                    />
+
+                    <#input id="inAcctName" name="入账账户" underline="false" readonly="readonly" hidden="inAcctNo" value="${transfer.inAcctName}" hiddenValue="${transfer.inAcctNo}"
+                        clickFun="TransferInfoDlg.openInAccountList(); return false;"
                     />
                 </div>
                 <div class="col-sm-6">

@@ -8,6 +8,7 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.RepayTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.ServiceFeeTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
+import com.zsy.loan.service.sequence.IdentifyGenerated;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.JodaTimeUtil;
@@ -277,7 +278,7 @@ public class LoanTrialCalculateFactory {
       TBizRepayPlan plan = TBizRepayPlan.builder().build();
       BeanKit.copyProperties(data, plan);
 
-      plan.setId(null);
+      plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
       plan.setLoanNo(data.getId());
       plan.setTermNo(i + 1l); //当前期
       plan.setBeginDate(beginDate); //开始日期
@@ -378,7 +379,7 @@ public class LoanTrialCalculateFactory {
       TBizRepayPlan plan = TBizRepayPlan.builder().build();
       BeanKit.copyProperties(data, plan);
 
-      plan.setId(null);
+      plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
       plan.setLoanNo(data.getId());
       plan.setTermNo(i + 1l); //当前期
       plan.setBeginDate(beginDate); //开始日期
@@ -433,7 +434,7 @@ public class LoanTrialCalculateFactory {
 
     TBizRepayPlan endPlan = TBizRepayPlan.builder().build();
     BeanKit.copyProperties(data, endPlan);
-    endPlan.setId(null);
+    endPlan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
     endPlan.setLoanNo(data.getId());
     endPlan.setTermNo(data.getTermNo()); //当前期
     endPlan.setBeginDate(list.get(termNo.intValue() - 1).getBeginDate()); //开始日期
@@ -484,7 +485,7 @@ public class LoanTrialCalculateFactory {
     TBizRepayPlan plan = TBizRepayPlan.builder().build();
     BeanKit.copyProperties(data, plan);
 
-    plan.setId(null);
+    plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
     plan.setLoanNo(data.getId());
     plan.setTermNo(1l); //当前期
     plan.setBeginDate(data.getBeginDate()); //开始日期
@@ -577,7 +578,7 @@ public class LoanTrialCalculateFactory {
     BeanKit.copyProperties(data, plan);
 
     plan.setRate(data.getExtensionRate()); //展期利率
-    plan.setId(null);
+    plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
     plan.setLoanNo(data.getId());
     plan.setTermNo(data.getTermNo() + data.getExtensionNo() + currentNo); //当前期
     plan.setBeginDate(beginDate); //开始日期
@@ -648,7 +649,7 @@ public class LoanTrialCalculateFactory {
       TBizRepayPlan plan = TBizRepayPlan.builder().build();
       BeanKit.copyProperties(data, plan);
 
-      plan.setId(null);
+      plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
       plan.setLoanNo(data.getId());
       plan.setTermNo(data.getTermNo() + data.getExtensionNo() + i + 1l); //当前期
       plan.setBeginDate(beginDate); //开始日期
@@ -744,7 +745,7 @@ public class LoanTrialCalculateFactory {
       TBizRepayPlan plan = TBizRepayPlan.builder().build();
       BeanKit.copyProperties(data, plan);
 
-      plan.setId(null);
+      plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
       plan.setLoanNo(data.getId());
       plan.setTermNo(data.getTermNo() + data.getExtensionNo() + i + 1l); //当前期
       plan.setBeginDate(beginDate); //开始日期
@@ -787,7 +788,7 @@ public class LoanTrialCalculateFactory {
 
     TBizRepayPlan endPlan = TBizRepayPlan.builder().build();
     BeanKit.copyProperties(data, endPlan);
-    endPlan.setId(null);
+    endPlan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
     endPlan.setLoanNo(data.getId());
     endPlan.setTermNo((long) termNo + currentNo + 1); //当前期
     endPlan.setBeginDate(list.get(termNo + currentNo - 1).getBeginDate()); //开始日期

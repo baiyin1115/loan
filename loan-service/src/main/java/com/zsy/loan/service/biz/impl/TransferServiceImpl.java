@@ -9,6 +9,7 @@ import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.dao.biz.TransferVoucherRepo;
 import com.zsy.loan.service.factory.TransferPermissionFactory;
+import com.zsy.loan.service.sequence.IdentifyGenerated;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.utils.BeanKit;
@@ -66,6 +67,9 @@ public class TransferServiceImpl extends BaseServiceImpl {
         .checkPermission((outAcctType == null ? null : outAcctType.longValue()) + "_" + TransferTypeEnum.getEnumByKey(transfer.getType()) + "_" +
             (inAcctType == null ? null : inAcctType.longValue()));
 
+    TBizTransferVoucherInfo newInfo = TBizTransferVoucherInfo.builder().build();
+    BeanKit.copyProperties(transfer, newInfo);
+
     /**
      * 判断状态
      */
@@ -76,9 +80,6 @@ public class TransferServiceImpl extends BaseServiceImpl {
       }
     }
 
-    TBizTransferVoucherInfo newInfo = TBizTransferVoucherInfo.builder().build();
-    BeanKit.copyProperties(transfer, newInfo);
-
     /**
      * 赋值
      */
@@ -87,6 +88,9 @@ public class TransferServiceImpl extends BaseServiceImpl {
     }
     newInfo.setStatus(ProcessStatusEnum.ING.getValue()); //处理中
 
+    if(!b){
+      newInfo.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
+    }
     repository.save(newInfo);
 
     return true;
@@ -164,8 +168,8 @@ public class TransferServiceImpl extends BaseServiceImpl {
       msg.append("|金额:" + BigDecimalUtil.formatAmt(info.getAmt()));
       msg.append("|日期:" + DateTimeKit.formatDate(info.getAcctDate()));
       msg.append("|用途:" + ConstantFactory.me().getInOutTypeName(info.getType()));
-      msg.append("|入账账户:" + (info.getInAcctNo() == null ? "-" : ConstantFactory.me().getAcctName(info.getInAcctNo())));
       msg.append("|出账账户:" + (info.getOutAcctNo() == null ? "-" : ConstantFactory.me().getAcctName(info.getOutAcctNo())));
+      msg.append("|入账账户:" + (info.getInAcctNo() == null ? "-" : ConstantFactory.me().getAcctName(info.getInAcctNo())));
       msg.append("<BR>");
     }
 

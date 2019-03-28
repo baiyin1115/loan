@@ -6,6 +6,7 @@ import com.zsy.loan.bean.enumeration.BizExceptionEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.ProcessStatusEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.biz.InOutVoucherInfoRepo;
+import com.zsy.loan.service.sequence.IdentifyGenerated;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.service.system.impl.ConstantFactory;
 import com.zsy.loan.utils.BeanKit;
@@ -66,6 +67,10 @@ public class InOutServiceImpl extends BaseServiceImpl {
       newInfo.setAcctDate(systemService.getSysAcctDate());
     }
     newInfo.setStatus(ProcessStatusEnum.ING.getValue()); //处理中
+
+    if(!b){
+      newInfo.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
+    }
 
     repository.save(newInfo);
 

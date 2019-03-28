@@ -19,6 +19,7 @@ import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.dao.biz.ProductInfoRepo;
 import com.zsy.loan.dao.biz.RepayPlanRepo;
 import com.zsy.loan.service.factory.LoanTrialCalculateFactory;
+import com.zsy.loan.service.sequence.IdentifyGenerated;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
@@ -116,6 +117,10 @@ public class LoanServiceImpl extends BaseServiceImpl {
     info.setTotPaidServFee(BigDecimal.valueOf(0.00)); // 已收服务费累计
     info.setTotPaidPen(BigDecimal.valueOf(0.00)); // 已还罚息累计
     info.setTotWavAmt(BigDecimal.valueOf(0.00)); // 减免金额累计
+
+    if(!b){
+      info.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
+    }
 
     repository.save(info);
 

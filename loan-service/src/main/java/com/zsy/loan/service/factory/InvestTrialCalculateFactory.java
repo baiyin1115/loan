@@ -8,6 +8,7 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
+import com.zsy.loan.service.sequence.IdentifyGenerated;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.DateUtil;
@@ -143,7 +144,7 @@ public class InvestTrialCalculateFactory {
         plan.setDdDate(concurrentEnd); //计息日期
       }
 
-      plan.setId(null);
+      plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
       plan.setInvestNo(data.getId());
       plan.setRate(data.getRate()); //利率
       plan.setBeginDate(concurrentBegin); //本期开始日期
@@ -244,7 +245,7 @@ public class InvestTrialCalculateFactory {
         plan.setDdDate(concurrentEnd); //计息日期
       }
 
-      plan.setId(null);
+      plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
       plan.setInvestNo(data.getId());
       plan.setRate(data.getRate()); //利率
 
@@ -348,7 +349,7 @@ public class InvestTrialCalculateFactory {
       }
 
       plan.setInvestNo(data.getId());
-      plan.setId(null);
+      plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
       plan.setRate(currentExtensionRate); //利率
       plan.setDdPrin(remainingPrin); //本期计息本金
       plan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息
@@ -415,7 +416,7 @@ public class InvestTrialCalculateFactory {
       }
 
       plan.setInvestNo(data.getId());
-      plan.setId(null);
+      plan.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
       plan.setRate(currentExtensionRate); //利率
       plan.setDdPrin(remainingPrin); //本期计息本金
       plan.setPaidInterest(BigDecimal.valueOf(0.00)); //本期已提利息

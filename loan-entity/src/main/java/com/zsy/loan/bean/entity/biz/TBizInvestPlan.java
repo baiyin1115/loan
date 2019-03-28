@@ -41,7 +41,7 @@ public class TBizInvestPlan implements Serializable {
   private static final long serialVersionUID = 946438418079009769L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  //@GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private Long id;
 

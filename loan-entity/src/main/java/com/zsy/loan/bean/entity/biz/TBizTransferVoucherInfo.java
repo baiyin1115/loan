@@ -42,7 +42,7 @@ public class TBizTransferVoucherInfo implements Serializable {
   private static final Long serialVersionUID = 7099828336472811968L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  //@GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private Long id;
 

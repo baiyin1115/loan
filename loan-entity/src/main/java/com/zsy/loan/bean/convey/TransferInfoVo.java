@@ -81,11 +81,4 @@ public class TransferInfoVo implements Serializable {
   private String outAcctName;
 
 
-  @ApiModelProperty(value = "入账账户类型", hidden = true)
-  private Long inAcctType;
-
-  @ApiModelProperty(value = "出账账户类型", hidden = true)
-  private Long outAcctType;
-
-
 }

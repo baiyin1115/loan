@@ -53,4 +53,11 @@ swagger:
     api-package-path: com.zsy.loan.admin
     version: 1.0.0
 
+#自定义
+common:
+#分布式id生成key
+  sequence:
+      workerId: 2
+      datacenterId: 2
+
 

@@ -18,6 +18,7 @@ import com.zsy.loan.dao.biz.InvestInfoRepo;
 import com.zsy.loan.dao.biz.InvestPlanRepo;
 import com.zsy.loan.service.factory.InvestStatusFactory;
 import com.zsy.loan.service.factory.InvestTrialCalculateFactory;
+import com.zsy.loan.service.sequence.IdentifyGenerated;
 import com.zsy.loan.service.system.ISystemService;
 import com.zsy.loan.utils.BeanKit;
 import com.zsy.loan.utils.BigDecimalUtil;
@@ -191,6 +192,10 @@ public class InvestServiceImpl extends BaseServiceImpl {
     info.setTotPaidInterest(BigDecimal.valueOf(0.00)); // 已还利息累计
     info.setTotWavAmt(BigDecimal.valueOf(0.00)); // 减免金额累计
     info.setTotAccruedInterest(BigDecimal.valueOf(0.00)); //计提利息累计
+
+    if(!b){
+      info.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
+    }
 
     repository.save(info);
 
