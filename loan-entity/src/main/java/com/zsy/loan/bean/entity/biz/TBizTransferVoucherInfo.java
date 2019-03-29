@@ -32,7 +32,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "t_biz_transfer_voucher_info")
-public class TBizTransferVoucherInfo implements Serializable, IBizInfo {
+public class TBizTransferVoucherInfo implements Serializable, IAcct {
 
   private static final Long serialVersionUID = 7099828336472811968L;
 

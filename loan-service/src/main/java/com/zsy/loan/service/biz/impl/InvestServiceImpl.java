@@ -685,7 +685,7 @@ public class InvestServiceImpl extends BaseServiceImpl {
       newInfo.setId(null);
       newInfo.setBeginDate(settleDate);
       newInfo.setEndDate(JodaTimeUtil.getAfterDayMonth(settleDate, 6));
-      BigDecimal prin = BigDecimalUtil.add(BigDecimalUtil.sub(old.getPrin(), old.getTotPaidInterest()), old.getTotAccruedInterest());
+      BigDecimal prin = BigDecimalUtil.add(BigDecimalUtil.sub(old.getPrin(), old.getTotPaidPrin()), old.getTotAccruedInterest());
       newInfo.setPrin(prin); //默认本金=待收本金+计提利息
       newInfo.setTermNo(6l);
       save(newInfo, false);

@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.convey;
 
+import com.zsy.loan.bean.entity.biz.IAcct;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -24,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvestCalculateVo implements Serializable {
+public class InvestCalculateVo implements Serializable, IAcct {
 
 
   private static final long serialVersionUID = -8798878859347645627L;
@@ -72,7 +73,7 @@ public class InvestCalculateVo implements Serializable {
   @ApiModelProperty(value = "利率")
   private BigDecimal rate;
 
-//  @NotNull(message = "[期数]不能为空！")
+  //  @NotNull(message = "[期数]不能为空！")
   @ApiModelProperty(value = "期数")
   private Long termNo;
 
@@ -84,7 +85,7 @@ public class InvestCalculateVo implements Serializable {
   @ApiModelProperty(value = "状态")
   private Long status;
 
-//  @NotNull(message = "[计息日]不能为空！")
+  //  @NotNull(message = "[计息日]不能为空！")
   @ApiModelProperty(value = "计息日")
   private Long ddDate;
 
@@ -157,13 +158,13 @@ public class InvestCalculateVo implements Serializable {
   @ApiModelProperty(value = "回款计划", hidden = true)
   private List<TBizInvestPlan> planList;
 
-  @ApiModelProperty(value = "当前期回款计划" , hidden = true)
+  @ApiModelProperty(value = "当前期回款计划", hidden = true)
   List<TBizInvestPlan> currentPlanList;
 
-  @ApiModelProperty(value = "当前期以前的已计息回款计划" , hidden = true)
+  @ApiModelProperty(value = "当前期以前的已计息回款计划", hidden = true)
   List<TBizInvestPlan> interestedRecords;
 
-  @ApiModelProperty(value = "当前期以后的回款计划" , hidden = true)
+  @ApiModelProperty(value = "当前期以后的回款计划", hidden = true)
   List<TBizInvestPlan> afterPayRecords;
 
   @ApiModelProperty(value = "计算详情", hidden = true)

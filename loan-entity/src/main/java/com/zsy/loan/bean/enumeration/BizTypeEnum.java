@@ -328,9 +328,9 @@ public class BizTypeEnum {
    */
   public enum AmtTypeEnum {
     /**
-     * 1:本金,2:利息,3:罚息,4:服务费,5:活期利息,6:资金
+     * 1:本金,2:利息,3:罚息,4:服务费,5:活期利息,6:资金,7:补偿,8:减免
      */
-    CAPITAL(1), INTEREST(2), BREACH_INTEREST(3), SERVICE_FEE(4), PASS_INTEREST(5), FUNDS(6);
+    CAPITAL(1), INTEREST(2), BREACH_INTEREST(3), SERVICE_FEE(4), PASS_INTEREST(5), FUNDS(6),RECOMPENSE(7),REDUCE(8);
 
     private long value;
 
@@ -365,7 +365,7 @@ public class BizTypeEnum {
    */
   public enum LoanBizTypeEnum {
     /**
-     * 1:放款,2:还款,3:服务费收取,4:服务费补偿,5:支出,6:融资,7:撤资,8:收入,9:资金登记,10:转账,11:提现,12:结转,13:代偿,14:提前还款
+     * 1:放款,2:还款,3:服务费收取,4:服务费补偿,5:支出,6:融资,7:撤资,8:收入,9:资金登记,10:转账,11:资金提出,12:结转,13:代偿,14:提前还款
      * ,15:借据登记,16:融资登记,17:展期,18:部分还款,19:部分撤资
      */
     PUT(1), REPAY(2), SERVICE_FEE_IN(3), SERVICE_FEE_OUT(4), OUT(5), INVEST(6), DIVESTMENT(7), IN(8), FUNDS_CHECK_IN(9), TRANSFER(10), WITHDRAW(
@@ -627,7 +627,7 @@ public class BizTypeEnum {
    */
   public enum TransferTypeEnum {
     /**
-     * 1:资金登记,2:资金提出,3:资金分拨,4:补偿,5:贴息,6:其他
+     * 1:资金登记,2:资金提出,3:资金分拨,4:补偿,5:减免,6:其他
      */
     REGISTER(1), WITHDRAW(2), DISTRIBUTION(3), SUPPLEMENT(4),DISCOUNT(5),OTHER(6);
 

@@ -51,7 +51,7 @@ public interface Const {
   //借款人
   long ACCT_NO_BEGIN_LOAN = 27100000000L;
   //公司账户
-  long ACCT_NO_BEGIN_COMPANY = 37100000000L;
+  long ACCT_NO_BEGIN_COMPANY = 47100000000L;
   //代偿账户
   long ACCT_NO_BEGIN_REPLACE = 37000000000L;
   //往来户-暂收

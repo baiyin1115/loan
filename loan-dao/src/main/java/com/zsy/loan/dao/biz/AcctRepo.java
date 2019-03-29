@@ -25,6 +25,8 @@ public interface AcctRepo extends PagingAndSortingRepository<TBizAcct, Long>
 
   Optional<TBizAcct> findByCustNo(long custNo);
 
+  Optional<TBizAcct> findByAcctType(long acctType);
+
   TBizAcct getByCustNo(long custNo);
 
   @Query(nativeQuery = true, value = "SELECT m1.id AS id,'0' AS pId,concat(m1.id,'_',m1.name) AS NAME,'false' AS isOpen FROM t_biz_acct as m1 where acct_type in (?1) order by id ASC")

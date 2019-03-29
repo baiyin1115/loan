@@ -1,11 +1,11 @@
 package com.zsy.loan.bean.convey;
 
+import com.zsy.loan.bean.entity.biz.IAcct;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
-import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanBreachVo implements Serializable {
+public class LoanBreachVo implements Serializable, IAcct {
 
   private static final long serialVersionUID = -2920692017093564101L;
   private Long id;
@@ -79,7 +79,7 @@ public class LoanBreachVo implements Serializable {
   @ApiModelProperty(value = "收款账户")
   private String externalAcct;
 
-  @ApiModelProperty( value = "服务费比例")
+  @ApiModelProperty(value = "服务费比例")
   private BigDecimal serviceFeeScale;
 
   @ApiModelProperty(value = "服务费")
@@ -161,6 +161,6 @@ public class LoanBreachVo implements Serializable {
 
   @NotNull(message = "[代偿账户]不能为空！")
   @ApiModelProperty(value = "代偿账户")
-  private String compensationAcct;
+  private Long compensationAcct;
 
 }

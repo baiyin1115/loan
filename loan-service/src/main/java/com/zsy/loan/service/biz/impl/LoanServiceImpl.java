@@ -487,7 +487,7 @@ public class LoanServiceImpl extends BaseServiceImpl {
 
     BigDecimal currentBreachPrin = loan.getCurrentBreachPrin();        // 录入本金
     BigDecimal currentBreachFee = loan.getCurrentBreachFee();    // 录入费用
-    String compensationAcct = loan.getCompensationAcct();         // 代偿账户
+    Long compensationAcct = loan.getCompensationAcct();         // 代偿账户
 
     BigDecimal schdPrin = BigDecimalUtil.sub(old.getSchdPrin(), old.getTotPaidPrin());
 
@@ -517,7 +517,7 @@ public class LoanServiceImpl extends BaseServiceImpl {
       if (i == 0) {
         upInfo.setPaidPrin(BigDecimalUtil.add(upInfo.getPaidPrin(), currentBreachPrin));
         upInfo.setPaidPen(BigDecimalUtil.add(upInfo.getPaidPen(), currentBreachFee));
-        upInfo.setExternalAcct(compensationAcct); //设置为代偿账户
+        upInfo.setExternalAcct(String.valueOf(compensationAcct)); //设置为代偿账户
       }
       upInfo.setAcctDate(systemService.getSysAcctDate());
       upInfo.setStatus(RepayStatusEnum.COMPENSATION.getValue());

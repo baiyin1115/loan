@@ -34,7 +34,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
 @Table(name = "t_biz_in_out_voucher_info")
-public class TBizInOutVoucherInfo implements Serializable, IBizInfo {
+public class TBizInOutVoucherInfo implements Serializable, IAcct {
 
   private static final Long serialVersionUID = 7432927477456095247L;
 

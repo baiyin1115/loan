@@ -33,7 +33,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
 @Table(name = "t_biz_invest_info")
-public class TBizInvestInfo implements Serializable, IBizInfo {
+public class TBizInvestInfo implements Serializable, IAcct {
 
   private static final long serialVersionUID = 2406673866480723832L;
 

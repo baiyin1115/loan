@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.convey;
 
+import com.zsy.loan.bean.entity.biz.IAcct;
 import com.zsy.loan.bean.entity.biz.TBizProductInfo;
 import com.zsy.loan.bean.entity.biz.TBizRepayPlan;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanCalculateVo implements Serializable {
+public class LoanCalculateVo implements Serializable, IAcct {
 
   private static final long serialVersionUID = -1166079815427120087L;
   private Long id;

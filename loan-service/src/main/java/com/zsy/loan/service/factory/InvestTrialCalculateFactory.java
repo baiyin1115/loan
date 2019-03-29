@@ -566,7 +566,7 @@ public class InvestTrialCalculateFactory {
 
       /**
        * 当前期的计算 如果是最后一天，就不计算部分撤资，计提利息就是当月利息
-       * 如果不是最后一天，技术当前账务日期到开始日期之间的利息，后续的利息单起一起技术
+       * 如果不是最后一天，计算当前账务日期到开始日期之间的利息，后续的利息单起一起计算
        */
       BigDecimal remainingPrin = BigDecimalUtil.sub(calculateAmt, divestmentAmt); // 剩余本金
       BigDecimal difference = BigDecimal.valueOf(0.00); // 存下差额--利息
@@ -626,7 +626,7 @@ public class InvestTrialCalculateFactory {
           plan.setDdNum((long) days);
 
           result.setTotSchdInterest(BigDecimalUtil.sub(result.getTotSchdInterest(), difference));  // 减少利息
-          result.setTotSchdInterest(BigDecimalUtil.add(result.getTotSchdInterest(), newInterest));  // 减少利息
+          result.setTotSchdInterest(BigDecimalUtil.add(result.getTotSchdInterest(), newInterest));  // 增加利息
 
         }
 

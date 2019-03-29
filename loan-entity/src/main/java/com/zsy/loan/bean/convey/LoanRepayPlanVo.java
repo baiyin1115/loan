@@ -1,11 +1,11 @@
 package com.zsy.loan.bean.convey;
 
+import com.zsy.loan.bean.entity.biz.IAcct;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanRepayPlanVo implements Serializable {
+public class LoanRepayPlanVo implements Serializable, IAcct {
 
   private static final long serialVersionUID = -3614132519822068019L;
   private Long id;
@@ -118,19 +118,19 @@ public class LoanRepayPlanVo implements Serializable {
   @ApiModelProperty(value = "还款状态")
   private Long status;
 
-  @ApiModelProperty( value = "创建人")
+  @ApiModelProperty(value = "创建人")
   private Long createBy;
 
-  @ApiModelProperty( value = "修改人")
+  @ApiModelProperty(value = "修改人")
   private Long modifiedBy;
 
-  @ApiModelProperty( value = "创建时间")
+  @ApiModelProperty(value = "创建时间")
   private Timestamp createAt;
 
-  @ApiModelProperty( value = "修改时间")
+  @ApiModelProperty(value = "修改时间")
   private Timestamp updateAt;
 
-  @ApiModelProperty( value = "备注")
+  @ApiModelProperty(value = "备注")
   private String remark;
 
   @ApiModelProperty(value = "本金")

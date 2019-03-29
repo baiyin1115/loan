@@ -15,6 +15,7 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
   CALCULATE_REQ_NOT_MATCH(401, "请求与上次试算结果不一致"),
   STATUS_ERROR(401, "当前状态不支持这个业务"),
   DATE_COMPARE_ERROR(401, "日期比较错误"),
+  BALANCE_ERROR(401, "余额不足"),
 
   /**
    * 字典
