@@ -1,5 +1,6 @@
 package com.zsy.loan.bean.entity.biz;
 
+import com.zsy.loan.bean.convey.IBizToAcct;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -35,7 +36,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
 @Table(name = "t_biz_repay_plan")
-public class TBizRepayPlan implements Serializable, IAcct {
+public class TBizRepayPlan implements Serializable {
 
 
   private static final long serialVersionUID = 1028676638418093831L;

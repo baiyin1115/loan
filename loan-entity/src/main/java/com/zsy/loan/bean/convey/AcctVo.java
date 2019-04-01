@@ -78,4 +78,8 @@ public class AcctVo implements Serializable {
   @ApiModelProperty( value = "状态条件",hidden = true)
   private String statsList;
 
+  @ApiModelProperty( value = "版本号")
+  private Long version;
+
+
 }

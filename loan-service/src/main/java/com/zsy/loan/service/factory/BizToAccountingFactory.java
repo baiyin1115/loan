@@ -2,15 +2,13 @@ package com.zsy.loan.service.factory;
 
 import com.zsy.loan.bean.convey.AccountingDetailVo;
 import com.zsy.loan.bean.convey.AccountingMainVo;
+import com.zsy.loan.bean.convey.IBizToAcct;
 import com.zsy.loan.bean.convey.InvestCalculateVo;
 import com.zsy.loan.bean.convey.LoanBreachVo;
 import com.zsy.loan.bean.convey.LoanCalculateVo;
-import com.zsy.loan.bean.convey.LoanPrepayVo;
 import com.zsy.loan.bean.convey.LoanRepayPlanVo;
-import com.zsy.loan.bean.entity.biz.IAcct;
 import com.zsy.loan.bean.entity.biz.TBizInOutVoucherInfo;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
-import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import com.zsy.loan.bean.entity.biz.TBizTransferVoucherInfo;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AmtTypeEnum;
@@ -20,7 +18,6 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.ServiceFeeTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.TransferTypeEnum;
 import com.zsy.loan.utils.BigDecimalUtil;
-import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +40,7 @@ public class BizToAccountingFactory {
   /**
    * 转换工厂
    */
-  public static Map<String, Function<IAcct, AccountingMainVo>> maps = new HashMap<>();
+  public static Map<String, Function<IBizToAcct, AccountingMainVo>> maps = new HashMap<>();
 
   static {
     /**
@@ -126,7 +123,7 @@ public class BizToAccountingFactory {
 
   }
 
-  private static AccountingMainVo funds_check_in(IAcct iacct) {
+  private static AccountingMainVo funds_check_in(IBizToAcct iacct) {
 
     /**
      * 登记 1笔
@@ -151,7 +148,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo transfer(IAcct iacct) {
+  private static AccountingMainVo transfer(IBizToAcct iacct) {
     /**
      * 转账 2笔
      *
@@ -179,7 +176,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo withdraw(IAcct iacct) {
+  private static AccountingMainVo withdraw(IBizToAcct iacct) {
 
     /**
      * 资金提出 1笔
@@ -204,7 +201,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo in(IAcct iacct) {
+  private static AccountingMainVo in(IBizToAcct iacct) {
     /**
      * 收入 2笔
      *
@@ -232,7 +229,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo out(IAcct iacct) {
+  private static AccountingMainVo out(IBizToAcct iacct) {
     /**
      * 支出 2笔
      *
@@ -260,7 +257,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo put(IAcct iacct) {
+  private static AccountingMainVo put(IBizToAcct iacct) {
     /**
      * 放款 6笔
      *
@@ -273,7 +270,7 @@ public class BizToAccountingFactory {
      * 借款人账户 (-)|放款金额|资金|放款
      * 暂付(+)|放款金额|资金|放款
      */
-    TBizLoanInfo info = (TBizLoanInfo) iacct;
+    LoanCalculateVo info = (LoanCalculateVo) iacct;
 
     AccountingMainVo main = AccountingMainVo.builder().acctDate(info.getAcctDate()).orgNo(info.getOrgNo()).voucherNo(info.getId())
         .type(LoanBizTypeEnum.PUT.getValue())
@@ -312,7 +309,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo invest(IAcct iacct) {
+  private static AccountingMainVo invest(IBizToAcct iacct) {
 
     /**
      * 融资 2笔
@@ -322,7 +319,7 @@ public class BizToAccountingFactory {
      *
      */
 
-    TBizInvestInfo info = (TBizInvestInfo) iacct;
+    InvestCalculateVo info = (InvestCalculateVo) iacct;
 
     AccountingMainVo main = AccountingMainVo.builder().acctDate(info.getAcctDate()).orgNo(info.getOrgNo()).voucherNo(info.getId())
         .type(LoanBizTypeEnum.INVEST.getValue())
@@ -343,7 +340,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo divestment(IAcct iacct) {
+  private static AccountingMainVo divestment(IBizToAcct iacct) {
 
     /**
      * 撤资 8笔
@@ -408,7 +405,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo part_divestment(IAcct iacct) {
+  private static AccountingMainVo part_divestment(IBizToAcct iacct) {
 
     /**
      * 部分撤资 8笔
@@ -474,7 +471,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo settlement(IAcct iacct) {
+  private static AccountingMainVo settlement(IBizToAcct iacct) {
 
     /**
      * 结转 4笔
@@ -517,7 +514,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo repay(IAcct iacct) {
+  private static AccountingMainVo repay(IBizToAcct iacct) {
 
     /**
      * 还款 10笔
@@ -602,7 +599,7 @@ public class BizToAccountingFactory {
   }
 
 
-  private static AccountingMainVo compensation(IAcct iacct) {
+  private static AccountingMainVo compensation(IBizToAcct iacct) {
 
     /**
      * 代偿 8笔
@@ -671,7 +668,7 @@ public class BizToAccountingFactory {
 
   }
 
-  private static AccountingMainVo prepayment(IAcct iacct) {
+  private static AccountingMainVo prepayment(IBizToAcct iacct) {
 
     /**
      * 提前还款 10笔
@@ -753,7 +750,7 @@ public class BizToAccountingFactory {
     return main;
   }
 
-  private static AccountingMainVo part_repayment(IAcct iacct) {
+  private static AccountingMainVo part_repayment(IBizToAcct iacct) {
 
     /**
      * 部分还款 4笔

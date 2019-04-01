@@ -3,6 +3,8 @@ package com.zsy.loan.service.biz.impl;
 import com.zsy.loan.bean.convey.InOutInfoVo;
 import com.zsy.loan.bean.entity.biz.TBizInOutVoucherInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.InOutTypeEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.ProcessStatusEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.biz.InOutVoucherInfoRepo;
@@ -68,7 +70,7 @@ public class InOutServiceImpl extends BaseServiceImpl {
     }
     newInfo.setStatus(ProcessStatusEnum.ING.getValue()); //处理中
 
-    if(!b){
+    if (!b) {
       newInfo.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
     }
 
@@ -169,7 +171,7 @@ public class InOutServiceImpl extends BaseServiceImpl {
       /**
        * 调用账户模块记账
        */
-      //TODO
+      inoutAccounting(info);
 
       repository.updateStatus(id, ProcessStatusEnum.SUCCESS.getValue(), ProcessStatusEnum.ING.getValue(), systemService.getSysAcctDate());
 
@@ -192,7 +194,8 @@ public class InOutServiceImpl extends BaseServiceImpl {
       /**
        * 调用账户模块记账
        */
-      //TODO
+      info.setAmt(info.getAmt().negate());
+      inoutAccounting(info);
 
       repository.updateStatus(id, ProcessStatusEnum.CANCEL.getValue(), ProcessStatusEnum.SUCCESS.getValue(), systemService.getSysAcctDate());
 
@@ -217,5 +220,18 @@ public class InOutServiceImpl extends BaseServiceImpl {
     }
     return true;
 
+  }
+
+  /**
+   * 转账调用记账接口共同
+   */
+  private void inoutAccounting(TBizInOutVoucherInfo info) {
+    String key = null;
+    if (InOutTypeEnum.PUBLIC_IN.getValue() == info.getType() || InOutTypeEnum.INTEREST.getValue() == info.getType()) {
+      key = LoanBizTypeEnum.IN + "_" + info.getType();
+    } else {
+      key = LoanBizTypeEnum.OUT + "_" + info.getType();
+    }
+    executeAccounting(key, info);
   }
 }

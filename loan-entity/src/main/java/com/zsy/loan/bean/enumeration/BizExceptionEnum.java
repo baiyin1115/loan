@@ -15,7 +15,7 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
   CALCULATE_REQ_NOT_MATCH(401, "请求与上次试算结果不一致"),
   STATUS_ERROR(401, "当前状态不支持这个业务"),
   DATE_COMPARE_ERROR(401, "日期比较错误"),
-  BALANCE_ERROR(401, "余额不足"),
+  BALANCE_ERROR(401, "余额错误"),
 
   /**
    * 字典
@@ -81,6 +81,7 @@ public enum BizExceptionEnum implements ServiceExceptionEnum {
   NO_THIS_CUSTOMER(400, "没有此客户"),
   CUSTOMER_ACCOUNT_INCONSISTENT(401, "客户状态和用户状态不一致"),
   CUSTOMER_FREEZED(401, "客户被冻结"),
+  CUSTOMER_BIZ_ING(401, "客户有正在进行中的业务"),
 
   /**
    * 错误的请求

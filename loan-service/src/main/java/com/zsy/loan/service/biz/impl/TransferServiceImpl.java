@@ -3,6 +3,7 @@ package com.zsy.loan.service.biz.impl;
 import com.zsy.loan.bean.convey.TransferInfoVo;
 import com.zsy.loan.bean.entity.biz.TBizTransferVoucherInfo;
 import com.zsy.loan.bean.enumeration.BizExceptionEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanBizTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.ProcessStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.TransferTypeEnum;
 import com.zsy.loan.bean.exception.LoanException;
@@ -47,7 +48,6 @@ public class TransferServiceImpl extends BaseServiceImpl {
   @Autowired
   private AcctRepo acctRepo;
 
-
   @Autowired
   private ISystemService systemService;
 
@@ -88,7 +88,7 @@ public class TransferServiceImpl extends BaseServiceImpl {
     }
     newInfo.setStatus(ProcessStatusEnum.ING.getValue()); //处理中
 
-    if(!b){
+    if (!b) {
       newInfo.setId(IdentifyGenerated.INSTANCE.getNextId()); //修改为统一的凭证编号规则
     }
     repository.save(newInfo);
@@ -198,8 +198,11 @@ public class TransferServiceImpl extends BaseServiceImpl {
       /**
        * 调用账户模块记账
        */
-      //TODO
+      transferAccounting(info);
 
+      /**
+       * 更新状态
+       */
       repository.updateStatus(id, ProcessStatusEnum.SUCCESS.getValue(), ProcessStatusEnum.ING.getValue(), systemService.getSysAcctDate());
 
     }
@@ -221,12 +224,28 @@ public class TransferServiceImpl extends BaseServiceImpl {
       /**
        * 调用账户模块记账
        */
-      //TODO
+      info.setAmt(info.getAmt().negate()); //金额设置成负值
+      transferAccounting(info);
 
       repository.updateStatus(id, ProcessStatusEnum.CANCEL.getValue(), ProcessStatusEnum.SUCCESS.getValue(), systemService.getSysAcctDate());
 
     }
     return true;
+  }
+
+  /**
+   * 转账调用记账接口共同
+   */
+  private void transferAccounting(TBizTransferVoucherInfo info) {
+    String key = null;
+    if (TransferTypeEnum.REGISTER.getValue() == info.getType()) {
+      key = LoanBizTypeEnum.FUNDS_CHECK_IN + "_" + info.getType();
+    } else if (TransferTypeEnum.WITHDRAW.getValue() == info.getType()) {
+      key = LoanBizTypeEnum.WITHDRAW + "_" + info.getType();
+    } else {
+      key = LoanBizTypeEnum.TRANSFER + "_" + info.getType();
+    }
+    executeAccounting(key, info);
   }
 
   @Transactional
@@ -247,4 +266,5 @@ public class TransferServiceImpl extends BaseServiceImpl {
     return true;
 
   }
+
 }

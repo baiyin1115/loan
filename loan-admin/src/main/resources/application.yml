@@ -59,5 +59,6 @@ common:
   sequence:
       workerId: 2
       datacenterId: 2
+  retry: 3
 
 

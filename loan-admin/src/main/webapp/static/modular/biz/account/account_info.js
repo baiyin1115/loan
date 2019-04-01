@@ -54,7 +54,7 @@ AccountDlg.close = function () {
  */
 AccountDlg.collectData = function () {
   this.set('id').set('custNo').set('name').set('availableBalance').set('freezeBalance').set('acctType').set('balanceType')
-  .set('status').set('createBy').set('modifiedBy').set('createAt').set('updateAt').set('remark')   ;
+  .set('status').set('createBy').set('modifiedBy').set('createAt').set('updateAt').set('remark').set('version')   ;
 }
 
 /**

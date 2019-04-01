@@ -1,11 +1,16 @@
 package com.zsy.loan.service.biz.impl;
 
+import com.zsy.loan.bean.convey.AccountingMainVo;
+import com.zsy.loan.bean.convey.LoanCalculateVo;
+import com.zsy.loan.bean.convey.IBizToAcct;
+import com.zsy.loan.service.factory.BizToAccountingFactory;
 import com.zsy.loan.service.shiro.ShiroKit;
 import com.zsy.loan.utils.factory.Page;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +21,9 @@ import org.springframework.util.ObjectUtils;
  * Created by Administrator on 2019/3/7/007.
  */
 public class BaseServiceImpl {
+
+  @Autowired
+  protected AccountingServiceImpl accountingService;
 
   protected void setOrgList(Integer orgNo, Path path, CriteriaBuilder criteriaBuilder,
       List<Predicate> list) {
@@ -43,6 +51,12 @@ public class BaseServiceImpl {
       pageable = PageRequest.of(page.getCurrent() - 1, page.getSize(), Sort.by(orders));
     }
     return pageable;
+  }
+
+  public Boolean executeAccounting(String key,IBizToAcct vo) {
+
+    AccountingMainVo toAcct = BizToAccountingFactory.maps.get(key).apply(vo);
+    return accountingService.accounting(toAcct);
   }
 
 //
@@ -87,6 +101,8 @@ public class BaseServiceImpl {
 //    page.setRecords(page1.getContent());
 //    return page;
 //  }
+
+
 
 
 }

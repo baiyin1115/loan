@@ -203,7 +203,8 @@ public class LoanServiceImpl extends BaseServiceImpl {
     /**
      * 调用账户模块记账
      */
-    //TODO
+    String key =  LoanBizTypeEnum.PUT + "_" + "";
+    executeAccounting(key,result);
 
     return true;
 
@@ -329,8 +330,8 @@ public class LoanServiceImpl extends BaseServiceImpl {
     /**
      * 调用账户模块记账
      */
-    //TODO
-    result.getBackAmt(); //注意这个  需要回退的金额
+    String key =  calculateRequest.getBizType() + "_" + "";
+    executeAccounting(key,result);
 
   }
 
@@ -437,7 +438,8 @@ public class LoanServiceImpl extends BaseServiceImpl {
     /**
      * 调用记账接口记账
      */
-    // todo 注意减免
+    String key =  LoanBizTypeEnum.REPAY + "_" + "";
+    executeAccounting(key,plan);
 
     /**
      * 更新还款计划
@@ -498,7 +500,8 @@ public class LoanServiceImpl extends BaseServiceImpl {
     /**
      * 调用记账接口记账
      */
-    // todo
+    String key =  LoanBizTypeEnum.COMPENSATION + "_" + "";
+    executeAccounting(key,loan);
 
     /**
      * 更新还款计划

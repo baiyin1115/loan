@@ -10,9 +10,13 @@ import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.AcctTypeEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerStatusEnum;
 import com.zsy.loan.bean.enumeration.BizTypeEnum.CustomerTypeEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.InvestStatusEnum;
+import com.zsy.loan.bean.enumeration.BizTypeEnum.LoanStatusEnum;
 import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.dao.biz.CustomerInfoRepo;
+import com.zsy.loan.dao.biz.InvestInfoRepo;
+import com.zsy.loan.dao.biz.LoanInfoRepo;
 import com.zsy.loan.service.system.impl.SystemServiceImpl;
 import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.StringUtils;
@@ -54,6 +58,12 @@ public class CustomerServiceImpl {
 
   @Autowired
   private AcctServiceImpl acctService;
+
+  @Autowired
+  private InvestInfoRepo investInfoRepo;
+
+  @Autowired
+  private LoanInfoRepo loanInfoRepo;
 
   /**
    * 通过客户名、手机号、身份证号码 模糊查询
@@ -146,7 +156,7 @@ public class CustomerServiceImpl {
   }
 
   /**
-   * 逻辑上删除用户
+   * 逻辑上删除客户
    */
   @Transactional
   public Boolean logicDelete(List<Long> ids) {
@@ -154,7 +164,7 @@ public class CustomerServiceImpl {
     for (long id : ids) {
 
       /**
-       * 判断用户状态
+       * 判断客户状态
        */
       TBizCustomerInfo customer = repository.findById(id).get();
       if (customer.getStatus().equals(CustomerStatusEnum.DELETE.getValue())) { //已经删除
@@ -176,7 +186,26 @@ public class CustomerServiceImpl {
       /**
        * 校验是否有进行中的项目
        */
-      //TODO
+      if (customer.getType().equals(CustomerTypeEnum.INVEST.getValue())) { //投资人
+        List<Long> status = new ArrayList<>(3);
+        status.add(InvestStatusEnum.CHECK_IN.getValue());
+        status.add(InvestStatusEnum.INTEREST_ING.getValue());
+        status.add(InvestStatusEnum.DELAY.getValue());
+        if (investInfoRepo.getCountByCustNo(id, status) != 0) {
+          throw new LoanException(BizExceptionEnum.CUSTOMER_BIZ_ING, String.valueOf(id));
+        }
+      } else {
+
+        List<Long> status = new ArrayList<>(5);
+        status.add(LoanStatusEnum.CHECK_IN.getValue());
+        status.add(LoanStatusEnum.PUT.getValue());
+        status.add(LoanStatusEnum.REPAY_IND.getValue());
+        status.add(LoanStatusEnum.OVERDUE.getValue());
+        status.add(LoanStatusEnum.DELAY.getValue());
+        if (loanInfoRepo.getCountByCustNo(id, status) != 0) {
+          throw new LoanException(BizExceptionEnum.CUSTOMER_BIZ_ING, String.valueOf(id));
+        }
+      }
 
       repository.UpStatusById(id, CustomerStatusEnum.DELETE.getValue());
       /**
@@ -197,7 +226,7 @@ public class CustomerServiceImpl {
 
     for (long id : ids) {
       /**
-       * 判断用户状态
+       * 判断客户状态
        */
       TBizCustomerInfo customer = repository.findById(id).get();
       if (customer.getStatus().equals(CustomerStatusEnum.BLACKLIST.getValue())) { //已经处理
@@ -229,7 +258,7 @@ public class CustomerServiceImpl {
     for (long id : ids) {
 
       /**
-       * 判断用户状态
+       * 判断客户状态
        */
       TBizCustomerInfo customer = repository.findById(id).get();
       if (customer.getStatus().equals(CustomerStatusEnum.NORMAL.getValue())) { //已经处理

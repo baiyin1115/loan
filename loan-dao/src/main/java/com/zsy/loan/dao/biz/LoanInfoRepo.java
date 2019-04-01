@@ -4,6 +4,7 @@ package com.zsy.loan.dao.biz;
 import com.zsy.loan.bean.entity.biz.TBizLoanInfo;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -53,4 +54,7 @@ public interface LoanInfoRepo extends PagingAndSortingRepository<TBizLoanInfo, L
   void repay(@Param("id") Long id, @Param("acctDate") Date acctDate,@Param("status") Long status,
       @Param("paidPrin") BigDecimal paidPrin, @Param("paidInterest") BigDecimal paidInterest, @Param("paidPen") BigDecimal
       paidPen, @Param("paidServFee") BigDecimal paidServFee, @Param("wavAmt") BigDecimal wavAmt, @Param("remark") String remark);
+
+  @Query(nativeQuery = true, value = "SELECT count(*) FROM t_biz_loan_info WHERE cust_no=:custNo AND status in (:status) ")
+  Integer getCountByCustNo(@Param("custNo") long custNo, @Param("status") List<Long> status);
 }

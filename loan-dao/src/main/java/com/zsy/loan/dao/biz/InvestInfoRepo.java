@@ -1,6 +1,7 @@
 
 package com.zsy.loan.dao.biz;
 
+import com.zsy.loan.bean.entity.biz.TBizAcct;
 import com.zsy.loan.bean.entity.biz.TBizInvestInfo;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -67,4 +68,6 @@ public interface InvestInfoRepo extends PagingAndSortingRepository<TBizInvestInf
   int settlement(@Param("investNo") Long investNo, @Param("sysAcctDate") Date sysAcctDate, @Param("paidInterest") BigDecimal paidInterest,
       @Param("paidPrin") BigDecimal paidPrin, @Param("accruedInterest") BigDecimal accruedInterest,@Param("newstatus") Long newstatus);
 
+  @Query(nativeQuery = true, value = "SELECT count(*) FROM t_biz_invest_info WHERE cust_no=:custNo AND status in (:status) ")
+  Integer getCountByCustNo(@Param("custNo") long custNo, @Param("status") List<Long> status);
 }

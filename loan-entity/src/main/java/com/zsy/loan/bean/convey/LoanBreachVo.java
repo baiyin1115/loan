@@ -1,6 +1,5 @@
 package com.zsy.loan.bean.convey;
 
-import com.zsy.loan.bean.entity.biz.IAcct;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -22,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanBreachVo implements Serializable, IAcct {
+public class LoanBreachVo implements Serializable, IBizToAcct {
 
   private static final long serialVersionUID = -2920692017093564101L;
   private Long id;

@@ -14,7 +14,6 @@ import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.CollectorsUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +39,12 @@ public class AccountingServiceImpl {
 
   @Autowired
   private AcctRecordRepo recordRepo;
+
+  /**
+   * 重试次数
+   */
+  @Value("${common.retry:2}")
+  int retry;
 
   /**
    * 统一记账接口
@@ -64,8 +70,14 @@ public class AccountingServiceImpl {
         }
 
         if (detailVo.getAcctType() != null) {
-          TBizAcct acct = repository.findByAcctType(detailVo.getAcctType()).get();
-          detailVo.setAcctNo(acct.getId());
+          List<TBizAcct> acctList = repository.findByAcctType(detailVo.getAcctType()).get();
+          for (TBizAcct acct : acctList) {
+            if (acct.getRemark() != null && acct.getRemark().contains(vo.getOrgNo().toString())) { //备注里面包含企业编号
+              detailVo.setAcctNo(acct.getId());
+              break;
+            }
+          }
+
         }
       }
 
@@ -96,20 +108,11 @@ public class AccountingServiceImpl {
     /**
      * 查询账户信息并判断账户余额
      */
-    Map<Long, TBizAcct> versionMap = new HashMap<>(); //版本号
     Iterator<Entry<Long, BigDecimal>> it = upAcctMap.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry<Long, BigDecimal> entry = it.next();
       if (entry.getValue().compareTo(BigDecimal.valueOf(0.00)) == 0) {
         it.remove();//使用迭代器的remove()方法删除元素
-      } else {
-        TBizAcct acct = repository.findById(entry.getKey()).get();
-        if (BigDecimalUtil.add(entry.getValue(), acct.getAvailableBalance()).compareTo(BigDecimal.valueOf(0.00)) < 0) {
-          throw new LoanException(BizExceptionEnum.BALANCE_ERROR,
-              entry.getKey() + "_" + acct.getAvailableBalance() + "_" + entry.getValue().negate());
-        }else{
-          versionMap.put(entry.getKey(),acct);
-        }
       }
     }
 
@@ -121,9 +124,32 @@ public class AccountingServiceImpl {
     /**
      * 更新账户余额（retry）
      */
-    //TODO
+    Iterator<Entry<Long, BigDecimal>> up = upAcctMap.entrySet().iterator();
+    while (up.hasNext()) {
+      Map.Entry<Long, BigDecimal> entry = up.next();
+      retryUpdate(entry.getKey(), entry.getValue());
+    }
 
     return true;
+  }
+
+
+  public int retryUpdate(Long acctId, BigDecimal upAmt) {
+
+    int up = 0;
+    TBizAcct acct = null;
+    for (int i = 0; i < retry; i++) {
+      acct = repository.findById(acctId).get();
+      if (BigDecimalUtil.add(upAmt, acct.getAvailableBalance()).compareTo(BigDecimal.valueOf(0.00)) < 0) {
+        throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW, "余额不足" + acctId + "_" + acct.getAvailableBalance() + "_" + upAmt);
+      }
+      up = repository.upAvailableBalance(acctId, upAmt, acct.getVersion());
+    }
+
+    if (up == 0) {
+      throw new LoanException(BizExceptionEnum.BALANCE_ERROR, "余额不足或余额不是最新值，请重试 " + acctId + "_" + acct.getAvailableBalance() + "_" + upAmt);
+    }
+    return up;
   }
 
 }

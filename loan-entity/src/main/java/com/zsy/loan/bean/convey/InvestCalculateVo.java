@@ -1,6 +1,5 @@
 package com.zsy.loan.bean.convey;
 
-import com.zsy.loan.bean.entity.biz.IAcct;
 import com.zsy.loan.bean.entity.biz.TBizInvestPlan;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -25,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvestCalculateVo implements Serializable, IAcct {
+public class InvestCalculateVo implements Serializable, IBizToAcct {
 
 
   private static final long serialVersionUID = -8798878859347645627L;

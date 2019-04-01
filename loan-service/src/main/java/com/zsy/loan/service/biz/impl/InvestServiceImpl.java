@@ -311,7 +311,8 @@ public class InvestServiceImpl extends BaseServiceImpl {
     /**
      * 调用账户模块记账
      */
-    //TODO
+    String key = LoanBizTypeEnum.INVEST + "_" + "";
+    executeAccounting(key,result);
 
     return true;
 
@@ -471,7 +472,8 @@ public class InvestServiceImpl extends BaseServiceImpl {
     /**
      * 调用账户模块记账
      */
-    //TODO
+    String key = calculateRequest.getBizType() + "_" + "";
+    executeAccounting(key,result);
 
     /**
      * 修改凭证信息
@@ -507,7 +509,6 @@ public class InvestServiceImpl extends BaseServiceImpl {
     /**
      * 查询下回款计划
      */
-    //TODO
     Date acctDate = systemService.getSysAcctDate();
     List<TBizInvestPlan> currentPlans = investPlanRepo.findCurrentTermRecord(calculate.getId(), acctDate);
     if (currentPlans == null || currentPlans.size() == 0) {
@@ -669,7 +670,8 @@ public class InvestServiceImpl extends BaseServiceImpl {
       /**
        * 调用账户模块记账
        */
-      //TODO
+      String key =  LoanBizTypeEnum.SETTLEMENT + "_" + "";
+      executeAccounting(key,old);
 
       /**
        * 更新凭证
