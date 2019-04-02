@@ -78,10 +78,29 @@ PopupAccountDlg.resetAccountSearch = function () {
 };
 
 PopupAccountDlg.setAccount = function () {
+
   var selected = $('#' + this.accountId).bootstrapTable('getSelections');
   if (selected.length != 1) {
-    Feng.info("请先选中表格中的某一记录！");
-    return false;
+
+    if (window.parent.Transfer != undefined) {
+      if (window.parent.Transfer.accountType == "in") {
+        window.parent.$("#inAcctName").attr("value", "");
+        window.parent.$("#inAcctNo").attr("value", "");
+      }else{
+        window.parent.$("#outAcctName").attr("value", "");
+        window.parent.$("#outAcctNo").attr("value", "");
+      }
+    }
+
+    if (window.parent.TransferInfoDlg != undefined) {
+      if (window.parent.TransferInfoDlg.accountType == "in") {
+        window.parent.$("#inAcctName").attr("value", "");
+        window.parent.$("#inAcctNo").attr("value", "");
+      }else{
+        window.parent.$("#outAcctName").attr("value", "");
+        window.parent.$("#outAcctNo").attr("value", "");
+      }
+    }
   } else {
     var seItem = selected[0];
 
@@ -104,9 +123,9 @@ PopupAccountDlg.setAccount = function () {
         window.parent.$("#outAcctNo").attr("value", seItem.id);
       }
     }
-
-    PopupAccountDlg.close();
   }
+
+  PopupAccountDlg.close();
 };
 
 PopupAccountDlg.close = function () {

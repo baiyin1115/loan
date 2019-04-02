@@ -20,11 +20,11 @@ public class ListGroupTest2 {
   public static void main(String[] args) {
 
     List<AccountingDetailVo> voList = new ArrayList<>();
-    AccountingDetailVo vo1 = AccountingDetailVo.builder().acctNo(1L).balDir("-").amt(BigDecimal.valueOf(500.22)).build();
-    AccountingDetailVo vo2 = AccountingDetailVo.builder().acctNo(2L).balDir("+").amt(BigDecimal.valueOf(500.33)).build();
-    AccountingDetailVo vo3 = AccountingDetailVo.builder().acctNo(1L).balDir("-").amt(BigDecimal.valueOf(500.44)).build();
-    AccountingDetailVo vo4 = AccountingDetailVo.builder().acctNo(2L).balDir("+").amt(BigDecimal.valueOf(500.55)).build();
-    AccountingDetailVo vo5 = AccountingDetailVo.builder().acctNo(3L).balDir("+").amt(BigDecimal.valueOf(500.66)).build();
+    AccountingDetailVo vo1 = AccountingDetailVo.builder().acctNo(1L).balDir("-").amt(BigDecimal.valueOf(500.22)).amtType(1l).build();
+    AccountingDetailVo vo2 = AccountingDetailVo.builder().acctNo(2L).balDir("+").amt(BigDecimal.valueOf(500.33)).amtType(2l).build();
+    AccountingDetailVo vo3 = AccountingDetailVo.builder().acctNo(1L).balDir("-").amt(BigDecimal.valueOf(500.44)).amtType(4l).build();
+    AccountingDetailVo vo4 = AccountingDetailVo.builder().acctNo(2L).balDir("+").amt(BigDecimal.valueOf(500.55)).amtType(2l).build();
+    AccountingDetailVo vo5 = AccountingDetailVo.builder().acctNo(3L).balDir("+").amt(BigDecimal.valueOf(500.66)).amtType(3l).build();
     voList.add(vo1);
     voList.add(vo2);
     voList.add(vo3);
@@ -83,6 +83,11 @@ public class ListGroupTest2 {
         Collectors.groupingBy(AccountingDetailVo::getAcctNo,TreeMap::new, CollectorsUtils.summingBigDecimal(AccountingDetailVo::getAmtByBalDir)));
 
     System.out.println(JSON.toJSONString(resultList333, SerializerFeature.PrettyFormat));
+
+    TreeMap<Long, BigDecimal> resultList444 = voList.stream().collect(
+        Collectors.groupingBy(AccountingDetailVo::getAcctNo,TreeMap::new, CollectorsUtils.summingBigDecimal(AccountingDetailVo::getAmtByBalDir)));
+
+
 
   }
 }

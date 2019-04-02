@@ -21,10 +21,12 @@ import com.zsy.loan.utils.factory.Page;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Order;
@@ -50,6 +52,9 @@ public class TransferServiceImpl extends BaseServiceImpl {
 
   @Autowired
   private ISystemService systemService;
+
+  @Autowired
+  private EntityManager entityManager;
 
 
   public Object save(TransferInfoVo transfer, boolean b) {
@@ -167,7 +172,7 @@ public class TransferServiceImpl extends BaseServiceImpl {
       msg.append("编号:" + id);
       msg.append("|金额:" + BigDecimalUtil.formatAmt(info.getAmt()));
       msg.append("|日期:" + DateTimeKit.formatDate(info.getAcctDate()));
-      msg.append("|用途:" + ConstantFactory.me().getInOutTypeName(info.getType()));
+      msg.append("|用途:" + ConstantFactory.me().getTransferTypeName(info.getType()));
       msg.append("|出账账户:" + (info.getOutAcctNo() == null ? "-" : ConstantFactory.me().getAcctName(info.getOutAcctNo())));
       msg.append("|入账账户:" + (info.getInAcctNo() == null ? "-" : ConstantFactory.me().getAcctName(info.getInAcctNo())));
       msg.append("<BR>");
@@ -196,15 +201,14 @@ public class TransferServiceImpl extends BaseServiceImpl {
       }
 
       /**
-       * 调用账户模块记账
-       */
-      transferAccounting(info);
-
-      /**
        * 更新状态
        */
       repository.updateStatus(id, ProcessStatusEnum.SUCCESS.getValue(), ProcessStatusEnum.ING.getValue(), systemService.getSysAcctDate());
 
+      /**
+       * 调用账户模块记账
+       */
+      transferAccounting(info);
     }
     return true;
   }
@@ -221,13 +225,15 @@ public class TransferServiceImpl extends BaseServiceImpl {
         throw new LoanException(BizExceptionEnum.STATUS_ERROR, String.valueOf(id));
       }
 
+      repository.updateStatus(id, ProcessStatusEnum.CANCEL.getValue(), ProcessStatusEnum.SUCCESS.getValue(), systemService.getSysAcctDate());
+
       /**
        * 调用账户模块记账
        */
-      info.setAmt(info.getAmt().negate()); //金额设置成负值
-      transferAccounting(info);
-
-      repository.updateStatus(id, ProcessStatusEnum.CANCEL.getValue(), ProcessStatusEnum.SUCCESS.getValue(), systemService.getSysAcctDate());
+      TBizTransferVoucherInfo acctInfo =  TBizTransferVoucherInfo.builder().build();
+      BeanKit.copyProperties(info,acctInfo);
+      acctInfo.setAmt(info.getAmt().negate()); //金额设置成负值
+      transferAccounting(acctInfo);
 
     }
     return true;
@@ -239,11 +245,11 @@ public class TransferServiceImpl extends BaseServiceImpl {
   private void transferAccounting(TBizTransferVoucherInfo info) {
     String key = null;
     if (TransferTypeEnum.REGISTER.getValue() == info.getType()) {
-      key = LoanBizTypeEnum.FUNDS_CHECK_IN + "_" + info.getType();
+      key = LoanBizTypeEnum.FUNDS_CHECK_IN + "_" + TransferTypeEnum.REGISTER;
     } else if (TransferTypeEnum.WITHDRAW.getValue() == info.getType()) {
-      key = LoanBizTypeEnum.WITHDRAW + "_" + info.getType();
+      key = LoanBizTypeEnum.WITHDRAW + "_" + TransferTypeEnum.WITHDRAW;
     } else {
-      key = LoanBizTypeEnum.TRANSFER + "_" + info.getType();
+      key = LoanBizTypeEnum.TRANSFER + "_" + TransferTypeEnum.getEnumByKey(info.getType());
     }
     executeAccounting(key, info);
   }

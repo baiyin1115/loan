@@ -228,9 +228,9 @@ public class InOutServiceImpl extends BaseServiceImpl {
   private void inoutAccounting(TBizInOutVoucherInfo info) {
     String key = null;
     if (InOutTypeEnum.PUBLIC_IN.getValue() == info.getType() || InOutTypeEnum.INTEREST.getValue() == info.getType()) {
-      key = LoanBizTypeEnum.IN + "_" + info.getType();
+      key = LoanBizTypeEnum.IN + "_" + InOutTypeEnum.getEnumByKey(info.getType());
     } else {
-      key = LoanBizTypeEnum.OUT + "_" + info.getType();
+      key = LoanBizTypeEnum.OUT + "_" + InOutTypeEnum.getEnumByKey(info.getType());
     }
     executeAccounting(key, info);
   }

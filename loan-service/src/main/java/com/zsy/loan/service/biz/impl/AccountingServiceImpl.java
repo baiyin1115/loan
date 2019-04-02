@@ -10,7 +10,6 @@ import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.biz.AcctRecordRepo;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.service.sequence.IdentifyGenerated;
-import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.CollectorsUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -39,6 +38,9 @@ public class AccountingServiceImpl {
 
   @Autowired
   private AcctRecordRepo recordRepo;
+
+  @Autowired
+  private AccountingRetryServiceImpl retryServiceImpl;
 
   /**
    * 重试次数
@@ -94,6 +96,7 @@ public class AccountingServiceImpl {
           .balDir(detailVo.getBalDir())
           .status(ProcessStatusEnum.SUCCESS.getValue())
           .remark("记账成功")
+          .voucherNo(vo.getVoucherNo() == null ? vo.getVoucherPlanNo() : vo.getVoucherNo()) //如果凭证为空 就选择计划编号
           .build();
 
       recordList.add(record);
@@ -124,32 +127,18 @@ public class AccountingServiceImpl {
     /**
      * 更新账户余额（retry）
      */
-    Iterator<Entry<Long, BigDecimal>> up = upAcctMap.entrySet().iterator();
-    while (up.hasNext()) {
-      Map.Entry<Long, BigDecimal> entry = up.next();
-      retryUpdate(entry.getKey(), entry.getValue());
+    int up = 0;
+    for (int i = 0; i < retry; i++) {
+      up = retryServiceImpl.retryUpdate(upAcctMap);
+      if (up == upAcctMap.size()) {
+        break;
+      }
+    }
+    if (up != upAcctMap.size()) {
+      throw new LoanException(BizExceptionEnum.BALANCE_ERROR, "余额不足或余额不是最新值，请重试 ");
     }
 
     return true;
-  }
-
-
-  public int retryUpdate(Long acctId, BigDecimal upAmt) {
-
-    int up = 0;
-    TBizAcct acct = null;
-    for (int i = 0; i < retry; i++) {
-      acct = repository.findById(acctId).get();
-      if (BigDecimalUtil.add(upAmt, acct.getAvailableBalance()).compareTo(BigDecimal.valueOf(0.00)) < 0) {
-        throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW, "余额不足" + acctId + "_" + acct.getAvailableBalance() + "_" + upAmt);
-      }
-      up = repository.upAvailableBalance(acctId, upAmt, acct.getVersion());
-    }
-
-    if (up == 0) {
-      throw new LoanException(BizExceptionEnum.BALANCE_ERROR, "余额不足或余额不是最新值，请重试 " + acctId + "_" + acct.getAvailableBalance() + "_" + upAmt);
-    }
-    return up;
   }
 
 }

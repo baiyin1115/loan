@@ -537,8 +537,8 @@ public class BizToAccountingFactory {
 
     LoanRepayPlanVo info = (LoanRepayPlanVo) iacct;
 
-    AccountingMainVo main = AccountingMainVo.builder().acctDate(info.getAcctDate()).orgNo(info.getOrgNo()).voucherNo(info.getId())
-        .type(LoanBizTypeEnum.REPAY.getValue())
+    AccountingMainVo main = AccountingMainVo.builder().acctDate(info.getAcctDate()).orgNo(info.getOrgNo())//.voucherNo(info.getId())
+        .voucherPlanNo(info.getId()).type(LoanBizTypeEnum.REPAY.getValue())
         .build();
 
     List<AccountingDetailVo> detailVoList = new ArrayList<>(4);
