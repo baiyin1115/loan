@@ -322,7 +322,7 @@ LoanPlan.initColumn = function () {
     {title:'借据编号',field:'loanNo',align:'center',valign:'middle',sortable:true},
     {title:'计划编号 ',field:'id',align:'center',valign:'middle',sortable:true},
     {title:'状态',field:'statusName',align:'center',valign:'middle',sortable:true},
-    // {title:sign+'公司'+sign,field:'orgName',align:'center',valign:'middle',sortable:true},
+    {title:sign+'公司'+sign,field:'orgNo',align:'center',valign:'middle',sortable:true,visible: false},
     // {title:sign+'产品'+sign,field:'productName',align:'center',valign:'middle',sortable:true},
     // {title:'客户名称',field:'custName',align:'center',valign:'middle',sortable:true},
     {title:sign+'入账账户'+sign,field:'inAcctName',align:'center',valign:'middle',sortable:true},

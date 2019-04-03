@@ -66,6 +66,9 @@ public class TBizAcctPopup implements Serializable {
   @Column(name = "version")
   private Long version;
 
+  @Column(name = "remark")
+  private String remark;
+
   /**
    * 创建人
    */

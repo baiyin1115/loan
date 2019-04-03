@@ -436,12 +436,6 @@ public class LoanServiceImpl extends BaseServiceImpl {
     }
 
     /**
-     * 调用记账接口记账
-     */
-    String key =  LoanBizTypeEnum.REPAY + "_" + "";
-    executeAccounting(key,plan);
-
-    /**
      * 更新还款计划
      */
     TBizRepayPlan upInfo = TBizRepayPlan.builder().build();
@@ -469,6 +463,12 @@ public class LoanServiceImpl extends BaseServiceImpl {
     }
     repository.repay(plan.getLoanNo(), systemService.getSysAcctDate(), status, currentPrin, currentInterest, currentPen, currentServFee,
         currentWav, plan.getRemark());
+
+    /**
+     * 调用记账接口记账
+     */
+    String key =  LoanBizTypeEnum.REPAY + "_" + "";
+    executeAccounting(key,plan);
 
   }
 

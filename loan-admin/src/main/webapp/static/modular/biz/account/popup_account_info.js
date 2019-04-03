@@ -34,13 +34,12 @@ PopupAccountDlg.initAccountColumn = function () {
     {title:'客户姓名',field:'custName',align:'center',valign:'middle',sortable:true},
     {title:'手机号',field:'custMobile',align:'center',valign:'middle',sortable:true},
     {title:'账户名称',field:'name',align:'center',valign:'middle',sortable:true},
+    {title:'备注',field:'remark',align:'center',valign:'middle',sortable:true},
     {title:'可用余额',field:'availableBalance',align:'center',valign:'middle',sortable:true},
     {title:'冻结余额',field:'freezeBalance',align:'center',valign:'middle',sortable:true},
     {title:'账户类型',field:'acctTypeName',align:'center',valign:'middle',sortable:true},
     {title:'余额性质',field:'balanceTypeName',align:'center',valign:'middle',sortable:true},
-    {title:'账户状态',field:'statusName',align:'center',valign:'middle',sortable:true},
-    {title:'客户类型',field:'custTypeName',align:'center',valign:'middle',sortable:true},
-    {title:'客户状态',field:'custStatusName',align:'center',valign:'middle',sortable:true}
+    {title:'账户状态',field:'statusName',align:'center',valign:'middle',sortable:true}
   ];
 };
 

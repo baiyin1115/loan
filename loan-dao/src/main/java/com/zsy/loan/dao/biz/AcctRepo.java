@@ -35,7 +35,7 @@ public interface AcctRepo extends PagingAndSortingRepository<TBizAcct, Long>
       + "where acct_type in (?1) order by id ASC")
   List getTreeList(List<Long> acctTypes);
 
-  @Modifying
+  @Modifying(clearAutomatically = true,flushAutomatically = true)
   @Query(nativeQuery = true, value =
       "update t_biz_acct t set available_balance=available_balance+:upAmt, version = version+1 where t.id =:acctId AND "
           + " version = :version ")

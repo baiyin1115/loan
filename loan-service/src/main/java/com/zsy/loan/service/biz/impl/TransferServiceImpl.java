@@ -53,9 +53,6 @@ public class TransferServiceImpl extends BaseServiceImpl {
   @Autowired
   private ISystemService systemService;
 
-  @Autowired
-  private EntityManager entityManager;
-
 
   public Object save(TransferInfoVo transfer, boolean b) {
 

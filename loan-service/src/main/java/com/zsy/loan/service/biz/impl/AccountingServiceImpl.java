@@ -10,6 +10,7 @@ import com.zsy.loan.bean.exception.LoanException;
 import com.zsy.loan.dao.biz.AcctRecordRepo;
 import com.zsy.loan.dao.biz.AcctRepo;
 import com.zsy.loan.service.sequence.IdentifyGenerated;
+import com.zsy.loan.utils.BigDecimalUtil;
 import com.zsy.loan.utils.CollectorsUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class AccountingServiceImpl {
         if (detailVo.getAcctType() != null) {
           List<TBizAcct> acctList = repository.findByAcctType(detailVo.getAcctType()).get();
           for (TBizAcct acct : acctList) {
-            if (acct.getRemark() != null && acct.getRemark().contains(vo.getOrgNo().toString())) { //备注里面包含企业编号
+            if (acct.getRemark() != null && acct.getRemark().contains(vo.getOrgNo().toString() + "_")) { //备注里面包含企业编号--目前只有暂收暂付会用到
               detailVo.setAcctNo(acct.getId());
               break;
             }
@@ -127,18 +128,60 @@ public class AccountingServiceImpl {
     /**
      * 更新账户余额（retry）
      */
-    int up = 0;
-    for (int i = 0; i < retry; i++) {
-      up = retryServiceImpl.retryUpdate(upAcctMap);
-      if (up == upAcctMap.size()) {
-        break;
-      }
-    }
-    if (up != upAcctMap.size()) {
-      throw new LoanException(BizExceptionEnum.BALANCE_ERROR, "余额不足或余额不是最新值，请重试 ");
-    }
+    updateBalance(upAcctMap);
 
     return true;
+  }
+
+  private void updateBalance(TreeMap<Long, BigDecimal> upAcctMap) {
+
+    Iterator<Entry<Long, BigDecimal>> entrys = upAcctMap.entrySet().iterator();
+    while (entrys.hasNext()) {
+      int upNum = 0;
+      Map.Entry<Long, BigDecimal> entry = entrys.next();
+
+      //首次更新
+      upNum = firstUpdate(entry.getKey(), entry.getValue());
+
+      if (upNum == 0) {
+        for (int i = 1; i < retry; i++) { //重试更新
+          upNum = retryUpdate(entry.getKey(), entry.getValue());
+          if (upNum != 0) {
+            break;
+          }
+        }
+      }
+
+      if (upNum == 0) {
+        throw new LoanException(BizExceptionEnum.BALANCE_ERROR, "余额不足或余额不是最新值，请重试 ");
+      }
+    }
+  }
+
+  /**
+   * 首次更新
+   */
+  private int firstUpdate(Long acctId, BigDecimal upAmt) {
+
+    TBizAcct acct = repository.findById(acctId).get();
+    if (BigDecimalUtil.add(upAmt, acct.getAvailableBalance()).compareTo(BigDecimal.valueOf(0.00)) < 0) {
+      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW, "余额不足" + acctId + "_" + acct.getAvailableBalance() + "_" + upAmt);
+    }
+
+    return repository.upAvailableBalance(acctId, upAmt, acct.getVersion());
+  }
+
+  /**
+   * 开启新事物，取得最新的版本号
+   */
+  private int retryUpdate(Long acctId, BigDecimal upAmt) {
+
+    TBizAcct acct = retryServiceImpl.getNewestBizAcct(acctId);
+    if (BigDecimalUtil.add(upAmt, acct.getAvailableBalance()).compareTo(BigDecimal.valueOf(0.00)) < 0) {
+      throw new LoanException(BizExceptionEnum.ACCOUNT_NO_OVERDRAW, "余额不足" + acctId + "_" + acct.getAvailableBalance() + "_" + upAmt);
+    }
+
+    return repository.upAvailableBalance(acctId, upAmt, acct.getVersion());
   }
 
 }

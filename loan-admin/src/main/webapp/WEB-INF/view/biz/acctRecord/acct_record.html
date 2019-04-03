@@ -1,0 +1,65 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>交易流水</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <#TimeCon id="queryBeginDate" name="开始日期" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-2">
+                                <#TimeCon id="queryEndDate" name="结束日期" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-2">
+                                <#SelectCon id="orgNo" name="公司" underline="false">
+                                    <option value=""></option>
+                                    @for(dict in userown.getOrgList()){
+                                    <option value="${dict.num}">${dict.name}</option>
+                                    @}
+                                </#SelectCon>
+                            </div>
+                            <div class="col-sm-2">
+                                <#SelectCon id="type" name="业务类型" underline="false">
+                                    <option value=""></option>
+                                    @for(dict in constant.getDicts('业务类型')){
+                                    <option value="${dict.num}">${dict.name}</option>
+                                    @}
+                                </#SelectCon>
+                            </div>
+                            <div class="col-sm-2">
+                                <#SelectCon id="amtType" name="资金类型" underline="false">
+                                    <option value=""></option>
+                                    @for(dict in constant.getDicts('资金类型')){
+                                    <option value="${dict.num}">${dict.name}</option>
+                                    @}
+                                </#SelectCon>
+                            </div>
+
+                            <div class="col-sm-2">
+                            <#NameCon id="acctNo" name="账户" underline="false" readonly="readonly" hidden="inAcctNo"
+                                clickFun="AcctRecord.openInAccountList(); return false;"
+                            />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12" align="right">
+                                <#button name="搜索" icon="fa-search" clickFun="AcctRecord.search()"/>
+                                <#button name="重置" icon="fa-trash" clickFun="AcctRecord.resetSearch()" space="true"/>
+                            </div>
+                        </div>
+                        <#table id="AcctRecordTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/biz/acctRecord/acct_record.js"></script>
+@}
+
+

@@ -65,6 +65,9 @@
                             @if(shiro.hasPermission("/transfer/cancel")){
                             <#button name="撤销" icon="fa-recycle" clickFun="Transfer.cancel()" space="true"/>
                             @}
+                            @if(shiro.hasPermission("/transfer/print")){
+                            <#button name="打印" icon="fa-print" clickFun="Transfer.openPrint()" space="true"/>
+                            @}
                         </div>
                         <#table id="TransferTable"/>
                     </div>

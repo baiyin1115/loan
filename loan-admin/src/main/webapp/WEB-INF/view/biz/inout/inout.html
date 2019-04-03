@@ -52,6 +52,9 @@
                             @if(shiro.hasPermission("/inout/cancel")){
                             <#button name="撤销" icon="fa-recycle" clickFun="Inout.cancel()" space="true"/>
                             @}
+                            @if(shiro.hasPermission("/inout/print")){
+                            <#button name="打印" icon="fa-print" clickFun="Inout.openPrint()" space="true"/>
+                            @}
                         </div>
                         <#table id="InOutTable"/>
                     </div>

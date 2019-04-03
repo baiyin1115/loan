@@ -286,7 +286,8 @@ public class BizToAccountingFactory {
     detailVoList.add(detailVoSub1);
     detailVoList.add(detailVoAdd1);
 
-    if (info.getServiceFeeType().equals(ServiceFeeTypeEnum.FIRST.getValue())) { //首期登记服务费
+    if (info.getServiceFeeType().equals(ServiceFeeTypeEnum.FIRST.getValue()) && info.getSchdServFee().compareTo(BigDecimal.valueOf(0.00)) != 0) {
+      //首期登记服务费
       AccountingDetailVo detailVoSub2 = AccountingDetailVo.builder().amt(info.getSchdServFee()).amtType(AmtTypeEnum.SERVICE_FEE.getValue())
           .custNo(info.getCustNo()).balDir(BalDirEnum.SUB.getValue()).build();
       AccountingDetailVo detailVoAdd2 = AccountingDetailVo.builder().amt(info.getSchdServFee()).amtType(AmtTypeEnum.SERVICE_FEE.getValue())
@@ -543,13 +544,15 @@ public class BizToAccountingFactory {
 
     List<AccountingDetailVo> detailVoList = new ArrayList<>(4);
 
-    AccountingDetailVo detailVoSub1 = AccountingDetailVo.builder().amt(info.getCurrentPrin()).amtType(AmtTypeEnum.CAPITAL.getValue())
-        .custNo(info.getCustNo()).balDir(BalDirEnum.SUB.getValue()).build();
-    AccountingDetailVo detailVoAdd1 = AccountingDetailVo.builder().amt(info.getCurrentPrin()).amtType(AmtTypeEnum.CAPITAL.getValue())
-        .acctNo(info.getInAcctNo()).balDir(BalDirEnum.ADD.getValue()).build();
+    if (info.getCurrentPrin().compareTo(BigDecimal.valueOf(0.00)) != 0) {
+      AccountingDetailVo detailVoSub1 = AccountingDetailVo.builder().amt(info.getCurrentPrin()).amtType(AmtTypeEnum.CAPITAL.getValue())
+          .custNo(info.getCustNo()).balDir(BalDirEnum.SUB.getValue()).build();
+      AccountingDetailVo detailVoAdd1 = AccountingDetailVo.builder().amt(info.getCurrentPrin()).amtType(AmtTypeEnum.CAPITAL.getValue())
+          .acctNo(info.getInAcctNo()).balDir(BalDirEnum.ADD.getValue()).build();
 
-    detailVoList.add(detailVoSub1);
-    detailVoList.add(detailVoAdd1);
+      detailVoList.add(detailVoSub1);
+      detailVoList.add(detailVoAdd1);
+    }
 
     if (info.getCurrentInterest().compareTo(BigDecimal.valueOf(0.00)) != 0) {
       AccountingDetailVo detailVoSub2 = AccountingDetailVo.builder().amt(info.getCurrentInterest()).amtType(AmtTypeEnum.INTEREST.getValue())
