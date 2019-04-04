@@ -12,11 +12,8 @@ spring:
 #      additional-exclude: static/**,WEB-INF/**
 #      exclude: ./loan-dao/src/main/webapp/**
   application:
-    name: loan-admin-dev
+    name: loan-admin-staging
   datasource:
-    #url: jdbc:log4jdbc:mysql://localhost:3306/loan?useUnicode=true&characterEncoding=UTF-8&useSSL=false
-    #username: loanuser
-    #password: 123456
     url: jdbc:log4jdbc:mysql://39.96.208.117:3306/loan?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: loanuser
     password: Loan@123456

@@ -27,7 +27,7 @@
     <!-- Common libs -->
     <!--<springframework.version>4.3.21.RELEASE</springframework.version>-->
     <httpcomponents.version>4.4.1</httpcomponents.version>
-    <jackson.version>2.8.11</jackson.version>
+    <jackson.version>2.9.4</jackson.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java_source_version>1.8</java_source_version>
     <java_target_version>1.8</java_target_version>
