@@ -14,7 +14,7 @@ spring:
   application:
     name: loan-admin-staging
   datasource:
-    url: jdbc:log4jdbc:mysql://39.96.208.117:3306/loan?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:log4jdbc:mysql://rm-bp15nxcn3605q2m4oio.mysql.rds.aliyuncs.com:3306/loan?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: loanuser
     password: Loan@123456
     type: com.alibaba.druid.pool.DruidDataSource
