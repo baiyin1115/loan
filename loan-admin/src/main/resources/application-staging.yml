@@ -16,7 +16,7 @@ spring:
   datasource:
     url: jdbc:log4jdbc:mysql://rm-bp15nxcn3605q2m4oio.mysql.rds.aliyuncs.com:3306/loan?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: loanuser
-    password: Loan@123456
+    password: loan@123456
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 5  # 初始化大小
