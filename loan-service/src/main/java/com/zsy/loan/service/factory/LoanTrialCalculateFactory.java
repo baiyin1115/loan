@@ -326,7 +326,7 @@ public class LoanTrialCalculateFactory {
         plan.setDdDate(data.getEndDate()); //还款日期
       } else {
         if (dd != null && dd.intValue() != 0) {
-          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(),false));
+          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(), false));
         } else {
           plan.setDdDate(endDate); //还款日期
         }
@@ -422,7 +422,7 @@ public class LoanTrialCalculateFactory {
         plan.setDdDate(lendingDate); //还款日期
       } else {
         if (dd != null && dd.intValue() != 0) {
-          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(),true));
+          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(), true));
         } else {
           plan.setDdDate(beginDate); //还款日期
         }
@@ -685,7 +685,7 @@ public class LoanTrialCalculateFactory {
         plan.setDdDate(endDate); //还款日期
       } else {
         if (dd != null && dd.intValue() != 0) {
-          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(),false));
+          plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(), false));
         } else {
           plan.setDdDate(endDate); //还款日期
         }
@@ -776,7 +776,7 @@ public class LoanTrialCalculateFactory {
        * 还款日期 --上扣息 首期是放款日期  如果约定还款日有值取当期约定还款日，没有就是当期开始日期，最后一期还款日是借据结束日期
        */
       if (dd != null && dd.intValue() != 0) {
-        plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(),true));
+        plan.setDdDate(JodaTimeUtil.getDdDate(beginDate, endDate, dd.intValue(), true));
       } else {
         plan.setDdDate(beginDate); //还款日期
       }
@@ -1333,21 +1333,22 @@ public class LoanTrialCalculateFactory {
       //更新还款计划状态
       for (int i = 0; i < currentRepayPlans.size(); i++) {
         TBizRepayPlan plan = currentRepayPlans.get(i);
-        if (plan.getCtdInterest().compareTo(BigDecimal.valueOf(0.00)) != 0) {
 
-          int day = JodaTimeUtil.daysBetween(plan.getBeginDate(), data.getAcctDate()); //计息天数
-          //应还利息 = 原待还利息-减少的利息（还款的本金*日利息*剩余计息天数）
-          //减少的利息
-          BigDecimal lowerInterest = BigDecimalUtil.mul(currentRepayPrin, dayRate, BigDecimal.valueOf(data.getProduct().getCycleInterval() - day));
-          difference = BigDecimalUtil.add(difference, lowerInterest);
-          plan.setCtdInterest(BigDecimalUtil.sub(plan.getCtdInterest(), lowerInterest));
-          plan.setAcctDate(data.getAcctDate());
+        int day = JodaTimeUtil.daysBetween(plan.getBeginDate(), data.getAcctDate()); //计息天数
+        //应还利息 = 原待还利息-减少的利息（还款的本金*日利息*剩余计息天数）
+        //减少的利息
+        BigDecimal lowerInterest = BigDecimalUtil.mul(currentRepayPrin, dayRate, BigDecimal.valueOf(data.getProduct().getCycleInterval() - day));
+        difference = BigDecimalUtil.add(difference, lowerInterest);
+        plan.setCtdInterest(BigDecimalUtil.sub(plan.getCtdInterest(), lowerInterest));
+        plan.setAcctDate(data.getAcctDate());
 
-          if (plan.getPaidInterest().compareTo(BigDecimal.valueOf(0.00)) > 0) { //考虑到已还款的情况
-            plan.setPaidInterest(BigDecimalUtil.sub(plan.getPaidInterest(), lowerInterest)); //修改已还金额，退款已在上面记录
-            backAmt = BigDecimalUtil.add(lowerInterest.negate());
-          }
+        if (plan.getPaidInterest().compareTo(BigDecimal.valueOf(0.00)) > 0) { //考虑到已还款的情况
+          plan.setPaidInterest(BigDecimalUtil.sub(plan.getPaidInterest(), lowerInterest)); //修改已还金额，退款已在上面记录
+          backAmt = BigDecimalUtil.add(lowerInterest.negate());
+        }
 
+        if (plan.getCtdPrin().compareTo(BigDecimal.valueOf(0.00)) > 0) { //最后一期是当前期的话修改下已还本金
+          plan.setPaidPrin(BigDecimalUtil.add(plan.getPaidPrin(), currentRepayPrin));
         }
       }
 

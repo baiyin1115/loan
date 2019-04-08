@@ -114,7 +114,7 @@ public class BizToAccountingFactory {
     /**
      * 部分还款
      */
-    maps.put(LoanBizTypeEnum.PREPAYMENT + "_" + "", BizToAccountingFactory::part_repayment);
+    maps.put(LoanBizTypeEnum.PART_REPAYMENT + "_" + "", BizToAccountingFactory::part_repayment);
 
     /**
      * 部分撤资
@@ -718,6 +718,16 @@ public class BizToAccountingFactory {
       detailVoList.add(detailVoAdd2);
     }
 
+    if (info.getBackAmt().compareTo(BigDecimal.valueOf(0.00)) != 0) {
+      AccountingDetailVo detailVoSub2 = AccountingDetailVo.builder().amt(info.getBackAmt()).amtType(AmtTypeEnum.INTEREST.getValue())
+          .custNo(info.getCustNo()).balDir(BalDirEnum.SUB.getValue()).build();
+      AccountingDetailVo detailVoAdd2 = AccountingDetailVo.builder().amt(info.getBackAmt()).amtType(AmtTypeEnum.INTEREST.getValue())
+          .acctNo(info.getLendingAcct()).balDir(BalDirEnum.ADD.getValue()).build();
+
+      detailVoList.add(detailVoSub2);
+      detailVoList.add(detailVoAdd2);
+    }
+
     if (info.getRepayServFee().compareTo(BigDecimal.valueOf(0.00)) != 0) {
       AccountingDetailVo detailVoSub3 = AccountingDetailVo.builder().amt(info.getRepayServFee()).amtType(AmtTypeEnum.SERVICE_FEE.getValue())
           .custNo(info.getCustNo()).balDir(BalDirEnum.SUB.getValue()).build();
@@ -764,6 +774,9 @@ public class BizToAccountingFactory {
      * 借款人账户(-)|-退回金额|利息|部分还款
      * 公司账户(+)|-退回金额|利息|部分还款
      *
+     * 公司账户(-)|发生额|减免|还款
+     * 借款人账户(+)|发生额|减免|还款
+     *
      */
 
     LoanCalculateVo info = (LoanCalculateVo) iacct;
@@ -782,14 +795,24 @@ public class BizToAccountingFactory {
     detailVoList.add(detailVoSub1);
     detailVoList.add(detailVoAdd1);
 
-    if (info.getBackAmt().compareTo(BigDecimal.valueOf(0.00)) != 0) { //利息为负数
-      AccountingDetailVo detailVoSub2 = AccountingDetailVo.builder().amt(info.getBackAmt().negate()).amtType(AmtTypeEnum.INTEREST.getValue())
+    if (info.getBackAmt().compareTo(BigDecimal.valueOf(0.00)) != 0) {
+      AccountingDetailVo detailVoSub2 = AccountingDetailVo.builder().amt(info.getBackAmt()).amtType(AmtTypeEnum.INTEREST.getValue())
           .custNo(info.getCustNo()).balDir(BalDirEnum.SUB.getValue()).build();
-      AccountingDetailVo detailVoAdd2 = AccountingDetailVo.builder().amt(info.getBackAmt().negate()).amtType(AmtTypeEnum.INTEREST.getValue())
+      AccountingDetailVo detailVoAdd2 = AccountingDetailVo.builder().amt(info.getBackAmt()).amtType(AmtTypeEnum.INTEREST.getValue())
           .acctNo(info.getLendingAcct()).balDir(BalDirEnum.ADD.getValue()).build();
 
       detailVoList.add(detailVoSub2);
       detailVoList.add(detailVoAdd2);
+    }
+
+    if (info.getCurrentRepayWav().compareTo(BigDecimal.valueOf(0.00)) != 0) {
+      AccountingDetailVo detailVoSub5 = AccountingDetailVo.builder().amt(info.getCurrentRepayWav()).amtType(AmtTypeEnum.REDUCE.getValue())
+          .acctNo(info.getLendingAcct()).balDir(BalDirEnum.SUB.getValue()).build();
+      AccountingDetailVo detailVoAdd5 = AccountingDetailVo.builder().amt(info.getCurrentRepayWav()).amtType(AmtTypeEnum.REDUCE.getValue())
+          .custNo(info.getCustNo()).balDir(BalDirEnum.ADD.getValue()).build();
+
+      detailVoList.add(detailVoSub5);
+      detailVoList.add(detailVoAdd5);
     }
 
     main.setDetail(detailVoList);

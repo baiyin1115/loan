@@ -330,7 +330,7 @@ public class LoanServiceImpl extends BaseServiceImpl {
     /**
      * 调用账户模块记账
      */
-    String key =  calculateRequest.getBizType() + "_" + "";
+    String key =  LoanBizTypeEnum.getEnumByKey(calculateRequest.getBizType()) + "_" + "";
     executeAccounting(key,result);
 
   }

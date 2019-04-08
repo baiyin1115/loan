@@ -600,7 +600,7 @@ public class ConstantFactory implements IConstantFactory {
     if (StringUtils.isNotEmpty(val)) {
       return val;
     }
-    TBizAcct info = acctRepo.getOne(id);
+    TBizAcct info = acctRepo.findById(id).orElse(null);
     if (StringUtils.isNotNullOrEmpty(info) && StringUtils.isNotEmpty(info.getName())) {
       val = id + "_" + info.getName();
       set(CacheConstantKey.ACCT_NO_NAME + id, val);
